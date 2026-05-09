@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dashboard — Mães e Pais Atípicos do Norte do ES</title>
+<meta name="theme-color" content="#534AB7">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS (mesmo sistema do protótipo v13) ── */
+:root {
+  --roxo:#534AB7; --roxo-lt:#EEEDFE; --roxo-dk:#3a3480; --roxo-glow:rgba(83,74,183,.35);
+  --teal:#1D9E75; --teal-lt:#E1F5EE; --teal-dk:#157a5a; --teal-glow:rgba(29,158,117,.3);
+  --amber:#EF9F27; --amber-lt:#FAEEDA; --amber-dk:#c47e0e; --amber-glow:rgba(239,159,39,.3);
+  --red:#E05A30; --red-lt:#fdeee8;
+  --bg:#0f0e17; --bg2:#1a1828; --bg3:#242237; --bg4:#2e2b4a;
+  --txt:#f0eeff; --txt2:#b8b4d8; --txt3:#7a7698;
+  --border:#3d3a5c; --border-lt:#4d4970;
+  --card:#1e1c30; --card2:#252340;
+  --radius:16px; --radius-sm:10px;
+  --font:'DM Sans',system-ui,sans-serif;
+  --font-mono:'DM Mono','Courier New',monospace;
+  --shadow:0 8px 40px rgba(0,0,0,.5);
+  --shadow-glow:0 0 40px var(--roxo-glow);
+}
+
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+html, body {
+  height:100%; min-height:100%;
+  background:var(--bg);
+  color:var(--txt);
+  font-family:var(--font);
+  overflow-x:hidden;
+}
+
+/* ── FUNDO COM TEXTURA SUTIL ── */
+body::before {
+  content:'';
+  position:fixed; inset:0; z-index:0;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% -10%, rgba(83,74,183,.18) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 90% 110%, rgba(29,158,117,.12) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(83,74,183,.06) 0%, transparent 70%);
+  pointer-events:none;
+}
+
+/* ── GRID LAYOUT ── */
+#app {
+  position:relative; z-index:1;
+  min-height:100vh;
+  display:grid;
+  grid-template-rows:auto auto 1fr auto;
+  grid-template-columns:1fr;
+  gap:0;
+  padding:28px 32px 24px;
+  max-width:1600px;
+  margin:0 auto;
+}
+
+/* ── HEADER ── */
+#header {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:24px;
+  margin-bottom:28px;
+  padding-bottom:20px;
+  border-bottom:1px solid var(--border);
+}
+.header-left { flex:1; min-width:0; }
+.event-badge {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(83,74,183,.15); border:1px solid rgba(83,74,183,.4);
+  border-radius:99px; padding:5px 14px;
+  font-size:12px; font-weight:600; letter-spacing:.8px; text-transform:uppercase;
+  color:var(--roxo-lt); margin-bottom:10px;
+}
+.event-badge .dot {
+  width:7px; height:7px; border-radius:50%; background:var(--teal);
+  box-shadow:0 0 6px var(--teal);
+  animation:pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.5;transform:scale(.7)}
+}
+#header h1 {
+  font-size:clamp(22px, 2.8vw, 36px);
+  font-weight:700; color:var(--txt);
+  line-height:1.1; letter-spacing:-.5px;
+}
+#header h1 em { color:var(--roxo-lt); font-style:normal; }
+.header-sub {
+  font-size:clamp(12px, 1.2vw, 15px);
+  color:var(--txt3); margin-top:8px;
+}
+.header-sub strong { color:var(--txt2); }
+
+.header-right {
+  display:flex; flex-direction:column;
+  align-items:flex-end; gap:12px; flex-shrink:0;
+}
+/* Contador regressivo */
+#countdown {
+  background:var(--card2); border:1px solid var(--border-lt);
+  border-radius:var(--radius-sm); padding:14px 20px;
+  text-align:center;
+}
+#countdown .cd-label {
+  font-size:10px; font-weight:600; letter-spacing:1px;
+  text-transform:uppercase; color:var(--txt3); margin-bottom:8px;
+}
+#countdown .cd-units {
+  display:flex; gap:10px; align-items:flex-end;
+}
+.cd-unit { display:flex; flex-direction:column; align-items:center; gap:2px; }
+.cd-num {
+  font-family:var(--font-mono);
+  font-size:clamp(20px, 2.5vw, 32px);
+  font-weight:600; color:var(--txt);
+  background:var(--bg3); border:1px solid var(--border);
+  border-radius:6px; padding:4px 10px; min-width:54px; text-align:center;
+  line-height:1;
+}
+.cd-unit-label { font-size:9px; color:var(--txt3); text-transform:uppercase; letter-spacing:.5px; }
+.cd-sep {
+  font-size:clamp(18px,2vw,26px); font-weight:600;
+  color:var(--txt3); margin-bottom:8px; opacity:.5;
+}
+
+/* Sync status */
+#sync-status {
+  display:flex; align-items:center; gap:7px;
+  font-size:12px; color:var(--txt3);
+}
+#sync-dot {
+  width:8px; height:8px; border-radius:50%;
+  background:var(--teal); box-shadow:0 0 6px var(--teal);
+  flex-shrink:0;
+}
+#sync-dot.syncing { animation:spin-pulse 1s linear infinite; }
+#sync-dot.error { background:var(--red); box-shadow:0 0 6px var(--red); animation:none; }
+@keyframes spin-pulse {
+  0%{opacity:1;transform:scale(1.3)} 100%{opacity:.4;transform:scale(.8)}
+}
+
+/* ── BARRA DE PROGRESSO PRINCIPAL ── */
+#progress-section {
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px 28px;
+  margin-bottom:24px;
+  display:flex; align-items:center; gap:32px;
+}
+.prog-main-label {
+  font-size:12px; font-weight:600; letter-spacing:.8px;
+  text-transform:uppercase; color:var(--txt3); margin-bottom:6px;
+}
+.prog-main-nums {
+  display:flex; align-items:baseline; gap:10px; margin-bottom:12px;
+}
+.prog-main-nums .current {
+  font-family:var(--font-mono);
+  font-size:clamp(36px, 5vw, 64px);
+  font-weight:600; color:var(--txt);
+  line-height:1;
+}
+.prog-main-nums .sep { font-size:clamp(20px, 2.5vw, 32px); color:var(--txt3); }
+.prog-main-nums .total {
+  font-family:var(--font-mono);
+  font-size:clamp(20px, 2.5vw, 32px);
+  color:var(--txt3); font-weight:500;
+}
+.prog-main-wrap { flex:1; }
+.prog-track {
+  height:12px; background:var(--bg4);
+  border-radius:99px; overflow:visible;
+  position:relative;
+}
+.prog-fill-main {
+  height:100%; border-radius:99px;
+  background:linear-gradient(90deg, var(--roxo) 0%, #7b6fe8 100%);
+  transition:width 1s cubic-bezier(.4,0,.2,1);
+  position:relative;
+  box-shadow:0 0 16px var(--roxo-glow);
+}
+.prog-fill-main::after {
+  content:'';
+  position:absolute; right:-2px; top:50%;
+  transform:translateY(-50%);
+  width:18px; height:18px;
+  border-radius:50%; background:white;
+  box-shadow:0 0 0 3px var(--roxo), 0 0 12px var(--roxo-glow);
+  transition:right 1s cubic-bezier(.4,0,.2,1);
+}
+.prog-markers {
+  display:flex; justify-content:space-between;
+  margin-top:8px;
+}
+.prog-marker {
+  font-size:11px; color:var(--txt3);
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+}
+.prog-marker .mk-line {
+  width:1px; height:6px; background:var(--border-lt); margin-bottom:2px;
+}
+#prog-pct-main {
+  font-family:var(--font-mono);
+  font-size:clamp(28px, 3.5vw, 48px);
+  font-weight:600; color:var(--roxo);
+  min-width:100px; text-align:center;
+  flex-shrink:0;
+}
+
+/* ── KPI CARDS ── */
+#kpi-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+  gap:16px;
+  margin-bottom:24px;
+}
+.kpi {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px 22px;
+  position:relative; overflow:hidden;
+  transition:border-color .3s;
+}
+.kpi::before {
+  content:'';
+  position:absolute; bottom:-20px; right:-20px;
+  width:100px; height:100px; border-radius:50%;
+  opacity:.08; transition:opacity .3s;
+}
+.kpi-presentes::before { background:var(--teal); }
+.kpi-kg::before { background:var(--amber); }
+.kpi-sorteio::before { background:var(--roxo); }
+.kpi-profis::before { background:var(--teal); }
+.kpi-icon {
+  font-size:22px; margin-bottom:10px;
+  display:block;
+}
+.kpi-val {
+  font-family:var(--font-mono);
+  font-size:clamp(28px, 3vw, 42px);
+  font-weight:600; color:var(--txt);
+  line-height:1; display:block;
+  transition:all .5s;
+}
+.kpi-lbl {
+  font-size:12px; color:var(--txt3);
+  margin-top:6px; font-weight:500; display:block;
+}
+.kpi-sub {
+  font-size:11px; color:var(--txt3);
+  margin-top:4px; display:block; opacity:.7;
+}
+.kpi-presentes { border-color:rgba(29,158,117,.4); }
+.kpi-presentes .kpi-val { color:var(--teal); }
+.kpi-kg { border-color:rgba(239,159,39,.4); }
+.kpi-kg .kpi-val { color:var(--amber); }
+.kpi-sorteio { border-color:rgba(83,74,183,.4); }
+.kpi-sorteio .kpi-val { color:var(--roxo-lt); }
+
+/* ── SETORES GRID ── */
+#setores-section {
+  margin-bottom:24px;
+}
+.section-title {
+  font-size:12px; font-weight:600; letter-spacing:.8px;
+  text-transform:uppercase; color:var(--txt3); margin-bottom:14px;
+}
+#setores-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
+  gap:12px;
+}
+.setor-card {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:16px 18px;
+  display:flex; align-items:center; gap:14px;
+  transition:border-color .3s, transform .3s;
+}
+.setor-card:hover { transform:translateY(-1px); }
+.setor-emoji { font-size:24px; flex-shrink:0; }
+.setor-body { flex:1; min-width:0; }
+.setor-name {
+  font-size:13px; font-weight:500; color:var(--txt2);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.setor-counts { display:flex; align-items:baseline; gap:6px; margin-top:4px; }
+.setor-total {
+  font-family:var(--font-mono);
+  font-size:22px; font-weight:600;
+}
+.setor-presentes {
+  font-size:12px; color:var(--txt3);
+  background:var(--bg4); border-radius:99px;
+  padding:2px 8px;
+}
+.setor-bar {
+  height:4px; background:var(--bg4);
+  border-radius:2px; margin-top:8px; overflow:hidden;
+}
+.setor-bar-fill {
+  height:100%; border-radius:2px;
+  transition:width 1s cubic-bezier(.4,0,.2,1);
+}
+
+/* ── ÚLTIMOS CHECK-INS ── */
+#checkins-section {
+  background:var(--card); border:1px solid var(--border);
+  border-radius:var(--radius); padding:20px 22px;
+  margin-bottom:24px;
+}
+#checkin-feed {
+  display:flex; flex-direction:column; gap:0;
+  max-height:200px; overflow:hidden;
+}
+.feed-item {
+  display:flex; align-items:center; gap:12px;
+  padding:9px 0; border-bottom:1px solid rgba(61,58,92,.5);
+  animation:slide-in .4s ease forwards;
+  opacity:0; transform:translateY(-8px);
+}
+.feed-item:last-child { border-bottom:none; }
+@keyframes slide-in {
+  to { opacity:1; transform:none; }
+}
+.feed-avatar {
+  width:34px; height:34px; border-radius:50%;
+  background:var(--bg3); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; flex-shrink:0;
+}
+.feed-info { flex:1; min-width:0; }
+.feed-name { font-size:13px; font-weight:500; color:var(--txt); }
+.feed-sub { font-size:11px; color:var(--txt3); margin-top:1px; }
+.feed-num {
+  font-family:var(--font-mono); font-size:12px;
+  color:var(--txt3); flex-shrink:0;
+}
+.feed-empty {
+  text-align:center; padding:20px;
+  color:var(--txt3); font-size:13px;
+}
+
+/* ── RODAPÉ ── */
+#footer {
+  border-top:1px solid var(--border);
+  padding-top:18px;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:20px; flex-wrap:wrap;
+}
+.footer-info { display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+.footer-chip {
+  display:flex; align-items:center; gap:6px;
+  font-size:12px; color:var(--txt3);
+}
+.footer-chip svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; flex-shrink:0; }
+.footer-brand {
+  font-size:11px; color:var(--txt3);
+  display:flex; align-items:center; gap:6px;
+}
+.footer-brand strong { color:var(--txt2); }
+
+/* ── REFRESH RING ── */
+#refresh-ring {
+  position:fixed; bottom:20px; right:20px;
+  width:44px; height:44px; z-index:100;
+}
+#refresh-ring svg { width:44px; height:44px; transform:rotate(-90deg); }
+#refresh-ring .ring-bg { fill:none; stroke:var(--border); stroke-width:3; }
+#refresh-ring .ring-fill {
+  fill:none; stroke:var(--roxo); stroke-width:3;
+  stroke-dasharray:120; stroke-dashoffset:120;
+  stroke-linecap:round;
+  transition:stroke-dashoffset .5s linear;
+}
+#refresh-ring .ring-icon {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; cursor:pointer;
+}
+
+/* ── OVERLAY DE MARCO (animação de milestone) ── */
+#marco-overlay {
+  position:fixed; inset:0; z-index:200;
+  background:rgba(15,14,23,.92);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity .4s;
+}
+#marco-overlay.show {
+  opacity:1; pointer-events:auto;
+}
+.marco-box {
+  background:var(--card2); border:2px solid var(--roxo);
+  border-radius:24px; padding:48px 64px; text-align:center;
+  max-width:560px;
+  box-shadow:0 0 80px var(--roxo-glow), var(--shadow);
+  animation:marco-in .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes marco-in {
+  from{transform:scale(.7);opacity:0}
+  to{transform:scale(1);opacity:1}
+}
+.marco-emoji { font-size:72px; display:block; margin-bottom:16px; }
+.marco-num {
+  font-family:var(--font-mono);
+  font-size:72px; font-weight:600; color:var(--roxo-lt);
+  line-height:1; display:block;
+  text-shadow:0 0 30px var(--roxo-glow);
+}
+.marco-label { font-size:24px; color:var(--txt); margin-top:12px; font-weight:500; }
+.marco-sub { font-size:16px; color:var(--txt3); margin-top:8px; }
+.marco-confetti {
+  position:absolute; inset:0; pointer-events:none;
+  overflow:hidden; border-radius:24px;
+}
+
+/* ── RESPONSIVIDADE ── */
+@media(max-width:900px){
+  #app { padding:16px 18px 18px; }
+  #header { flex-direction:column; align-items:stretch; }
+  .header-right { flex-direction:row; align-items:center; justify-content:space-between; }
+  #progress-section { flex-direction:column; gap:12px; text-align:center; }
+  #prog-pct-main { min-width:auto; }
+  #kpi-grid { grid-template-columns:1fr 1fr; }
+  #setores-grid { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:560px){
+  #kpi-grid { grid-template-columns:1fr 1fr; }
+  #setores-grid { grid-template-columns:1fr; }
+  .marco-box { padding:32px 28px; }
+  .marco-num { font-size:52px; }
+}
+
+/* ── ANIMAÇÕES DE ATUALIZAÇÃO ── */
+.kpi-val.updating { animation:flip-num .4s cubic-bezier(.4,0,.2,1); }
+@keyframes flip-num {
+  0%{transform:translateY(0);opacity:1}
+  40%{transform:translateY(-12px);opacity:0}
+  60%{transform:translateY(12px);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
+
+/* ── LOADING INICIAL ── */
+#loading-screen {
+  position:fixed; inset:0; z-index:300;
+  background:var(--bg);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:20px;
+  transition:opacity .5s, visibility .5s;
+}
+#loading-screen.hide { opacity:0; visibility:hidden; }
+.loading-logo { font-size:48px; animation:bob 1.5s ease-in-out infinite; }
+@keyframes bob {
+  0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)}
+}
+.loading-text { font-size:16px; color:var(--txt3); }
+.loading-spinner {
+  width:40px; height:40px;
+  border:3px solid var(--border);
+  border-top-color:var(--roxo);
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* ── CONFIG PANEL (sidebar pequeno para definir URL) ── */
+#config-bar {
+  position:fixed; top:16px; left:16px; z-index:150;
+  display:none;
+}
+#config-bar.show { display:block; }
+.config-form {
+  background:var(--card2); border:1px solid var(--border);
+  border-radius:var(--radius-sm); padding:16px;
+  box-shadow:var(--shadow);
+  width:340px;
+}
+.config-form label { font-size:12px; color:var(--txt3); display:block; margin-bottom:6px; }
+.config-form input {
+  width:100%; background:var(--bg3); border:1px solid var(--border);
+  border-radius:6px; color:var(--txt); font-size:13px; font-family:var(--font);
+  padding:9px 11px; outline:none;
+}
+.config-form input:focus { border-color:var(--roxo); }
+.config-btns { display:flex; gap:8px; margin-top:10px; }
+.config-btn {
+  flex:1; padding:9px; border-radius:6px; font-size:13px; font-weight:500;
+  cursor:pointer; border:none; font-family:var(--font);
+}
+.config-save { background:var(--roxo); color:#fff; }
+.config-cancel { background:var(--bg4); color:var(--txt2); }
+
+/* Botão de config flutuante */
+#btn-config {
+  position:fixed; top:16px; left:16px; z-index:149;
+  background:var(--card2); border:1px solid var(--border);
+  border-radius:99px; padding:7px 14px;
+  font-size:12px; color:var(--txt3); cursor:pointer;
+  display:flex; align-items:center; gap:6px;
+  transition:border-color .2s, color .2s;
+}
+#btn-config:hover { border-color:var(--roxo); color:var(--txt); }
+#btn-config svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; }
+
+/* ── MODO DEMO (sem URL configurada) ── */
+#demo-banner {
+  background:rgba(239,159,39,.1); border:1px solid rgba(239,159,39,.4);
+  border-radius:var(--radius-sm); padding:12px 18px;
+  font-size:13px; color:var(--amber-lt);
+  margin-bottom:20px;
+  display:flex; align-items:center; gap:10px;
+}
+#demo-banner svg { width:16px; height:16px; stroke:currentColor; fill:none; stroke-width:2; flex-shrink:0; }
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div id="loading-screen">
+  <div class="loading-logo">💜</div>
+  <div class="loading-spinner"></div>
+  <div class="loading-text">Carregando dashboard…</div>
+</div>
+
+<!-- Config button -->
+<button id="btn-config" onclick="toggleConfig()">
+  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+  Configurar URL
+</button>
+
+<!-- Config panel -->
+<div id="config-bar">
+  <div class="config-form">
+    <label>URL do Google Apps Script Web App</label>
+    <input type="url" id="input-url" placeholder="https://script.google.com/macros/s/…/exec">
+    <div class="config-btns">
+      <button class="config-btn config-save" onclick="salvarConfig()">Salvar</button>
+      <button class="config-btn config-cancel" onclick="toggleConfig()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Marco overlay -->
+<div id="marco-overlay">
+  <div class="marco-box">
+    <span class="marco-emoji" id="marco-emoji">🎉</span>
+    <span class="marco-num" id="marco-num">1000</span>
+    <div class="marco-label" id="marco-label">inscrições!</div>
+    <div class="marco-sub" id="marco-sub">Que evento incrível! 💜</div>
+  </div>
+</div>
+
+<!-- App principal -->
+<div id="app">
+
+  <!-- HEADER -->
+  <div id="header">
+    <div class="header-left">
+      <div class="event-badge"><div class="dot"></div> Ao vivo</div>
+      <h1>Mães e Pais Atípicos<br><em>do Norte do ES</em></h1>
+      <div class="header-sub">
+        <strong>30 de maio de 2026</strong> · Centro de Vivência Amélia Boroto · São Mateus – ES
+      </div>
+    </div>
+    <div class="header-right">
+      <div id="countdown">
+        <div class="cd-label">Começa em</div>
+        <div class="cd-units" id="cd-units">
+          <div class="cd-unit"><div class="cd-num" id="cd-d">--</div><div class="cd-unit-label">dias</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><div class="cd-num" id="cd-h">--</div><div class="cd-unit-label">horas</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><div class="cd-num" id="cd-m">--</div><div class="cd-unit-label">min</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><div class="cd-num" id="cd-s">--</div><div class="cd-unit-label">seg</div></div>
+        </div>
+      </div>
+      <div id="sync-status">
+        <div id="sync-dot"></div>
+        <span id="sync-text">Aguardando…</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DEMO BANNER -->
+  <div id="demo-banner" style="display:none">
+    <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span>Modo demonstração — configure a URL do Apps Script para dados reais. Clique em "Configurar URL" no canto superior esquerdo.</span>
+  </div>
+
+  <!-- BARRA DE PROGRESSO PRINCIPAL -->
+  <div id="progress-section">
+    <div class="prog-main-wrap">
+      <div class="prog-main-label">Inscrições</div>
+      <div class="prog-main-nums">
+        <span class="current" id="prog-total">0</span>
+        <span class="sep">/</span>
+        <span class="total">1.200</span>
+      </div>
+      <div class="prog-track">
+        <div class="prog-fill-main" id="prog-fill-main" style="width:0%"></div>
+      </div>
+      <div class="prog-markers">
+        <div class="prog-marker"><div class="mk-line"></div>0</div>
+        <div class="prog-marker"><div class="mk-line"></div>500</div>
+        <div class="prog-marker"><div class="mk-line"></div>800</div>
+        <div class="prog-marker"><div class="mk-line"></div>1.000</div>
+        <div class="prog-marker"><div class="mk-line"></div>1.200</div>
+      </div>
+    </div>
+    <div id="prog-pct-main">0%</div>
+  </div>
+
+  <!-- KPI CARDS -->
+  <div id="kpi-grid">
+    <div class="kpi kpi-presentes">
+      <span class="kpi-icon">✅</span>
+      <span class="kpi-val" id="kpi-presentes">0</span>
+      <span class="kpi-lbl">Presentes confirmados</span>
+      <span class="kpi-sub" id="kpi-presentes-pct">— % dos inscritos</span>
+    </div>
+    <div class="kpi kpi-kg">
+      <span class="kpi-icon">🌾</span>
+      <span class="kpi-val" id="kpi-kg">0</span>
+      <span class="kpi-lbl">kg de alimento doados</span>
+      <span class="kpi-sub">Obrigado pela solidariedade!</span>
+    </div>
+    <div class="kpi kpi-sorteio">
+      <span class="kpi-icon">🎫</span>
+      <span class="kpi-val" id="kpi-sorteio">0</span>
+      <span class="kpi-lbl">Números no sorteio</span>
+      <span class="kpi-sub" id="kpi-sorteio-sub">inscrições + extras quiz + alimento</span>
+    </div>
+    <div class="kpi" style="border-color:rgba(239,159,39,.3)">
+      <span class="kpi-icon">💜</span>
+      <span class="kpi-val" id="kpi-maes" style="color:var(--roxo-lt)">0</span>
+      <span class="kpi-lbl">Mães/Pais atípicos</span>
+      <span class="kpi-sub" id="kpi-maes-pct">— % do total</span>
+    </div>
+  </div>
+
+  <!-- SETORES -->
+  <div id="setores-section">
+    <div class="section-title">Inscrições por perfil</div>
+    <div id="setores-grid"></div>
+  </div>
+
+  <!-- FEED DE CHECK-INS -->
+  <div id="checkins-section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+      <div class="section-title" style="margin-bottom:0">Últimos check-ins</div>
+      <span style="font-size:12px;color:var(--txt3)" id="checkin-hora">—</span>
+    </div>
+    <div id="checkin-feed">
+      <div class="feed-empty">Nenhum check-in registrado ainda</div>
+    </div>
+  </div>
+
+  <!-- RODAPÉ -->
+  <div id="footer">
+    <div class="footer-info">
+      <div class="footer-chip">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Centro de Vivência Amélia Boroto — Carapina, São Mateus/ES
+      </div>
+      <div class="footer-chip">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        30 de maio de 2026 (sábado)
+      </div>
+      <div class="footer-chip">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13.5 19.79 19.79 0 0 1 1.61 4.9 2 2 0 0 1 3.6 2.72h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 17z"/></svg>
+        @maes_atipicas_do_norte_do_es
+      </div>
+    </div>
+    <div class="footer-brand">
+      <span>Atualização automática a cada 30s</span>
+      ·
+      <strong>CMMPANE/NES 2026</strong>
+    </div>
+  </div>
+
+</div><!-- /#app -->
+
+<!-- Refresh ring (canto inferior direito) -->
+<div id="refresh-ring">
+  <svg viewBox="0 0 44 44">
+    <circle class="ring-bg" cx="22" cy="22" r="19"/>
+    <circle class="ring-fill" id="ring-fill" cx="22" cy="22" r="19"/>
+  </svg>
+  <div class="ring-icon" onclick="sincronizarAgora()" title="Atualizar agora">🔄</div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════
+   CONFIGURAÇÕES
+════════════════════════════════════════════════════════ */
+const LIMITE = 1200;
+const REFRESH_INTERVAL = 30; // segundos
+const EVENTO_DATA = new Date('2026-05-30T08:00:00-03:00');
+const MARCOS = [500, 800, 1000, 1150, 1200];
+
+const SETORES = [
+  { id:'SM-AT', label:'Mãe/Pai Atípico — São Mateus', emoji:'💜', cor:'var(--roxo)' },
+  { id:'OT-AT', label:'Mãe/Pai Atípico — Outra Cidade', emoji:'💜', cor:'var(--roxo)' },
+  { id:'PR-SA', label:'Profissional de Saúde', emoji:'🩺', cor:'var(--teal)' },
+  { id:'PR-ED', label:'Educação', emoji:'📚', cor:'var(--teal)' },
+  { id:'PR-AS', label:'Assist. Social / Entidade', emoji:'🏛️', cor:'var(--amber)' },
+  { id:'FAM',   label:'Familiar de Autista', emoji:'👨‍👩‍👧', cor:'var(--amber)' },
+  { id:'OUT',   label:'Outros', emoji:'👥', cor:'var(--txt3)' },
+];
+
+/* ════════════════════════════════════════════════════════
+   ESTADO
+════════════════════════════════════════════════════════ */
+let STATE = {
+  inscritos: [],
+  checkins: [],
+  kg: 0,
+  ultimoSync: null,
+  marcosVistos: JSON.parse(localStorage.getItem('dash_marcos') || '[]'),
+  modoDemo: false,
+};
+
+/* ════════════════════════════════════════════════════════
+   UTILITÁRIOS
+════════════════════════════════════════════════════════ */
+function fmt(n) {
+  return Number(n).toLocaleString('pt-BR');
+}
+function pad2(n) { return String(n).padStart(2,'0'); }
+function horaAgora() {
+  return new Date().toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit', second:'2-digit'});
+}
+
+/* ════════════════════════════════════════════════════════
+   COUNTDOWN
+════════════════════════════════════════════════════════ */
+function tickCountdown() {
+  const diff = EVENTO_DATA - Date.now();
+  if (diff <= 0) {
+    document.getElementById('cd-d').textContent = '00';
+    document.getElementById('cd-h').textContent = '00';
+    document.getElementById('cd-m').textContent = '00';
+    document.getElementById('cd-s').textContent = '00';
+    return;
+  }
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-d').textContent = pad2(d);
+  document.getElementById('cd-h').textContent = pad2(h);
+  document.getElementById('cd-m').textContent = pad2(m);
+  document.getElementById('cd-s').textContent = pad2(s);
+}
+setInterval(tickCountdown, 1000);
+tickCountdown();
+
+/* ════════════════════════════════════════════════════════
+   REFRESH RING
+════════════════════════════════════════════════════════ */
+let ringTimer = null;
+let ringElapsed = 0;
+const CIRCUM = 2 * Math.PI * 19; // ~119.4
+
+function iniciarRing() {
+  clearInterval(ringTimer);
+  ringElapsed = 0;
+  const fill = document.getElementById('ring-fill');
+  fill.style.strokeDasharray = CIRCUM;
+  fill.style.strokeDashoffset = CIRCUM;
+
+  ringTimer = setInterval(() => {
+    ringElapsed += 0.5;
+    const pct = ringElapsed / REFRESH_INTERVAL;
+    fill.style.strokeDashoffset = CIRCUM * (1 - pct);
+    if (ringElapsed >= REFRESH_INTERVAL) {
+      sincronizarAgora();
+    }
+  }, 500);
+}
+
+/* ════════════════════════════════════════════════════════
+   CONFIGURAÇÃO DE URL
+════════════════════════════════════════════════════════ */
+function getUrl() { return localStorage.getItem('dash_url') || ''; }
+
+function toggleConfig() {
+  const bar = document.getElementById('config-bar');
+  bar.classList.toggle('show');
+  if (bar.classList.contains('show')) {
+    document.getElementById('input-url').value = getUrl();
+  }
+}
+
+function salvarConfig() {
+  const val = document.getElementById('input-url').value.trim();
+  localStorage.setItem('dash_url', val);
+  toggleConfig();
+  sincronizarAgora();
+}
+
+/* ════════════════════════════════════════════════════════
+   SINCRONIZAÇÃO COM APPS SCRIPT
+════════════════════════════════════════════════════════ */
+async function sincronizarAgora() {
+  const url = getUrl();
+  setSyncStatus('syncing', 'Sincronizando…');
+
+  if (!url || !url.includes('script.google.com')) {
+    // Modo demo: gerar dados fictícios
+    STATE.modoDemo = true;
+    gerarDemoData();
+    setSyncStatus('ok', 'Modo demo · ' + horaAgora());
+    document.getElementById('demo-banner').style.display = 'flex';
+    renderDashboard();
+    iniciarRing();
+    return;
+  }
+
+  STATE.modoDemo = false;
+  document.getElementById('demo-banner').style.display = 'none';
+
+  try {
+    const resp = await fetch(url + '?action=stats', { cache: 'no-store' });
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const data = await resp.json();
+
+    if (data.inscritos) {
+      STATE.inscritos = data.inscritos;
+    } else if (data.lista) {
+      STATE.inscritos = data.lista;
+    }
+    if (data.kg !== undefined) STATE.kg = data.kg;
+    STATE.ultimoSync = new Date();
+
+    setSyncStatus('ok', 'Atualizado · ' + horaAgora());
+    renderDashboard();
+    verificarMarcos();
+  } catch(e) {
+    setSyncStatus('error', 'Erro ao sincronizar · ' + horaAgora());
+    console.warn('[Dashboard] Erro:', e);
+  }
+  iniciarRing();
+}
+
+function setSyncStatus(tipo, texto) {
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-text');
+  dot.className = '';
+  if (tipo === 'syncing') dot.classList.add('syncing');
+  if (tipo === 'error') dot.classList.add('error');
+  txt.textContent = texto;
+}
+
+/* ════════════════════════════════════════════════════════
+   DADOS DEMO
+════════════════════════════════════════════════════════ */
+function gerarDemoData() {
+  // Gera dados fictícios realistas para demonstração
+  if (STATE.inscritos.length === 0) {
+    const nomes = ['Ana Silva','Carlos Pereira','Juliana Costa','Marcos Oliveira',
+      'Fernanda Lima','Roberto Santos','Patricia Souza','Diego Alves',
+      'Camila Rocha','Felipe Martins','Larissa Nunes','André Ferreira',
+      'Gabriela Dias','Lucas Ribeiro','Beatriz Carvalho','Thiago Gomes'];
+    const perfis = ['SM-AT','SM-AT','SM-AT','OT-AT','OT-AT','PR-SA','PR-SA','PR-ED',
+                    'PR-AS','FAM','FAM','OUT','SM-AT','SM-AT','OT-AT','PR-SA'];
+    const cidades = ['São Mateus','São Mateus','Nova Venécia','Linhares',
+      'São Mateus','São Mateus','Aracruz','São Mateus'];
+
+    STATE.inscritos = Array.from({length:347}, (_, i) => ({
+      numero: (perfis[i%perfis.length] === 'SM-AT' ? 'SM-AT-' : perfis[i%perfis.length]+'-') + String(i+1).padStart(4,'0'),
+      nome: nomes[i%nomes.length] + ' ' + (i+1),
+      perfil: perfis[i%perfis.length],
+      cidade: cidades[i%cidades.length],
+      presente: i < 89,
+      kg: i % 5 === 0 ? (1 + (i%3)) : 0,
+      checkinTs: i < 89 ? new Date(Date.now() - (89-i)*120000).toLocaleString('pt-BR') : null,
+    }));
+    STATE.kg = STATE.inscritos.reduce((a,i)=>a+(i.kg||0),0);
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   RENDER DASHBOARD
+════════════════════════════════════════════════════════ */
+function renderDashboard() {
+  const total = STATE.inscritos.length;
+  const presentes = STATE.inscritos.filter(i=>i.presente).length;
+  const kg = STATE.inscritos.reduce((a,i)=>a+(i.kg||0),0) + (STATE.kg||0);
+  const pct = Math.min(100, Math.round((total/LIMITE)*100));
+
+  // Progresso principal
+  animarValor('prog-total', fmt(total));
+  document.getElementById('prog-fill-main').style.width = pct + '%';
+  document.getElementById('prog-pct-main').textContent = pct + '%';
+
+  // KPIs
+  const pctPres = total > 0 ? Math.round((presentes/total)*100) : 0;
+  const maes = STATE.inscritos.filter(i=>i.perfil==='SM-AT'||i.perfil==='OT-AT').length;
+  const pctMaes = total > 0 ? Math.round((maes/total)*100) : 0;
+
+  // Calc números sorteio (base + extras alimento)
+  const numSorteio = STATE.inscritos.reduce((a,i) => {
+    const extras = i.kg||0;
+    const quiz = i.quizAcertos||0;
+    return a + 1 + extras + quiz;
+  }, 0);
+
+  animarValor('kpi-presentes', fmt(presentes));
+  animarValor('kpi-kg', fmt(kg));
+  animarValor('kpi-sorteio', fmt(numSorteio));
+  animarValor('kpi-maes', fmt(maes));
+
+  document.getElementById('kpi-presentes-pct').textContent =
+    pctPres + '% dos inscritos presentes';
+  document.getElementById('kpi-maes-pct').textContent =
+    pctMaes + '% do total inscrito';
+
+  // Setores
+  renderSetores(total);
+
+  // Feed check-ins
+  renderCheckinFeed();
+}
+
+function animarValor(id, novoValor) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (el.textContent === novoValor) return;
+  el.classList.remove('updating');
+  void el.offsetWidth;
+  el.classList.add('updating');
+  el.textContent = novoValor;
+}
+
+function renderSetores(total) {
+  const grid = document.getElementById('setores-grid');
+  grid.innerHTML = SETORES.map(s => {
+    const cnt = STATE.inscritos.filter(i=>i.perfil===s.id).length;
+    const pres = STATE.inscritos.filter(i=>i.perfil===s.id&&i.presente).length;
+    const pct = total > 0 ? Math.round((cnt/total)*100) : 0;
+    return `
+    <div class="setor-card">
+      <span class="setor-emoji">${s.emoji}</span>
+      <div class="setor-body">
+        <div class="setor-name">${s.label}</div>
+        <div class="setor-counts">
+          <span class="setor-total" style="color:${s.cor}">${fmt(cnt)}</span>
+          <span class="setor-presentes">✅ ${fmt(pres)}</span>
+        </div>
+        <div class="setor-bar">
+          <div class="setor-bar-fill" style="width:${pct}%;background:${s.cor}"></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderCheckinFeed() {
+  const feed = document.getElementById('checkin-feed');
+  const hora = document.getElementById('checkin-hora');
+
+  const presentes = STATE.inscritos
+    .filter(i => i.presente && i.checkinTs)
+    .sort((a,b) => new Date(b.checkinTs) - new Date(a.checkinTs))
+    .slice(0, 6);
+
+  if (presentes.length === 0) {
+    feed.innerHTML = '<div class="feed-empty">Nenhum check-in registrado ainda</div>';
+    hora.textContent = '—';
+    return;
+  }
+
+  hora.textContent = 'Último: ' + (presentes[0].checkinTs || horaAgora());
+
+  const setor = (id) => SETORES.find(s=>s.id===id) || {emoji:'👥', cor:'var(--txt3)'};
+
+  feed.innerHTML = presentes.map((p, idx) => `
+    <div class="feed-item" style="animation-delay:${idx*50}ms">
+      <div class="feed-avatar" style="border-color:${setor(p.perfil).cor}">${setor(p.perfil).emoji}</div>
+      <div class="feed-info">
+        <div class="feed-name">${p.nome}</div>
+        <div class="feed-sub">${p.cidade || ''} · ${p.condicao || setor(p.perfil).label || ''}</div>
+      </div>
+      <div class="feed-num">${p.numero}</div>
+    </div>`).join('');
+}
+
+/* ════════════════════════════════════════════════════════
+   MARCOS (animação quando atinge 500, 800, 1000…)
+════════════════════════════════════════════════════════ */
+const MARCO_CONFIG = {
+  500:  { emoji:'🎊', label:'inscrições!', sub:'A comunidade está crescendo!', cor:'var(--teal)' },
+  800:  { emoji:'🔥', label:'inscrições!', sub:'Que engajamento incrível!', cor:'var(--amber)' },
+  1000: { emoji:'🏆', label:'inscrições!', sub:'Mil famílias juntas! 💜', cor:'var(--roxo)' },
+  1150: { emoji:'⚡', label:'inscrições!', sub:'Quase lá! Limite quase atingido.', cor:'var(--amber)' },
+  1200: { emoji:'🎉', label:'inscrições!', sub:'LOTADO! Limite máximo atingido!', cor:'var(--red)' },
+};
+
+function verificarMarcos() {
+  const total = STATE.inscritos.length;
+  const novos = MARCOS.filter(m =>
+    total >= m && !STATE.marcosVistos.includes(m)
+  );
+  if (novos.length > 0) {
+    const marco = Math.max(...novos);
+    mostrarMarco(marco);
+    STATE.marcosVistos.push(marco);
+    localStorage.setItem('dash_marcos', JSON.stringify(STATE.marcosVistos));
+  }
+}
+
+function mostrarMarco(num) {
+  const cfg = MARCO_CONFIG[num] || { emoji:'🎉', label:'inscrições!', sub:'Parabéns!', cor:'var(--roxo)' };
+  document.getElementById('marco-emoji').textContent = cfg.emoji;
+  document.getElementById('marco-num').textContent = fmt(num);
+  document.getElementById('marco-label').textContent = cfg.label;
+  document.getElementById('marco-sub').textContent = cfg.sub;
+
+  const overlay = document.getElementById('marco-overlay');
+  overlay.classList.add('show');
+  setTimeout(() => overlay.classList.remove('show'), 6000);
+}
+
+/* ════════════════════════════════════════════════════════
+   INIT
+════════════════════════════════════════════════════════ */
+window.addEventListener('DOMContentLoaded', async () => {
+  // Renderizar setores vazios imediatamente
+  renderSetores(0);
+
+  // Iniciar countdown
+  tickCountdown();
+
+  // Pequeno delay para loading parecer natural
+  await new Promise(r => setTimeout(r, 800));
+  document.getElementById('loading-screen').classList.add('hide');
+
+  // Primeira sincronização
+  await sincronizarAgora();
+});
+</script>
+</body>
+</html>

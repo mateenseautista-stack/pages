@@ -1,0 +1,3986 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Mães e Pais Atípicos — Norte do ES (v16)</title>
+<!-- PWA -->
+<meta name="theme-color" content="#534AB7">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MãesPais NES">
+<meta name="description" content="App de gestão do evento Mães e Pais Atípicos do Norte do ES — 30/05/2026">
+<link rel="manifest" href="./manifest.json">
+<!-- Apple touch icon real (P13: hospedagem GitHub Pages) -->
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js"></script>
+<!-- Firebase App (P16 — Push Notifications via FCM) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
+<style>
+/* ── TOKENS ── */
+:root{
+  --roxo:#534AB7;--roxo-lt:#EEEDFE;--roxo-dk:#3a3480;
+  --teal:#1D9E75;--teal-lt:#E1F5EE;--teal-dk:#157a5a;
+  --amber:#EF9F27;--amber-lt:#FAEEDA;--amber-dk:#c47e0e;
+  --red:#E05A30;--red-lt:#fdeee8;
+  --bg:#0f0e17;--bg2:#1a1828;--bg3:#242237;--bg4:#2e2b4a;
+  --txt:#f0eeff;--txt2:#b8b4d8;--txt3:#7a7698;
+  --border:#3d3a5c;--border-lt:#4d4970;
+  --card:#1e1c30;--card2:#252340;
+  --radius:14px;--radius-sm:8px;
+  --font:'DM Sans',system-ui,sans-serif;
+  --font-mono:'DM Mono','Courier New',monospace;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --transition:.18s cubic-bezier(.4,0,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--txt);font-family:var(--font);font-size:15px;line-height:1.5;overscroll-behavior:none}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+/* ── PWA OFFLINE BANNER ── */
+#offline-banner{display:none;position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:999;padding:10px 16px;background:var(--amber);color:#1a1400;font-size:13px;font-weight:600;text-align:center;gap:8px;align-items:center;justify-content:center}
+#offline-banner.show{display:flex}
+#offline-banner svg{width:16px;height:16px;flex-shrink:0}
+
+/* ── PWA INSTALL BANNER ── */
+#pwa-install-bar{display:none;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;z-index:150;background:var(--card2);border:1px solid var(--roxo);border-radius:var(--radius);padding:14px 16px;gap:12px;align-items:center;box-shadow:var(--shadow)}
+#pwa-install-bar.show{display:flex}
+#pwa-install-bar .pwa-icon{width:40px;height:40px;background:var(--roxo);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+#pwa-install-bar .pwa-text{flex:1}
+#pwa-install-bar .pwa-text strong{display:block;font-size:14px;color:var(--txt)}
+#pwa-install-bar .pwa-text span{font-size:12px;color:var(--txt3)}
+#pwa-install-bar .pwa-btns{display:flex;gap:6px}
+.pwa-btn-install{background:var(--roxo);color:#fff;border:none;border-radius:var(--radius-sm);padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+.pwa-btn-dismiss{background:none;color:var(--txt3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;font-size:13px;cursor:pointer;font-family:var(--font)}
+
+/* ── PWA STATUS na aba Dados ── */
+.pwa-status-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:12px 16px}
+.pwa-status-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.pwa-status-row:last-child{border-bottom:none}
+.pwa-status-icon{font-size:18px;width:28px;text-align:center}
+.pwa-status-info{flex:1}
+.pwa-status-info strong{display:block;font-size:13px;color:var(--txt);font-weight:500}
+.pwa-status-info span{font-size:11px;color:var(--txt3)}
+.pwa-status-badge{padding:3px 8px;border-radius:99px;font-size:11px;font-weight:600}
+.pwa-ok{background:var(--teal-lt);color:var(--teal-dk)}
+.pwa-no{background:var(--bg4);color:var(--txt3)}
+.pwa-warn{background:var(--amber-lt);color:var(--amber-dk)}
+
+/* ── NOTIFICAÇÕES (P14 + P16 FCM) ── */
+.notif-feature-row{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--txt2)}
+.notif-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+#notif-card .info-box{padding:10px 12px;border-radius:var(--radius-sm);border:1px solid}
+/* FCM card */
+.fcm-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:99px;font-size:11px;font-weight:600}
+.fcm-badge.ok{background:var(--teal-lt);color:var(--teal-dk)}
+.fcm-badge.warn{background:var(--amber-lt);color:var(--amber-dk)}
+.fcm-badge.off{background:var(--bg4);color:var(--txt3)}
+.fcm-step{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--txt2)}
+.fcm-step:last-child{border-bottom:none}
+.fcm-step-num{width:22px;height:22px;border-radius:50%;background:var(--roxo);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.fcm-token-box{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:var(--font-mono);font-size:10px;color:var(--txt3);word-break:break-all;margin-top:8px;max-height:60px;overflow:hidden;line-height:1.5}
+#fcm-config-area input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--txt);font-family:var(--font);font-size:13px;padding:10px 12px;margin-top:6px;outline:none}
+#fcm-config-area input:focus{border-color:var(--roxo)}
+
+/* ── LAYOUT ── */
+#app{display:flex;flex-direction:column;height:100%;max-width:480px;margin:0 auto}
+#content{flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:80px}
+#content::-webkit-scrollbar{display:none}
+
+/* ── BOTTOM NAV ── */
+#nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--bg2);border-top:1px solid var(--border);display:flex;z-index:100;padding-bottom:env(safe-area-inset-bottom)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px;cursor:pointer;gap:3px;color:var(--txt3);font-size:10px;font-weight:500;letter-spacing:.3px;transition:color var(--transition);border:none;background:none;position:relative}
+.nav-btn svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.nav-btn.active{color:var(--roxo)}
+.nav-btn.active::after{content:'';position:absolute;top:0;left:25%;right:25%;height:2px;background:var(--roxo);border-radius:0 0 2px 2px}
+
+/* ── HEADER ── */
+.page-header{padding:20px 16px 12px;position:sticky;top:0;background:var(--bg);z-index:50;border-bottom:1px solid var(--border)}
+.page-header h1{font-size:17px;font-weight:600;color:var(--txt)}
+.page-header p{font-size:12px;color:var(--txt3);margin-top:2px}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:12px 16px}
+.card-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--txt3);margin-bottom:10px}
+
+/* ── FORM ELEMENTS ── */
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:500;color:var(--txt2);margin-bottom:5px}
+.field label span.req{color:var(--red)}
+.field input,.field select,.field textarea{
+  width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);
+  color:var(--txt);font-family:var(--font);font-size:15px;padding:11px 13px;
+  outline:none;transition:border-color var(--transition),box-shadow var(--transition);
+}
+.field input:focus,.field select:focus,.field textarea:focus{
+  border-color:var(--roxo);box-shadow:0 0 0 3px rgba(83,74,183,.18)
+}
+.field input::placeholder,.field textarea::placeholder{color:var(--txt3)}
+.field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237a7698' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;background-size:16px;padding-right:36px}
+.field textarea{resize:none;min-height:80px}
+
+/* ── BUTTONS ── */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:13px 20px;border-radius:var(--radius-sm);font-family:var(--font);font-size:15px;font-weight:500;cursor:pointer;border:none;transition:all var(--transition)}
+.btn-primary{background:var(--roxo);color:#fff}
+.btn-primary:hover{background:var(--roxo-dk)}
+.btn-primary:active{transform:scale(.97)}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:var(--teal-dk)}
+.btn-teal:active{transform:scale(.97)}
+.btn-amber{background:var(--amber);color:#1a1400}
+.btn-amber:hover{background:var(--amber-dk);color:#fff}
+.btn-amber:active{transform:scale(.97)}
+.btn-ghost{background:var(--bg3);color:var(--txt2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg4)}
+.btn-sm{padding:9px 16px;font-size:13px;width:auto;min-width:80px}
+.btn-danger{background:var(--red);color:#fff}
+
+/* ── PILLS / BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:99px;font-size:11px;font-weight:500;white-space:nowrap}
+.badge-roxo{background:var(--roxo-lt);color:var(--roxo-dk)}
+.badge-teal{background:var(--teal-lt);color:var(--teal-dk)}
+.badge-amber{background:var(--amber-lt);color:var(--amber-dk)}
+.badge-red{background:var(--red-lt);color:var(--red)}
+.badge-gray{background:var(--bg4);color:var(--txt2)}
+
+/* ── STEP PROGRESS ── */
+#step-bar{display:flex;align-items:center;gap:4px;padding:12px 16px}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--border-lt);transition:all .3s}
+.step-dot.done{background:var(--roxo);width:20px;border-radius:4px}
+.step-dot.active{background:var(--roxo);width:8px;box-shadow:0 0 0 3px rgba(83,74,183,.3)}
+.step-label{margin-left:auto;font-size:12px;color:var(--txt3)}
+
+/* ── PERFIL SELECTOR ── */
+.perfil-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.perfil-card{background:var(--bg3);border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px 10px;cursor:pointer;text-align:center;transition:all var(--transition)}
+.perfil-card:hover{border-color:var(--roxo-lt)}
+.perfil-card.selected{border-color:var(--roxo);background:rgba(83,74,183,.12)}
+.perfil-card .emoji{font-size:24px;display:block;margin-bottom:6px}
+.perfil-card .label{font-size:12px;font-weight:500;color:var(--txt2);line-height:1.3}
+.perfil-card.destaque{border-color:var(--amber);background:rgba(239,159,39,.08)}
+.perfil-card.destaque.selected{border-color:var(--amber);background:rgba(239,159,39,.18)}
+.perfil-card.destaque .label{color:var(--amber)}
+.sorteio-tag{background:var(--amber);color:#1a1400;font-size:9px;font-weight:600;padding:2px 6px;border-radius:99px;display:inline-block;margin-top:4px}
+
+/* ── QUIZ ── */
+.quiz-option{background:var(--bg3);border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all var(--transition);font-size:14px}
+.quiz-option:hover{border-color:var(--roxo-lt)}
+.quiz-option.selected{border-color:var(--roxo);background:rgba(83,74,183,.12);color:var(--roxo)}
+.quiz-option.correct{border-color:var(--teal);background:rgba(29,158,117,.12);color:var(--teal)}
+.quiz-option.wrong{border-color:var(--red);background:rgba(224,90,48,.1);color:var(--red)}
+
+/* ── CHECKBOX TERM ── */
+.check-row{display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.check-row input[type=checkbox]{width:18px;height:18px;min-width:18px;margin-top:2px;accent-color:var(--roxo);cursor:pointer}
+.check-row label{font-size:13px;color:var(--txt2);cursor:pointer}
+
+/* ── CONFIRMATION NUMBER ── */
+.numero-box{background:linear-gradient(135deg,rgba(83,74,183,.2),rgba(29,158,117,.15));border:2px solid var(--roxo);border-radius:var(--radius);padding:24px;text-align:center;margin:12px 0}
+.numero-box .label{font-size:11px;color:var(--txt3);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.numero-box .num{font-family:var(--font-mono);font-size:32px;font-weight:500;color:var(--txt);letter-spacing:3px}
+.sorteio-extra-box{background:rgba(239,159,39,.1);border:2px solid var(--amber);border-radius:var(--radius-sm);padding:14px;margin-top:12px;text-align:left}
+.sorteio-extra-box .title{color:var(--amber);font-weight:600;font-size:14px;margin-bottom:6px}
+.sorteio-extra-box p{font-size:13px;color:var(--txt2);line-height:1.5}
+.mae-sorteio-box{background:rgba(83,74,183,.1);border:2px solid var(--roxo);border-radius:var(--radius-sm);padding:14px;margin-top:12px}
+.mae-sorteio-box .title{color:var(--roxo);font-weight:600;font-size:14px;margin-bottom:6px}
+.mae-sorteio-box p{font-size:13px;color:var(--txt2);line-height:1.5}
+
+/* ── PAINEL STATS ── */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 16px 12px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 12px}
+.stat-card .val{font-size:26px;font-weight:600;line-height:1}
+.stat-card .lbl{font-size:11px;color:var(--txt3);margin-top:4px}
+.stat-card.full{grid-column:1/-1}
+.prog-bar{height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;margin-top:10px}
+.prog-fill{height:100%;background:var(--roxo);border-radius:3px;transition:width .5s ease}
+
+/* ── SETOR ROWS ── */
+.setor-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.setor-row:last-child{border-bottom:none}
+.setor-row .name{flex:1;font-size:13px;font-weight:500}
+.setor-row .count{font-size:18px;font-weight:600;min-width:36px;text-align:right}
+.setor-row .mini-bar{flex:2;height:4px;background:var(--bg4);border-radius:2px;overflow:hidden}
+.setor-row .mini-fill{height:100%;border-radius:2px}
+
+/* ── SEARCH INPUT ── */
+.search-wrap{position:relative;margin:12px 16px}
+.search-wrap input{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--txt);font-size:14px;padding:10px 12px 10px 38px;width:100%;outline:none}
+.search-wrap input:focus{border-color:var(--roxo);box-shadow:0 0 0 3px rgba(83,74,183,.15)}
+.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--txt3)}
+.search-icon svg{width:17px;height:17px;stroke:currentColor;stroke-width:2;fill:none}
+
+/* ── INSCRITO CARD (check-in) ── */
+.inscrito-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin:8px 16px;display:flex;align-items:center;gap:12px;transition:all var(--transition)}
+.inscrito-item .info{flex:1}
+.inscrito-item .nome{font-size:14px;font-weight:500}
+.inscrito-item .sub{font-size:12px;color:var(--txt3);margin-top:2px}
+.inscrito-item .status-dot{width:10px;height:10px;border-radius:50%;background:var(--border-lt);flex-shrink:0}
+.inscrito-item.presente .status-dot{background:var(--teal)}
+.inscrito-item.presente{border-color:rgba(29,158,117,.3);background:rgba(29,158,117,.05)}
+
+/* ── SORTEIO ── */
+.setor-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 16px 12px}
+.setor-btn{background:var(--bg3);border:2px solid var(--border);border-radius:var(--radius-sm);padding:10px 8px;cursor:pointer;text-align:center;font-size:12px;font-weight:500;color:var(--txt2);transition:all var(--transition)}
+.setor-btn:hover{border-color:var(--roxo-lt)}
+.setor-btn.active{border-color:var(--roxo);background:rgba(83,74,183,.12);color:var(--txt)}
+.setor-btn .emoji{display:block;font-size:20px;margin-bottom:4px}
+
+.sorteio-machine{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);margin:0 16px;padding:24px;text-align:center;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.sorteio-machine .num-display{font-family:var(--font-mono);font-size:36px;font-weight:500;color:var(--txt);letter-spacing:3px;transition:all .3s}
+.sorteio-machine .num-display.rolling{animation:roll .08s linear infinite}
+@keyframes roll{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
+.sorteio-machine.winner{border-color:var(--amber);background:rgba(239,159,39,.06)}
+.winner-info{background:var(--amber-lt);border-radius:var(--radius-sm);padding:14px;margin:12px 0;width:100%;text-align:left}
+.winner-info .nome{font-size:16px;font-weight:600;color:var(--amber-dk);margin-bottom:4px}
+.winner-info .sub{font-size:12px;color:var(--txt3)}
+
+.sorteio-hist{margin:0 16px}
+.hist-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px}
+.hist-item .hist-num{font-family:var(--font-mono);font-size:12px;color:var(--txt3);min-width:110px}
+.hist-item .hist-nome{flex:1;font-weight:500}
+.hist-item .hist-setor{font-size:11px;color:var(--txt3)}
+
+/* ── ALIMENTO TAB ── */
+.alimento-form{margin:0 16px}
+.alimento-result{background:var(--teal-lt);border:2px solid var(--teal);border-radius:var(--radius-sm);padding:16px;margin:12px 0;display:none}
+.alimento-result.show{display:block}
+.alimento-result .title{color:var(--teal-dk);font-weight:600;font-size:15px;margin-bottom:8px}
+.alimento-result .nums{font-family:var(--font-mono);font-size:12px;color:var(--teal-dk);background:rgba(29,158,117,.1);padding:8px 10px;border-radius:6px;margin-top:8px;line-height:1.8}
+.kg-input-wrap{display:flex;gap:8px;align-items:center}
+.kg-input-wrap input{flex:1}
+.kg-input-wrap .unit{font-size:14px;color:var(--txt3);white-space:nowrap}
+.kg-btn-row{display:flex;gap-6px;gap:6px;margin-top:8px}
+.kg-shortcut{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px;font-size:13px;font-weight:500;color:var(--txt2);text-align:center;cursor:pointer;transition:all var(--transition)}
+.kg-shortcut:hover{border-color:var(--teal);color:var(--teal)}
+.kg-shortcut.selected{border-color:var(--teal);background:rgba(29,158,117,.12);color:var(--teal)}
+
+/* ── ALERTS / TOASTS ── */
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);background:var(--bg2);border:1px solid var(--border);border-radius:99px;padding:10px 20px;font-size:13px;white-space:nowrap;z-index:999;transition:transform .3s ease;box-shadow:var(--shadow)}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#toast.success{border-color:var(--teal);color:var(--teal)}
+#toast.error{border-color:var(--red);color:var(--red)}
+#toast.info{border-color:var(--roxo);color:var(--roxo)}
+
+/* ── EMPTY STATE ── */
+.empty{text-align:center;padding:40px 20px;color:var(--txt3)}
+.empty .icon{font-size:36px;margin-bottom:10px}
+.empty p{font-size:14px}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--border);margin:16px}
+
+/* ── SECTION TITLE ── */
+.section-title{padding:6px 16px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--txt3)}
+
+/* ── INFO ALERT BOX ── */
+.info-box{background:rgba(83,74,183,.1);border:1px solid rgba(83,74,183,.3);border-radius:var(--radius-sm);padding:12px 14px;margin:0 16px;font-size:13px;color:var(--txt2);line-height:1.5}
+.info-box.amber{background:rgba(239,159,39,.1);border-color:rgba(239,159,39,.3);color:var(--amber)}
+.info-box.teal{background:rgba(29,158,117,.1);border-color:rgba(29,158,117,.3);color:var(--teal)}
+
+
+/* ── DADOS TAB ── */
+.sync-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin:12px 16px}
+.sync-status{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--bg3);border-radius:var(--radius-sm);margin-bottom:12px;font-size:13px}
+.sync-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.sync-dot.ok{background:var(--teal);animation:pulse 2s infinite}
+.sync-dot.error{background:var(--red)}
+.sync-dot.loading{background:var(--amber);animation:pulse .6s infinite}
+.sync-dot.offline{background:var(--txt3)}
+.sync-log{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;margin-top:10px;max-height:160px;overflow-y:auto;font-family:var(--font-mono);font-size:11px;color:var(--txt3);line-height:1.8}
+.sync-log .ok{color:var(--teal)}
+.sync-log .err{color:var(--red)}
+.sync-log .info{color:var(--amber)}
+.url-field{display:flex;gap:6px;align-items:center}
+.url-field input{flex:1;font-size:12px;padding:9px 10px}
+.export-row{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+
+/* ── ANIM ── */
+.fade-in{animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── MODAL QR ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:flex-end;justify-content:center;animation:fadeIn .2s ease}
+.modal-overlay.closing{animation:fadeOut .2s ease forwards}
+@keyframes fadeOut{to{opacity:0}}
+.modal-sheet{background:var(--bg2);border-radius:20px 20px 0 0;padding:24px 20px 36px;width:100%;max-width:480px;border-top:1px solid var(--border);animation:slideUp .25s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:40px;height:4px;background:var(--border-lt);border-radius:2px;margin:0 auto 20px}
+.modal-title{font-size:16px;font-weight:600;color:var(--txt);margin-bottom:4px}
+.modal-sub{font-size:12px;color:var(--txt3);margin-bottom:20px}
+.qr-box{background:#fff;border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.qr-box img{display:block;max-width:200px;width:100%;border-radius:4px}
+.qr-numero{font-family:var(--font-mono);font-size:22px;font-weight:600;color:var(--roxo);text-align:center;letter-spacing:2px;margin-bottom:6px}
+.qr-nome{font-size:14px;color:var(--txt2);text-align:center;margin-bottom:20px}
+
+/* ── SCANNER QR ── */
+.scanner-overlay{position:fixed;inset:0;background:#000;z-index:210;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.scanner-header{position:absolute;top:0;left:0;right:0;padding:20px 16px 16px;display:flex;align-items:center;gap:12px;background:linear-gradient(to bottom,rgba(0,0,0,.8),transparent);z-index:1}
+.scanner-header h2{font-size:16px;font-weight:600;color:#fff;flex:1}
+.scanner-close{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.15);border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px}
+#scanner-video{width:100%;height:100%;object-fit:cover}
+.scanner-frame{position:absolute;width:240px;height:240px;border:2px solid rgba(255,255,255,.3);border-radius:16px;pointer-events:none}
+.scanner-corner{position:absolute;width:30px;height:30px;border-color:var(--roxo);border-style:solid;border-width:0}
+.scanner-corner.tl{top:-2px;left:-2px;border-top-width:3px;border-left-width:3px;border-radius:12px 0 0 0}
+.scanner-corner.tr{top:-2px;right:-2px;border-top-width:3px;border-right-width:3px;border-radius:0 12px 0 0}
+.scanner-corner.bl{bottom:-2px;left:-2px;border-bottom-width:3px;border-left-width:3px;border-radius:0 0 0 12px}
+.scanner-corner.br{bottom:-2px;right:-2px;border-bottom-width:3px;border-right-width:3px;border-radius:0 0 12px 0}
+.scanner-line{position:absolute;left:8px;right:8px;height:2px;background:linear-gradient(to right,transparent,var(--roxo),transparent);animation:scan 2s linear infinite}
+@keyframes scan{0%{top:8px;opacity:1}90%{opacity:1}100%{top:calc(100% - 8px);opacity:0}}
+.scanner-hint{position:absolute;bottom:80px;left:0;right:0;text-align:center;color:rgba(255,255,255,.7);font-size:13px;padding:0 24px}
+.scanner-result{position:absolute;bottom:120px;left:16px;right:16px;background:rgba(29,158,117,.95);border-radius:12px;padding:14px 16px;text-align:center;font-weight:500;font-size:14px;color:#fff;animation:fadeIn .2s ease}
+
+/* ── BTN SCAN ── */
+.scan-btn-wrap{padding:0 16px 12px;display:flex;gap:8px}
+.btn-scan{background:var(--bg3);border:1px solid var(--border);color:var(--txt2);display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 16px;border-radius:var(--radius-sm);font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;flex:1;transition:all var(--transition)}
+.btn-scan:hover{border-color:var(--roxo);color:var(--roxo);background:rgba(83,74,183,.08)}
+.btn-scan svg{width:18px;height:18px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── TAB PAGES ── */
+.tab-page{display:none}
+.tab-page.active{display:block}
+
+/* ── FORM NAV BUTTONS ── */
+.form-nav{display:flex;gap:8px;margin-top:8px}
+.form-nav .btn{flex:1}
+
+/* ── PRESENÇA COUNTER ── */
+.presenca-strip{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);margin:0 16px 12px;padding:12px 14px;display:flex;align-items:center;gap:12px}
+.presenca-strip .val{font-size:22px;font-weight:600;color:var(--teal)}
+.presenca-strip .lbl{font-size:12px;color:var(--txt3);flex:1}
+.presenca-strip .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── VOLUNTÁRIOS ── */
+.vol-section{margin:0 16px 8px}
+.vol-section-header{display:flex;align-items:center;justify-content:space-between;padding:14px 0 10px;cursor:pointer;user-select:none}
+.vol-section-header h2{font-size:14px;font-weight:600;color:var(--txt);display:flex;align-items:center;gap:8px}
+.vol-toggle-icon{font-size:18px;color:var(--txt3);transition:transform .25s}
+.vol-section-header.open .vol-toggle-icon{transform:rotate(180deg)}
+.vol-body{display:none;padding-bottom:8px}
+.vol-body.open{display:block}
+.vol-funcs-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.vol-func-card{background:var(--bg3);border:2px solid var(--border);border-radius:var(--radius-sm);padding:10px 8px;cursor:pointer;text-align:center;transition:all var(--transition);position:relative}
+.vol-func-card:hover{border-color:var(--roxo-lt)}
+.vol-func-card.selected{border-color:var(--roxo);background:rgba(83,74,183,.12)}
+.vol-func-card .emoji{font-size:22px;display:block;margin-bottom:4px}
+.vol-func-card .label{font-size:12px;font-weight:500;color:var(--txt2);line-height:1.3}
+.vol-func-card .count{position:absolute;top:6px;right:6px;background:var(--roxo);color:#fff;font-size:10px;font-weight:600;border-radius:99px;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 5px}
+.vol-form{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-bottom:12px}
+.vol-form .field{margin-bottom:10px}
+.vol-form .field:last-child{margin-bottom:0}
+.vol-list{display:flex;flex-direction:column;gap:6px}
+.vol-item{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;gap:10px}
+.vol-item .vol-emoji{font-size:18px;flex-shrink:0}
+.vol-item .vol-info{flex:1}
+.vol-item .vol-nome{font-size:13px;font-weight:500;color:var(--txt)}
+.vol-item .vol-func{font-size:11px;color:var(--txt3);margin-top:2px}
+.vol-item .vol-remove{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:16px;padding:4px;border-radius:4px;transition:color var(--transition)}
+.vol-item .vol-remove:hover{color:var(--red)}
+.vol-dashboard{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}
+.vol-dash-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;display:flex;align-items:center;gap:10px}
+.vol-dash-card .emoji{font-size:20px}
+.vol-dash-card .info .label{font-size:11px;color:var(--txt3)}
+.vol-dash-card .info .val{font-size:18px;font-weight:600;color:var(--txt)}
+.vol-empty{text-align:center;padding:20px;color:var(--txt3);font-size:13px}
+
+/* ── MODAL FICHAS ── */
+#fichas-modal{display:none;position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.75);overflow-y:auto}
+#fichas-modal.open{display:flex;flex-direction:column}
+.fichas-modal-inner{background:var(--bg2);border-radius:var(--radius) var(--radius) 0 0;margin-top:auto;max-height:90vh;display:flex;flex-direction:column}
+.fichas-modal-header{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.fichas-modal-header h2{flex:1;font-size:16px;font-weight:600}
+.fichas-filter{padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px;border-bottom:1px solid var(--border)}
+.fichas-filter label{font-size:12px;color:var(--txt3);font-weight:600;width:100%;margin-bottom:2px}
+.fichas-setor-btn{background:var(--bg3);border:1.5px solid var(--border);border-radius:99px;padding:6px 12px;font-size:12px;font-weight:500;color:var(--txt2);cursor:pointer;transition:all var(--transition)}
+.fichas-setor-btn.sel{border-color:var(--roxo);background:rgba(83,74,183,.15);color:var(--txt)}
+.fichas-modal-footer{padding:14px 16px;border-top:1px solid var(--border);display:flex;gap:8px}
+.fichas-preview-info{padding:10px 16px;font-size:13px;color:var(--txt2);background:var(--bg3);border-bottom:1px solid var(--border)}
+.fichas-preview-info strong{color:var(--txt)}
+
+/* ── PRINT STYLES ── */
+@media print {
+  body * { visibility: hidden !important; }
+  #fichas-print-area, #fichas-print-area * { visibility: visible !important; }
+  #fichas-print-area {
+    position: fixed !important;
+    inset: 0 !important;
+    padding: 10mm !important;
+    background: #fff !important;
+  }
+  @page { size: A4; margin: 10mm; }
+}
+
+/* ── FICHAS PRINT AREA ── */
+#fichas-print-area {
+  display: none;
+}
+#fichas-print-area.ready {
+  display: block;
+}
+.fichas-grid-print {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6mm;
+  width: 100%;
+}
+.ficha-item {
+  border: 1.5px dashed #bbb;
+  border-radius: 6px;
+  padding: 8px;
+  text-align: center;
+  background: #fff;
+  page-break-inside: avoid;
+  font-family: 'DM Sans', Arial, sans-serif;
+}
+.ficha-evento {
+  font-size: 7px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 4px;
+}
+.ficha-nome {
+  font-size: 9px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 3px;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ficha-numero {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: #534AB7;
+  margin-bottom: 5px;
+  letter-spacing: 1px;
+}
+.ficha-qr {
+  margin: 0 auto;
+  width: 56px;
+  height: 56px;
+}
+.ficha-qr img {
+  width: 56px;
+  height: 56px;
+  display: block;
+}
+.ficha-setor {
+  font-size: 7px;
+  color: #888;
+  margin-top: 4px;
+}
+.ficha-corte {
+  font-size: 7px;
+  color: #ccc;
+  margin-top: 3px;
+}
+/* ── Print / Relatório ── */
+@media print {
+  #nav,#offline-banner,#pwa-install-bar,.btn,button,
+  .sync-card:not(#relatorio-card),
+  #pwa-status-card, #dados-resumo,
+  .page-header p { display:none !important; }
+  #relatorio-card { border:none !important; box-shadow:none !important; }
+  #relatorio-output { display:block !important; }
+  body { background:#fff !important; color:#000 !important; }
+  #relatorio-body { background:#fff !important; border:none !important; color:#000 !important; }
+}
+</style>
+</head>
+<body>
+<!-- OFFLINE BANNER -->
+<div id="offline-banner">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+  ⚠️ Sem internet — modo offline ativo. Check-ins serão sincronizados ao reconectar.
+</div>
+
+<!-- PWA INSTALL BAR -->
+<div id="pwa-install-bar">
+  <div class="pwa-icon">💜</div>
+  <div class="pwa-text">
+    <strong>Instalar no celular</strong>
+    <span>Acesso rápido, funciona offline</span>
+  </div>
+  <div class="pwa-btns">
+    <button class="pwa-btn-install" onclick="instalarPWA()">Instalar</button>
+    <button class="pwa-btn-dismiss" onclick="dispensarInstall()">✕</button>
+  </div>
+</div>
+
+<div id="app">
+  <div id="content">
+
+    <!-- ════════════════════════ TAB: INSCRIÇÃO ════════════════════════ -->
+    <div id="tab-form" class="tab-page active">
+      <div class="page-header">
+        <h1>🧩 Inscrição</h1>
+        <p id="form-header-sub">Mães e Pais Atípicos do Norte do ES — 30/05/2026</p>
+      </div>
+      <div id="step-bar">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+        <div class="step-dot" id="dot-3"></div>
+        <div class="step-dot" id="dot-4"></div>
+        <div class="step-dot" id="dot-5"></div>
+        <div class="step-dot" id="dot-6"></div>
+        <span class="step-label" id="step-label">Etapa 1 de 6</span>
+      </div>
+      <div id="form-body"></div>
+    </div>
+
+    <!-- ════════════════════════ TAB: PAINEL ════════════════════════ -->
+    <div id="tab-painel" class="tab-page">
+      <div class="page-header">
+        <h1>📊 Painel</h1>
+        <p>Inscrições em tempo real · Check-in presencial</p>
+      </div>
+
+      <!-- Stats gerais -->
+      <div class="stat-grid">
+        <div class="stat-card full">
+          <div style="display:flex;align-items:flex-end;gap:10px">
+            <div>
+              <div class="val" id="stat-total" style="color:var(--roxo)">0</div>
+              <div class="lbl">Total de inscritos</div>
+            </div>
+            <div style="flex:1">
+              <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+              <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:11px;color:var(--txt3)">
+                <span id="prog-pct">0%</span><span>limite: 1.200</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="stat-presentes" style="color:var(--teal)">0</div>
+          <div class="lbl">✅ Presentes</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="stat-kg" style="color:var(--amber)">0</div>
+          <div class="lbl">🥫 kg doados</div>
+        </div>
+      </div>
+
+      <!-- Setores -->
+      <div class="card">
+        <div class="card-title">por setor</div>
+        <div id="setor-list"></div>
+      </div>
+
+      <!-- Check-in -->
+      <div class="section-title">CHECK-IN PRESENCIAL</div>
+      <div class="presenca-strip">
+        <div class="dot"></div>
+        <div class="lbl">Check-in ativo — busque pelo nome ou número</div>
+        <div class="val" id="checkin-count">0</div>
+      </div>
+      <div class="scan-btn-wrap">
+        <button class="btn-scan" onclick="abrirScanner()">
+          <svg viewBox="0 0 24 24"><path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="7" width="3" height="3"/><rect x="14" y="7" width="3" height="3"/><rect x="7" y="14" width="3" height="3"/><rect x="14" y="14" width="3" height="3"/></svg>
+          🔍 Escanear QR Code
+        </button>
+      </div>
+      <div class="search-wrap">
+        <div class="search-icon">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <input id="checkin-search" type="text" placeholder="Nome ou número (ex: SM-AT-0001)…" oninput="filtrarInscritos()">
+      </div>
+      <div id="checkin-list"></div>
+
+      <!-- ── VOLUNTÁRIOS (seção colapsável) ── -->
+      <div class="divider"></div>
+      <div class="vol-section">
+        <div class="vol-section-header" id="vol-header" onclick="toggleVoluntarios()">
+          <h2>
+            <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--roxo);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            👷 Voluntários
+            <span id="vol-total-badge" style="background:var(--roxo);color:#fff;font-size:10px;font-weight:600;border-radius:99px;padding:2px 8px;display:none">0</span>
+          </h2>
+          <span class="vol-toggle-icon">⌄</span>
+        </div>
+
+        <div class="vol-body" id="vol-body">
+
+          <!-- Dashboard por área -->
+          <div id="vol-dashboard" class="vol-dashboard"></div>
+
+          <!-- Grade de funções -->
+          <div class="section-title" style="padding:0 0 8px">SELECIONAR FUNÇÃO</div>
+          <div class="vol-funcs-grid" id="vol-funcs-grid"></div>
+
+          <!-- Formulário de cadastro -->
+          <div class="vol-form" id="vol-form">
+            <div class="field">
+              <label>Nome do voluntário <span class="req">*</span></label>
+              <input id="vol-nome-input" type="text" placeholder="Nome completo" maxlength="60">
+            </div>
+            <div class="field">
+              <label>Turno / Horário</label>
+              <select id="vol-turno-input">
+                <option value="Dia todo">☀️ Dia todo</option>
+                <option value="Manhã (8h–12h)">🌅 Manhã (8h–12h)</option>
+                <option value="Tarde (12h–17h)">🌤️ Tarde (12h–17h)</option>
+                <option value="Montagem (7h–9h)">🔧 Montagem (7h–9h)</option>
+                <option value="Desmontagem (17h+)">📦 Desmontagem (17h+)</option>
+              </select>
+            </div>
+            <div style="font-size:12px;color:var(--txt3);margin-bottom:10px" id="vol-func-selecionada">
+              ⚠️ Selecione uma função acima
+            </div>
+            <button class="btn btn-primary" onclick="cadastrarVoluntario()">
+              ✅ Cadastrar voluntário
+            </button>
+          </div>
+
+          <!-- Lista de voluntários -->
+          <div class="section-title" style="padding:8px 0 4px;display:flex;align-items:center;justify-content:space-between">
+            <span>EQUIPE CADASTRADA</span>
+            <button class="btn btn-ghost btn-sm" id="btn-sync-vol" onclick="sincronizarVoluntarios()" style="font-size:11px;padding:4px 10px;display:none">
+              ☁️ Salvar na planilha
+            </button>
+          </div>
+          <!-- Status de sync voluntários -->
+          <div id="vol-sync-status" style="display:none;margin:0 0 8px;padding:8px 12px;border-radius:8px;font-size:12px;background:var(--bg3);border:1px solid var(--border);color:var(--txt3)">
+            Aguardando sincronização…
+          </div>
+          <div class="vol-list" id="vol-list">
+            <div class="vol-empty">Nenhum voluntário cadastrado ainda.</div>
+          </div>
+
+        </div>
+      </div>
+      <div style="height:8px"></div>
+    </div>
+
+    <!-- ════════════════════════ TAB: SORTEIO ════════════════════════ -->
+    <div id="tab-sorteio" class="tab-page">
+      <div class="page-header">
+        <h1>🎯 Sorteio</h1>
+        <p>Selecione o setor e realize o sorteio</p>
+      </div>
+
+      <div class="info-box amber" style="margin-bottom:12px">
+        ⚠️ Apenas inscritos com <strong>check-in confirmado</strong> participam do sorteio.
+      </div>
+
+      <div class="section-title">SELECIONAR SETOR</div>
+      <div class="setor-select-grid" id="setor-select-grid"></div>
+
+      <div class="section-title" id="sorteio-pool-label">POOL DO SORTEIO</div>
+      <div class="info-box" style="margin-bottom:12px;margin-top:0" id="pool-info">Selecione um setor acima.</div>
+
+      <div class="sorteio-machine" id="sorteio-machine">
+        <div style="font-size:36px">🎟️</div>
+        <div class="num-display" id="num-display">— — —</div>
+        <div style="font-size:12px;color:var(--txt3)" id="sorteio-instrucao">Selecione um setor para sortear</div>
+      </div>
+
+      <!-- P19: campo prêmio para gravar automaticamente na planilha -->
+      <div style="margin:0 16px 10px;display:flex;gap:8px;align-items:center">
+        <input id="sorteio-premio-input" type="text" placeholder="🏆 Nome do prêmio (ex: Ventilador Arno)"
+          style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--txt);font-family:var(--font);font-size:13px;padding:10px 12px;outline:none"
+          onfocus="this.style.borderColor='var(--amber)'" onblur="this.style.borderColor='var(--border)'">
+      </div>
+
+      <div style="margin:0 16px;display:flex;gap:8px">
+        <button class="btn btn-amber" id="btn-sortear" onclick="realizarSorteio()" style="flex:2">🎲 Sortear</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetarSorteio()">↺ Reset</button>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">HISTÓRICO</div>
+      <div class="sorteio-hist" id="sorteio-hist">
+        <div class="empty"><div class="icon">📋</div><p>Nenhum sorteio realizado ainda.</p></div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">FICHAS DE SORTEIO</div>
+      <div style="margin:0 16px 24px">
+        <p style="font-size:13px;color:var(--txt2);margin-bottom:12px">Gere fichas com QR Code para impressão. 3 fichas por linha, com tracejado de corte.</p>
+        <button class="btn btn-ghost" onclick="abrirModalFichas()">
+          <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          🖨️ Gerar fichas para impressão
+        </button>
+      </div>
+    </div>
+
+<!-- ════ MODAL FICHAS ════ -->
+<div id="fichas-modal">
+  <div class="fichas-modal-inner">
+    <div class="fichas-modal-header">
+      <h2>🖨️ Fichas de Sorteio</h2>
+      <button class="scanner-close" onclick="fecharModalFichas()">✕</button>
+    </div>
+    <div class="fichas-filter">
+      <label>Filtrar por setor:</label>
+      <div id="fichas-setor-btns" style="display:flex;flex-wrap:wrap;gap:6px;width:100%"></div>
+    </div>
+    <div class="fichas-preview-info" id="fichas-preview-info">
+      Selecione um setor para gerar as fichas.
+    </div>
+    <div class="fichas-modal-footer">
+      <button class="btn btn-ghost btn-sm" style="flex:1" onclick="fecharModalFichas()">Cancelar</button>
+      <button class="btn btn-primary" style="flex:2" id="btn-imprimir-fichas" onclick="imprimirFichas()">
+        <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimir fichas
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ÁREA DE IMPRESSÃO ════ -->
+<div id="fichas-print-area">
+  <div class="fichas-grid-print" id="fichas-grid-print"></div>
+</div>
+
+    <!-- ════════════════════════ TAB: ALIMENTO ════════════════════════ -->
+    <div id="tab-alimento" class="tab-page">
+      <div class="page-header">
+        <h1>🥫 Alimento</h1>
+        <p>Registrar doação · Gerar números extras</p>
+      </div>
+
+      <div class="info-box teal" style="margin-bottom:12px">
+        Cada <strong>1 kg = 1 número extra</strong> no sorteio. Válido para qualquer perfil.
+      </div>
+
+      <div class="alimento-form">
+        <div class="field">
+          <label>Número de inscrição ou nome</label>
+          <div style="display:flex;gap:8px">
+            <input id="alim-busca" type="text" placeholder="Ex: SM-AT-0001 ou Maria Silva" style="flex:1">
+            <button class="btn btn-ghost btn-sm" onclick="buscarInscritoAlimento()">Buscar</button>
+          </div>
+        </div>
+
+        <div id="alim-inscrito-card" style="display:none" class="fade-in">
+          <div class="inscrito-item" style="margin:0 0 12px;border-color:var(--teal)">
+            <div class="status-dot" style="background:var(--teal)"></div>
+            <div class="info">
+              <div class="nome" id="alim-nome">—</div>
+              <div class="sub" id="alim-numero-label">—</div>
+              <div class="sub" id="alim-kg-atual">—</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Quantidade doada (kg)</label>
+            <div class="kg-input-wrap">
+              <input id="alim-kg" type="number" min="1" max="50" value="1" placeholder="0">
+              <span class="unit">kg</span>
+            </div>
+            <div class="kg-btn-row" id="kg-shortcuts">
+              <div class="kg-shortcut" onclick="setKg(1)">1 kg</div>
+              <div class="kg-shortcut" onclick="setKg(2)">2 kg</div>
+              <div class="kg-shortcut" onclick="setKg(3)">3 kg</div>
+              <div class="kg-shortcut" onclick="setKg(5)">5 kg</div>
+              <div class="kg-shortcut" onclick="setKg(10)">10 kg</div>
+            </div>
+          </div>
+
+          <button class="btn btn-teal" onclick="registrarAlimento()">✅ Registrar doação</button>
+
+          <div class="alimento-result" id="alim-result">
+            <div class="title" id="alim-result-title">—</div>
+            <p id="alim-result-msg" style="font-size:13px;color:var(--txt2);margin-bottom:6px">—</p>
+            <div class="nums" id="alim-result-nums">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-title">REGISTROS DE HOJE</div>
+      <div id="alim-hist-list" style="margin:0 16px">
+        <div class="empty"><div class="icon">🥫</div><p>Nenhuma doação registrada.</p></div>
+      </div>
+    </div>
+
+
+    <!-- ════════════════════════ TAB: DADOS ════════════════════════ -->
+    <div id="tab-dados" class="tab-page">
+      <div class="page-header">
+        <h1>🗄️ Dados</h1>
+        <p>Integração com Google Sheets · Exportar · Sincronizar</p>
+      </div>
+
+      <!-- Status de conexão -->
+      <div class="sync-card">
+        <div class="card-title">status da conexão</div>
+        <div class="sync-status" id="sync-status-box">
+          <div class="sync-dot offline" id="sync-dot"></div>
+          <div id="sync-status-txt" style="flex:1">Não conectado — usando dados de demonstração</div>
+        </div>
+        <div style="font-size:12px;color:var(--txt3);margin-bottom:10px">
+          Insira a URL do seu Apps Script publicado como Web App, ou a URL CSV da planilha publicada.
+        </div>
+
+        <div class="field" style="margin-bottom:8px">
+          <label>URL do Apps Script (Web App) ou CSV da planilha</label>
+          <div class="url-field">
+            <input id="gs-url" type="url" placeholder="https://script.google.com/macros/s/..." style="">
+            <button class="btn btn-ghost btn-sm" onclick="salvarUrl()">💾</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-teal" onclick="sincronizarAgora()" style="flex:1">🔄 Sincronizar agora</button>
+          <button class="btn btn-ghost btn-sm" onclick="limparDados()">🗑️ Limpar</button>
+        </div>
+
+        <div class="sync-log" id="sync-log">
+          <span class="info">» Aguardando configuração de URL...</span>
+        </div>
+      </div>
+
+      <!-- Resumo dos dados carregados -->
+      <div class="sync-card" id="dados-resumo" style="display:none">
+        <div class="card-title">dados carregados</div>
+        <div class="stat-grid" style="margin:0 0 8px">
+          <div class="stat-card">
+            <div class="val" id="d-total" style="color:var(--roxo)">0</div>
+            <div class="lbl">inscritos</div>
+          </div>
+          <div class="stat-card">
+            <div class="val" id="d-presentes" style="color:var(--teal)">0</div>
+            <div class="lbl">presentes</div>
+          </div>
+          <div class="stat-card">
+            <div class="val" id="d-smAt" style="color:var(--roxo)">0</div>
+            <div class="lbl">SM-AT</div>
+          </div>
+          <div class="stat-card">
+            <div class="val" id="d-otAt">0</div>
+            <div class="lbl">OT-AT</div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--txt3)" id="d-ultima-sync">Última sincronização: —</div>
+      </div>
+
+      <!-- Modo offline / exportar -->
+      <div class="sync-card">
+        <div class="card-title">usar sem internet (modo offline)</div>
+        <p style="font-size:13px;color:var(--txt2);margin-bottom:10px;line-height:1.6">
+          Exporte os inscritos como JSON da planilha e cole abaixo para usar o app sem internet no dia do evento.
+        </p>
+
+        <div class="field" style="margin-bottom:8px">
+          <label>JSON exportado da planilha <span style="color:var(--txt3)">(opcional)</span></label>
+          <textarea id="json-offline" placeholder='Cole aqui o JSON gerado pelo Apps Script (função exportarJSON())&#10;&#10;Formato: [{"numero":"SM-AT-0001","nome":"Ana..."},...] ' style="min-height:100px;font-size:11px;font-family:var(--font-mono)"></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="importarJSON()">📥 Importar JSON</button>
+      </div>
+
+      <!-- Instruções -->
+      <div class="sync-card">
+        <div class="card-title">como configurar</div>
+        <div style="font-size:13px;color:var(--txt2);line-height:1.8">
+          <strong style="color:var(--roxo)">Opção 1 — Web App (recomendado):</strong><br>
+          1. No Apps Script, adicione a função <code style="color:var(--amber)">doGet()</code> do arquivo <code>v6_doGet.js</code><br>
+          2. Publicar → Implantar como Web App → acesso "Qualquer pessoa"<br>
+          3. Copie a URL e cole acima<br><br>
+          <strong style="color:var(--teal)">Opção 2 — CSV público:</strong><br>
+          1. Na planilha, vá em Arquivo → Compartilhar → Publicar na Web<br>
+          2. Selecione aba "Inscritos" → formato CSV<br>
+          3. Copie a URL e cole acima<br><br>
+          <strong style="color:var(--amber)">Opção 3 — JSON offline:</strong><br>
+          1. No Apps Script, execute <code style="color:var(--amber)">exportarJSON()</code><br>
+          2. Copie o JSON gerado e cole no campo acima
+        </div>
+      </div>
+
+      <!-- Auto-sync toggle -->
+      <div class="sync-card">
+        <div class="card-title">sincronização automática</div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="flex:1">
+            <div style="font-size:14px;font-weight:500">Atualizar automaticamente</div>
+            <div style="font-size:12px;color:var(--txt3);margin-top:2px">A cada 60 segundos quando conectado</div>
+          </div>
+          <div id="auto-sync-toggle" onclick="toggleAutoSync()" style="width:44px;height:24px;background:var(--border-lt);border-radius:12px;cursor:pointer;position:relative;transition:background .2s">
+            <div id="auto-sync-thumb" style="position:absolute;top:3px;left:3px;width:18px;height:18px;background:var(--txt3);border-radius:50%;transition:all .2s"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Relatório Final -->
+      <div class="sync-card" id="relatorio-card">
+        <div class="card-title">📊 relatório final do evento</div>
+        <p style="font-size:13px;color:var(--txt2);margin-bottom:10px;line-height:1.6">
+          Resumo completo de presenças, doações e sorteios realizados.
+        </p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="gerarRelatorio()" style="flex:2">📊 Gerar relatório</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportarCSV()">⬇️ CSV</button>
+        </div>
+
+        <!-- P18: Botão Gerar PDF via Apps Script -->
+        <div id="pdf-relatorio-card" style="margin-top:14px;background:#5BB8F510;border:1px solid #5BB8F540;border-radius:10px;padding:14px;">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <span style="font-size:20px">📄</span>
+            <div>
+              <strong style="font-size:13px;color:#5BB8F5;display:block">Relatório PDF completo</strong>
+              <span style="font-size:11px;color:var(--txt3)">Gerado na nuvem · Enviado por email</span>
+            </div>
+          </div>
+          <p style="font-size:12px;color:var(--txt2);line-height:1.6;margin-bottom:12px">
+            Gera Google Doc com presença por setor, kg arrecadados, ganhadores do sorteio e voluntários
+            — exporta como PDF e envia para <strong style="color:var(--txt)">maesepaisatipicosdonortees@gmail.com</strong>.
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button id="btn-gerar-pdf"
+              onclick="gerarRelatorioPDFRemoto(true)"
+              style="flex:2;background:#5BB8F5;color:#0f0e17;border:none;border-radius:10px;padding:12px 16px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:opacity .2s;font-family:var(--font)">
+              📥 Gerar PDF + Enviar Email
+            </button>
+            <button onclick="gerarRelatorioPDFRemoto(false)"
+              style="background:none;border:1px solid #5BB8F540;color:#5BB8F5;border-radius:10px;padding:12px 14px;font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font)">
+              Só gerar
+            </button>
+          </div>
+          <div id="pdf-status" style="display:none;margin-top:12px;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.6"></div>
+        </div>
+
+        <!-- Relatório inline -->
+        <div id="relatorio-output" style="display:none;margin-top:14px">
+          <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13px;line-height:1.8" id="relatorio-body"></div>
+          <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨️ Imprimir / PDF</button>
+            <button class="btn btn-ghost btn-sm" onclick="exportarCSV()">⬇️ Exportar CSV</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- P20: QR Code de Divulgação -->
+      <div class="sync-card" id="qr-divulg-card">
+        <div class="card-title">📲 qr code de divulgação</div>
+        <p style="font-size:13px;color:var(--txt2);margin-bottom:12px;line-height:1.6">
+          QR Code da página pública de inscrição — use em cartazes, stories e materiais impressos.
+        </p>
+
+        <!-- Campo URL com edição -->
+        <div style="margin-bottom:12px">
+          <label style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;display:block;margin-bottom:6px">
+            URL da página de inscrição
+          </label>
+          <div style="display:flex;gap:6px">
+            <input id="qr-divulg-url" type="url"
+              placeholder="https://SEU-USUARIO.github.io/maespais-nes/inscricao.html"
+              style="flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--txt);font-family:var(--font);font-size:12px;padding:9px 12px;outline:none"
+              oninput="atualizarQRDivulg()"
+            >
+            <button onclick="abrirURLInscricao()" title="Abrir no navegador"
+              style="background:var(--roxo);color:#fff;border:none;border-radius:var(--radius-sm);padding:9px 13px;cursor:pointer;font-size:16px">
+              ↗
+            </button>
+          </div>
+          <div id="qr-divulg-hint" style="font-size:11px;color:var(--txt3);margin-top:5px">
+            Cole a URL do GitHub Pages para gerar o QR Code.
+          </div>
+        </div>
+
+        <!-- QR Code display -->
+        <div id="qr-divulg-wrap" style="display:none;text-align:center">
+          <div style="background:#fff;border-radius:12px;padding:16px;display:inline-block;margin-bottom:12px;box-shadow:0 4px 16px rgba(0,0,0,.3)">
+            <img id="qr-divulg-img" src="" alt="QR Code" style="width:200px;height:200px;display:block;border-radius:4px">
+          </div>
+          <div style="font-size:11px;color:var(--txt3);margin-bottom:12px;word-break:break-all" id="qr-divulg-url-label"></div>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+            <button onclick="baixarQRDivulg()"
+              style="background:var(--roxo);color:#fff;border:none;border-radius:10px;padding:11px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:6px">
+              ⬇️ Baixar QR Code
+            </button>
+            <button onclick="copiarURLInscricao()"
+              style="background:none;border:1px solid var(--border);color:var(--txt2);border-radius:10px;padding:11px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)">
+              🔗 Copiar link
+            </button>
+          </div>
+
+          <!-- Preview de uso -->
+          <div style="margin-top:16px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:left">
+            <div style="font-size:11px;font-weight:700;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">
+              💡 Sugestões de uso
+            </div>
+            <div style="font-size:12px;color:var(--txt2);line-height:1.8">
+              📸 Stories do Instagram — "Faça sua inscrição!"<br>
+              🖨️ Cartazes e flyers impressos<br>
+              💬 Grupos de WhatsApp da comunidade<br>
+              📧 Emails de divulgação do evento
+            </div>
+          </div>
+        </div>
+
+        <!-- Estado vazio -->
+        <div id="qr-divulg-empty" style="text-align:center;padding:20px 0">
+          <div style="font-size:40px;margin-bottom:8px">📱</div>
+          <div style="font-size:13px;color:var(--txt3)">Cole a URL acima para gerar o QR Code</div>
+        </div>
+      </div>
+
+      <!-- PWA Status -->\n      <div class="sync-card" id="pwa-status-card">
+        <div class="card-title">📱 app offline / instalação</div>
+
+        <div class="pwa-status-row">
+          <div class="pwa-status-icon">🔌</div>
+          <div class="pwa-status-info">
+            <strong>Conexão</strong>
+            <span id="pwa-conn-sub">Verificando…</span>
+          </div>
+          <div class="pwa-status-badge" id="pwa-conn-badge">—</div>
+        </div>
+
+        <div class="pwa-status-row">
+          <div class="pwa-status-icon">⚙️</div>
+          <div class="pwa-status-info">
+            <strong>Service Worker</strong>
+            <span id="pwa-sw-sub">Verificando…</span>
+          </div>
+          <div class="pwa-status-badge" id="pwa-sw-badge">—</div>
+        </div>
+
+        <div class="pwa-status-row">
+          <div class="pwa-status-icon">💾</div>
+          <div class="pwa-status-info">
+            <strong>Cache offline</strong>
+            <span id="pwa-cache-sub">Verificando…</span>
+          </div>
+          <div class="pwa-status-badge" id="pwa-cache-badge">—</div>
+        </div>
+
+        <div class="pwa-status-row">
+          <div class="pwa-status-icon">📋</div>
+          <div class="pwa-status-info">
+            <strong>Check-ins pendentes</strong>
+            <span id="pwa-queue-sub">Nenhum na fila</span>
+          </div>
+          <div class="pwa-status-badge" id="pwa-queue-badge" class="pwa-ok">0</div>
+        </div>
+
+        <div class="pwa-status-row" id="pwa-install-row" style="display:none">
+          <div class="pwa-status-icon">📲</div>
+          <div class="pwa-status-info">
+            <strong>Instalar como app</strong>
+            <span>Acesso rápido sem abrir navegador</span>
+          </div>
+          <button class="pwa-btn-install" onclick="instalarPWA()" style="font-size:12px;padding:6px 12px">Instalar</button>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn btn-ghost btn-sm" onclick="forcarCacheAgora()" style="flex:1;font-size:12px">🔄 Atualizar cache</button>
+          <button class="btn btn-ghost btn-sm" onclick="sincronizarFila()" style="flex:1;font-size:12px">📤 Enviar fila</button>
+        </div>
+      </div>
+
+      <!-- ══ NOTIFICAÇÕES (P14) ══ -->
+      <div class="sync-card" id="notif-card">
+        <div class="card-title">🔔 notificações</div>
+
+        <!-- Estado: bloqueado -->
+        <div id="notif-blocked" style="display:none">
+          <div class="info-box" style="background:var(--red-lt);border-color:var(--red);color:var(--red);margin-bottom:10px;font-size:13px">
+            🚫 Notificações bloqueadas pelo navegador. Vá em Configurações do site para permitir.
+          </div>
+        </div>
+
+        <!-- Estado: não solicitado / negado -->
+        <div id="notif-request-area">
+          <p style="font-size:13px;color:var(--txt2);line-height:1.6;margin-bottom:12px">
+            Ative as notificações para receber alertas automáticos sobre o evento:
+          </p>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+            <div class="notif-feature-row">
+              <span class="notif-dot" style="background:var(--amber)"></span>
+              <span>Alerta quando atingir <strong>1.000, 1.150 e 1.200</strong> inscrições</span>
+            </div>
+            <div class="notif-feature-row">
+              <span class="notif-dot" style="background:var(--teal)"></span>
+              <span>Lembrete <strong>D-1</strong> para voluntários (29/05 às 18h)</span>
+            </div>
+            <div class="notif-feature-row">
+              <span class="notif-dot" style="background:var(--roxo)"></span>
+              <span>Confirmação de instalação e check-ins importantes</span>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btn-ativar-notif" onclick="solicitarNotificacoes()">
+            🔔 Ativar notificações
+          </button>
+        </div>
+
+        <!-- Estado: ativo -->
+        <div id="notif-active-area" style="display:none">
+          <div class="pwa-status-row">
+            <div class="pwa-status-icon">🔔</div>
+            <div class="pwa-status-info">
+              <strong>Notificações ativas</strong>
+              <span id="notif-status-sub">Você receberá alertas do evento</span>
+            </div>
+            <div class="pwa-status-badge pwa-ok">✓ Ativo</div>
+          </div>
+
+          <div style="margin-top:12px">
+            <div class="card-title" style="margin-bottom:8px">alertas configurados</div>
+            <div id="notif-agenda-list" style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--txt2)"></div>
+          </div>
+
+          <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="testarNotificacao()" style="flex:1;font-size:12px">🧪 Testar agora</button>
+            <button class="btn btn-ghost btn-sm" onclick="agendarLembretes()" style="flex:1;font-size:12px">⏰ Reagendar</button>
+          </div>
+
+          <div style="margin-top:10px">
+            <button class="btn btn-ghost btn-sm" onclick="desativarNotificacoes()" style="width:100%;font-size:12px;color:var(--txt3)">
+              Desativar notificações
+            </button>
+          </div>
+        </div>
+      </div><!-- /#notif-card -->
+
+      <!-- ══ FIREBASE FCM (P16) ══ -->
+      <div class="sync-card" id="fcm-card">
+        <div class="card-title">🔥 push notifications (firebase)</div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div style="font-size:13px;color:var(--txt2);line-height:1.5">
+            Notificações mesmo com o <strong>app fechado</strong> — via Firebase Cloud Messaging.
+          </div>
+          <span class="fcm-badge off" id="fcm-status-badge">Inativo</span>
+        </div>
+
+        <!-- Configuração (antes de ativar) -->
+        <div id="fcm-setup-area">
+          <div style="font-size:12px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px">configuração (1 vez só)</div>
+          <div class="fcm-step"><div class="fcm-step-num">1</div><div>Acesse <strong style="color:var(--roxo)">console.firebase.google.com</strong> → crie projeto <code style="color:var(--amber)">maespais-nes</code> → ative Cloud Messaging.</div></div>
+          <div class="fcm-step"><div class="fcm-step-num">2</div><div>Configurações do projeto → Web → Adicionar app → copie o objeto <code style="color:var(--amber)">firebaseConfig</code> como JSON.</div></div>
+          <div class="fcm-step"><div class="fcm-step-num">3</div><div>Cloud Messaging → <strong>Certificados push da Web (VAPID)</strong> → gere a chave pública e copie.</div></div>
+          <div class="fcm-step"><div class="fcm-step-num">4</div><div>Suba o arquivo <code style="color:var(--teal)">firebase-messaging-sw.js</code> na raiz do GitHub Pages junto com os demais arquivos.</div></div>
+
+          <div style="margin-top:12px">
+            <label style="font-size:12px;color:var(--txt3);display:block;margin-bottom:4px">Chave VAPID (Web Push)</label>
+            <input id="fcm-vapid-input" type="text" placeholder="BNgt8kSaQ2... (chave pública VAPID)">
+
+            <label style="font-size:12px;color:var(--txt3);display:block;margin-top:10px;margin-bottom:4px">Firebase Config (JSON)</label>
+            <textarea id="fcm-config-input" rows="4" style="width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--txt);font-family:var(--font-mono);font-size:11px;padding:10px 12px;resize:vertical;outline:none" placeholder='{"apiKey":"AIza...","authDomain":"maespais-nes.firebaseapp.com","projectId":"maespais-nes","messagingSenderId":"123456","appId":"1:123:web:abc"}'></textarea>
+
+            <div style="display:flex;gap:8px;margin-top:10px">
+              <button class="btn btn-primary" onclick="fcmSalvarConfig()" style="flex:2">🔥 Salvar e ativar FCM</button>
+              <button class="btn btn-ghost btn-sm" onclick="fcmCarregarConfig()" style="flex:1;font-size:12px">📂 Carregar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Área ativa -->
+        <div id="fcm-active-area" style="display:none">
+          <div class="pwa-status-row">
+            <div class="pwa-status-icon">🔥</div>
+            <div class="pwa-status-info">
+              <strong>Firebase FCM ativo</strong>
+              <span id="fcm-sub-status">Obtendo token…</span>
+            </div>
+            <div class="pwa-status-badge pwa-ok" id="fcm-active-badge">✓</div>
+          </div>
+          <div style="margin-top:10px">
+            <div style="font-size:12px;color:var(--txt3);margin-bottom:4px">Token FCM deste dispositivo</div>
+            <div class="fcm-token-box" id="fcm-token-display">Aguardando…</div>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="btn btn-ghost btn-sm" onclick="fcmCopiarToken()" style="flex:1;font-size:12px">📋 Copiar token</button>
+              <button class="btn btn-ghost btn-sm" onclick="fcmTestar()" style="flex:1;font-size:12px">🧪 Testar push</button>
+            </div>
+          </div>
+          <div style="margin-top:10px">
+            <button class="btn btn-ghost btn-sm" onclick="fcmResetarConfig()" style="width:100%;font-size:12px;color:var(--txt3)">🗑️ Resetar configuração Firebase</button>
+          </div>
+        </div>
+
+      </div><!-- /#fcm-card -->
+
+    </div>
+
+  </div><!-- /#content -->
+
+  <!-- BOTTOM NAV -->
+  <nav id="nav">
+    <button class="nav-btn active" id="nav-form" onclick="switchTab('form')">
+      <svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      Inscrição
+    </button>
+    <button class="nav-btn" id="nav-painel" onclick="switchTab('painel')">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Painel
+    </button>
+    <button class="nav-btn" id="nav-sorteio" onclick="switchTab('sorteio')">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Sorteio
+    </button>
+    <button class="nav-btn" id="nav-alimento" onclick="switchTab('alimento')">
+      <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      Alimento
+    </button>
+    <button class="nav-btn" id="nav-dados" onclick="switchTab('dados')">
+      <svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      Dados
+    </button>
+  </nav>
+</div>
+<!-- ════ MODAL QR CODE ════ -->
+<div id="qr-modal" style="display:none"></div>
+
+<!-- ════ SCANNER QR ════ -->
+<div id="qr-scanner" class="scanner-overlay" style="display:none">
+  <div class="scanner-header">
+    <h2>📷 Escanear QR Code</h2>
+    <button class="scanner-close" onclick="fecharScanner()">✕</button>
+  </div>
+  <video id="scanner-video" autoplay playsinline muted></video>
+  <canvas id="scanner-canvas" style="display:none"></canvas>
+  <div class="scanner-frame">
+    <div class="scanner-corner tl"></div>
+    <div class="scanner-corner tr"></div>
+    <div class="scanner-corner bl"></div>
+    <div class="scanner-corner br"></div>
+    <div class="scanner-line"></div>
+  </div>
+  <div class="scanner-hint">Aponte para o QR Code do inscrito</div>
+  <div id="scanner-result" style="display:none"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   ESTADO GLOBAL
+═══════════════════════════════════════════════════════ */
+const STATE = {
+  inscritos: [],
+  alimentos: [],
+  sorteioHist: [],
+  setorAtivo: null,
+  step: 1,
+  formData: {},
+  quizAcertos: 0,
+};
+
+const SETORES = [
+  { id:'SM-AT', label:'Mãe/Pai Atípico\nSão Mateus', emoji:'💜', cor:'var(--roxo)', exclusivo:true },
+  { id:'OT-AT', label:'Mãe/Pai Atípico\nOutra Cidade', emoji:'💜', cor:'var(--roxo)', exclusivo:false },
+  { id:'PR-SA', label:'Profissional\nde Saúde', emoji:'🩺', cor:'var(--teal)', exclusivo:false },
+  { id:'PR-ED', label:'Educação', emoji:'📚', cor:'var(--teal)', exclusivo:false },
+  { id:'PR-AS', label:'Assist. Social\n/ Entidade', emoji:'🏛️', cor:'var(--amber)', exclusivo:false },
+  { id:'FAM',   label:'Familiar\nde Autista', emoji:'👨‍👩‍👧', cor:'var(--amber)', exclusivo:false },
+  { id:'OUT',   label:'Outros', emoji:'👥', cor:'var(--txt3)', exclusivo:false },
+  { id:'TODOS', label:'Todos\nPresentes', emoji:'🌟', cor:'var(--roxo)', exclusivo:false },
+];
+
+const PERFIS = [
+  { id:'SM-AT', label:'Mãe/Pai Atípico(a) — São Mateus', emoji:'💜', destaque:true, ehMae:true },
+  { id:'OT-AT', label:'Mãe/Pai Atípico(a) — Outra Cidade', emoji:'💜', destaque:true, ehMae:true },
+  { id:'PR-SA', label:'Profissional de Saúde', emoji:'🩺', destaque:false, ehMae:false },
+  { id:'PR-ED', label:'Educação', emoji:'📚', destaque:false, ehMae:false },
+  { id:'PR-AS', label:'Órgão / Entidade', emoji:'🏛️', destaque:false, ehMae:false },
+  { id:'FAM',   label:'Familiar de autista', emoji:'👨‍👩‍👧', destaque:false, ehMae:false },
+  { id:'OUT',   label:'Outro', emoji:'👥', destaque:false, ehMae:false },
+];
+
+const QUIZ = [
+  {
+    pergunta:'O que é TEA — Transtorno do Espectro Autista?',
+    opcoes:[
+      'A) Uma doença contagiosa que afeta crianças',
+      'B) Um transtorno do neurodesenvolvimento que afeta a comunicação e o comportamento',
+      'C) Uma deficiência intelectual permanente sem possibilidade de melhora',
+      'D) Um distúrbio emocional causado por trauma na infância',
+    ],
+    correta: 1,
+  },
+  {
+    pergunta:'Autismo é um espectro. O que isso significa?',
+    opcoes:[
+      'A) Que todos os autistas são iguais e têm os mesmos desafios',
+      'B) Que a condição tem cores e fases, como um arco-íris',
+      'C) Que cada pessoa autista tem perfil único — habilidades e desafios diferentes',
+      'D) Que o autismo afeta apenas crianças pequenas',
+    ],
+    correta: 2,
+  },
+  {
+    pergunta:'Como apoiar melhor uma família com filho(a) autista?',
+    opcoes:[
+      'A) Dar conselhos sobre como "consertar" o comportamento da criança',
+      'B) Evitar falar sobre o assunto para não constranger a família',
+      'C) Escutar sem julgamento, perguntar o que precisam e ser presença real',
+      'D) Indicar curas milagrosas e tratamentos alternativos encontrados na internet',
+    ],
+    correta: 2,
+  },
+];
+
+/* ═══════════════════════════════════════════════════════
+   NAVEGAÇÃO DE ABAS
+═══════════════════════════════════════════════════════ */
+function switchTab(tab) {
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('nav-' + tab).classList.add('active');
+
+  if (tab === 'painel') renderPainel();
+  if (tab === 'sorteio') renderSorteioTab();
+  if (tab === 'alimento') renderAlimHist();
+  if (tab === 'dados') initDadosTab();
+}
+
+/* ═══════════════════════════════════════════════════════
+   FORMULÁRIO — ETAPAS
+═══════════════════════════════════════════════════════ */
+function renderForm() {
+  updateStepBar();
+  const body = document.getElementById('form-body');
+  body.innerHTML = '';
+  body.classList.add('fade-in');
+
+  switch(STATE.step) {
+    case 1: renderEtapa1(body); break;
+    case 2: renderEtapa2(body); break;
+    case 3: renderEtapa3(body); break;
+    case 4: renderEtapa4(body); break;
+    case 5: renderEtapa5(body); break;
+    case 6: renderEtapa6(body); break;
+  }
+}
+
+function updateStepBar() {
+  for (let i = 1; i <= 6; i++) {
+    const d = document.getElementById('dot-' + i);
+    d.className = 'step-dot' + (i < STATE.step ? ' done' : i === STATE.step ? ' active' : '');
+  }
+  document.getElementById('step-label').textContent = 'Etapa ' + STATE.step + ' de 6';
+}
+
+/* ETAPA 1 — Dados pessoais */
+function renderEtapa1(body) {
+  body.innerHTML = `
+  <div class="card fade-in">
+    <div class="card-title">seus dados</div>
+    <div class="field"><label>Nome completo <span class="req">*</span></label>
+      <input id="f-nome" type="text" placeholder="Como aparecerá no cadastro" value="${STATE.formData.nome||''}">
+    </div>
+    <div class="field"><label>WhatsApp (com DDD) <span class="req">*</span></label>
+      <input id="f-tel" type="tel" placeholder="(27) 99999-9999" value="${STATE.formData.telefone||''}">
+    </div>
+    <div class="field"><label>E-mail (opcional)</label>
+      <input id="f-email" type="email" placeholder="Para receber confirmação por e-mail" value="${STATE.formData.email||''}">
+    </div>
+    <div class="field"><label>Cidade onde mora <span class="req">*</span></label>
+      <input id="f-cidade" type="text" placeholder="Ex: São Mateus" value="${STATE.formData.cidade||''}">
+    </div>
+    <div class="form-nav">
+      <button class="btn btn-primary" onclick="salvarEtapa1()">Continuar →</button>
+    </div>
+  </div>`;
+}
+
+function salvarEtapa1() {
+  const nome   = document.getElementById('f-nome').value.trim();
+  const tel    = document.getElementById('f-tel').value.replace(/\D/g,'');
+  const email  = document.getElementById('f-email').value.trim();
+  const cidade = document.getElementById('f-cidade').value.trim();
+  if (!nome)   { toast('Digite seu nome completo', 'error'); return; }
+  if (tel.length < 10) { toast('WhatsApp inválido — inclua DDD', 'error'); return; }
+  if (!cidade) { toast('Digite sua cidade', 'error'); return; }
+  STATE.formData = { ...STATE.formData, nome, telefone:tel, email, cidade };
+  STATE.step = 2; renderForm();
+}
+
+/* ETAPA 2 — Perfil */
+function renderEtapa2(body) {
+  const cards = PERFIS.map(p => `
+    <div class="perfil-card ${p.destaque?'destaque':''} ${STATE.formData.perfil===p.id?'selected':''}"
+         onclick="selecionarPerfil('${p.id}')">
+      <span class="emoji">${p.emoji}</span>
+      <div class="label">${p.label}</div>
+      ${p.destaque ? '<span class="sorteio-tag">🏆 Sorteio Exclusivo</span>' : ''}
+    </div>`).join('');
+
+  body.innerHTML = `
+  <div class="card fade-in">
+    <div class="card-title">qual é o seu perfil?</div>
+    <div class="perfil-grid">${cards}</div>
+    <div class="form-nav" style="margin-top:12px">
+      <button class="btn btn-ghost btn-sm" onclick="voltarEtapa()">← Voltar</button>
+      <button class="btn btn-primary" onclick="confirmarPerfil()">Continuar →</button>
+    </div>
+  </div>`;
+}
+
+function selecionarPerfil(id) {
+  STATE.formData.perfil = id;
+  document.querySelectorAll('.perfil-card').forEach(c => c.classList.remove('selected'));
+  event.currentTarget.classList.add('selected');
+}
+
+function confirmarPerfil() {
+  if (!STATE.formData.perfil) { toast('Selecione um perfil', 'error'); return; }
+  const p = PERFIS.find(p => p.id === STATE.formData.perfil);
+  STATE.formData.ehMae = p ? p.ehMae : false;
+  STATE.step = 3; renderForm();
+}
+
+/* ETAPA 3 — Dados do filho (só mãe) */
+function renderEtapa3(body) {
+  const ehMae = STATE.formData.ehMae;
+  if (!ehMae) { STATE.step = 4; renderForm(); return; }
+
+  const condicoes = ['Transtorno do Espectro Autista (TEA) Nível 1','Transtorno do Espectro Autista (TEA) Nível 2','Transtorno do Espectro Autista (TEA) Nível 3','Síndrome de Down','Deficiência Intelectual (DI)','Deficiência Múltipla','Microcefalia','Paralisia Cerebral','Outra condição']
+    .map(c => `<option value="${c}" ${STATE.formData.condicao===c?'selected':''}>${c}</option>`).join('');
+
+  body.innerHTML = `
+  <div class="card fade-in">
+    <div class="card-title">dados do(a) filho(a)</div>
+    <div class="field"><label>Nome completo do(a) filho(a) <span class="req">*</span></label>
+      <input id="f-filho-nome" type="text" placeholder="Nome do(a) filho(a)" value="${STATE.formData.filhoNome||''}">
+    </div>
+    <div class="field"><label>Idade</label>
+      <input id="f-filho-idade" type="text" placeholder="Ex: 7 anos" value="${STATE.formData.filhoIdade||''}">
+    </div>
+    <div class="field"><label>Condição / Diagnóstico <span class="req">*</span></label>
+      <select id="f-condicao"><option value="">Selecione…</option>${condicoes}</select>
+    </div>
+    <div class="form-nav">
+      <button class="btn btn-ghost btn-sm" onclick="voltarEtapa()">← Voltar</button>
+      <button class="btn btn-primary" onclick="salvarEtapa3()">Continuar →</button>
+    </div>
+  </div>`;
+}
+
+function salvarEtapa3() {
+  const fn = document.getElementById('f-filho-nome').value.trim();
+  const fi = document.getElementById('f-filho-idade').value.trim();
+  const fc = document.getElementById('f-condicao').value;
+  if (!fn) { toast('Digite o nome do(a) filho(a)', 'error'); return; }
+  if (!fc) { toast('Selecione a condição', 'error'); return; }
+  STATE.formData = { ...STATE.formData, filhoNome:fn, filhoIdade:fi, condicao:fc };
+  STATE.step = 4; renderForm();
+}
+
+/* ETAPA 4 — Quiz */
+function renderEtapa4(body) {
+  STATE.formData._quizRespostas = STATE.formData._quizRespostas || {};
+  STATE.formData._quizMostrado  = STATE.formData._quizMostrado  || {};
+  renderQuizPergunta(body, 0);
+}
+
+function renderQuizPergunta(body, qi) {
+  const q = QUIZ[qi];
+  const respostas = STATE.formData._quizRespostas || {};
+  const jaRespondeu = respostas[qi] !== undefined;
+
+  const opcoes = q.opcoes.map((op, oi) => {
+    let cls = 'quiz-option';
+    if (jaRespondeu) {
+      if (oi === q.correta) cls += ' correct';
+      else if (respostas[qi] === oi) cls += ' wrong';
+    }
+    return `<div class="${cls}" onclick="responderQuiz(${qi},${oi})">${op}</div>`;
+  }).join('');
+
+  body.innerHTML = `
+  <div class="card fade-in">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="card-title" style="margin:0">Quiz sobre autismo</div>
+      <div class="badge badge-amber">+${Object.values(respostas).filter((r,i)=>r===QUIZ[i]?.correta).length} extras</div>
+    </div>
+    <div style="font-size:11px;color:var(--txt3);margin-bottom:8px">Pergunta ${qi+1} de ${QUIZ.length} — cada acerto = 1 número extra!</div>
+    <div style="font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.5">${q.pergunta}</div>
+    ${opcoes}
+    ${jaRespondeu ? `
+    <div class="form-nav" style="margin-top:8px">
+      ${qi > 0 ? '' : ''}
+      ${qi < QUIZ.length-1
+        ? `<button class="btn btn-primary" onclick="renderQuizPergunta(document.getElementById('form-body'),${qi+1})">Próxima →</button>`
+        : `<button class="btn btn-primary" onclick="finalizarQuiz()">Ver resultado →</button>`
+      }
+    </div>` : ''}
+  </div>
+  <div style="padding:0 16px">
+    <button class="btn btn-ghost btn-sm" onclick="voltarEtapa()">← Etapa anterior</button>
+  </div>`;
+}
+
+function responderQuiz(qi, oi) {
+  if (STATE.formData._quizRespostas[qi] !== undefined) return;
+  STATE.formData._quizRespostas[qi] = oi;
+  renderQuizPergunta(document.getElementById('form-body'), qi);
+}
+
+function finalizarQuiz() {
+  const r = STATE.formData._quizRespostas || {};
+  let acertos = 0;
+  QUIZ.forEach((q,i) => { if (r[i] === q.correta) acertos++; });
+  STATE.quizAcertos = acertos;
+  STATE.formData.quizAcertos = acertos;
+  STATE.step = 5; renderForm();
+}
+
+/* ETAPA 5 — Termo de imagem */
+function renderEtapa5(body) {
+  body.innerHTML = `
+  <div class="card fade-in">
+    <div class="card-title">autorização de imagem</div>
+    <div style="background:var(--bg3);border-radius:var(--radius-sm);padding:14px;font-size:13px;color:var(--txt2);line-height:1.7;margin-bottom:14px">
+      Ao participar do <strong>4º Encontro Mães e Pais Atípicos do Norte do ES</strong>, você está ciente de que fotos e vídeos poderão ser produzidos durante o evento. Essas imagens podem ser utilizadas em materiais institucionais, redes sociais e registros históricos da comunidade, sem fins lucrativos.
+    </div>
+    <div class="check-row">
+      <input type="checkbox" id="termo1" ${STATE.formData.termo1?'checked':''}>
+      <label for="termo1">Autorizo o uso da minha imagem e/ou do(a) meu(minha) filho(a) nos materiais do evento.</label>
+    </div>
+    <div class="check-row">
+      <input type="checkbox" id="termo2" ${STATE.formData.termo2?'checked':''}>
+      <label for="termo2">Estou ciente de que para retirar prêmio é necessário: documento com foto + certidão de nascimento do(a) filho(a) (se mãe/pai atípico) + laudo médico.</label>
+    </div>
+    <div class="form-nav" style="margin-top:16px">
+      <button class="btn btn-ghost btn-sm" onclick="voltarEtapa()">← Voltar</button>
+      <button class="btn btn-primary" onclick="salvarEtapa5()">Confirmar inscrição →</button>
+    </div>
+  </div>`;
+}
+
+function salvarEtapa5() {
+  const t1 = document.getElementById('termo1').checked;
+  const t2 = document.getElementById('termo2').checked;
+  if (!t1 || !t2) { toast('Marque ambas as confirmações', 'error'); return; }
+  STATE.formData.termo1 = t1;
+  STATE.formData.termo2 = t2;
+
+  // Gerar número e registrar
+  const numero = gerarNumeroLocal(STATE.formData);
+  STATE.formData.numero = numero;
+  STATE.formData.numerosExtras = gerarExtrasQuiz(numero, STATE.quizAcertos);
+  STATE.formData.presente = false;
+  STATE.formData.kg = 0;
+  STATE.formData.numerosAlimento = [];
+
+  STATE.inscritos.push({ ...STATE.formData, ts: new Date() });
+  STATE.step = 6; renderForm();
+}
+
+/* ETAPA 6 — Confirmação */
+function renderEtapa6(body) {
+  const d = STATE.formData;
+  const ehMae = d.ehMae;
+  const extras = d.numerosExtras || [];
+  const totalExtras = extras.length;
+
+  let sorteioBox = '';
+  if (ehMae) {
+    sorteioBox = `
+    <div class="mae-sorteio-box">
+      <div class="title">🏆 Você participa dos sorteios EXCLUSIVOS!</div>
+      <p>• Sorteio <strong>exclusivo mães/pais atípicos</strong> 💜<br>
+      • + Sorteio extra para <strong>todos os presentes</strong> 🌟<br>
+      • Leve no dia: laudo + certidão + documento com foto</p>
+    </div>`;
+  } else {
+    sorteioBox = `
+    <div class="sorteio-extra-box">
+      <div class="title">🌟 Você pode participar do Sorteio Extra!</div>
+      <p>Você não é mãe/pai atípico, mas <strong>participa do sorteio especial</strong> para todos os presentes no evento!<br><br>
+      Brindes exclusivos para quem estiver presente. <strong>Guarde seu número!</strong><br><br>
+      Para retirar prêmio: documento com foto.</p>
+    </div>`;
+  }
+
+  let quizBox = totalExtras > 0 ? `
+    <div class="card" style="margin-top:0">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:24px">🧠</span>
+        <div>
+          <div style="font-size:14px;font-weight:600">Quiz: ${STATE.quizAcertos} acerto${STATE.quizAcertos!==1?'s':''}</div>
+          <div style="font-size:12px;color:var(--txt3)">${totalExtras} número${totalExtras!==1?'s':''} extra${totalExtras!==1?'s':''} gerado${totalExtras!==1?'s':''}</div>
+        </div>
+        <div style="margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--txt3)">${extras.join('<br>')}</div>
+      </div>
+    </div>` : '';
+
+  body.innerHTML = `
+  <div style="padding:12px 16px" class="fade-in">
+    <div class="numero-box">
+      <div class="label">✅ Inscrição confirmada!</div>
+      <div class="num">${d.numero}</div>
+      <div style="font-size:12px;color:var(--txt3);margin-top:6px">⚠️ Guarde este número — você precisará no dia!</div>
+    </div>
+    ${sorteioBox}
+    ${quizBox}
+    <div class="card" style="margin:12px 0;background:rgba(29,158,117,.1);border-color:var(--teal)">
+      <p style="font-size:13px;color:var(--teal-dk)">🥫 <strong>Ganhe mais números!</strong> Traga alimentos não perecíveis. Cada 1 kg = 1 número extra no sorteio!</p>
+    </div>
+    <button class="btn btn-primary" onclick="novaInscricao()" style="margin-top:4px">+ Nova inscrição</button>
+  </div>`;
+}
+
+function novaInscricao() {
+  STATE.step = 1;
+  STATE.formData = {};
+  STATE.quizAcertos = 0;
+  renderForm();
+}
+
+function voltarEtapa() {
+  if (STATE.step > 1) {
+    // Se estava em etapa 4 e não é mãe, voltar para 2
+    if (STATE.step === 4 && !STATE.formData.ehMae) STATE.step = 2;
+    else STATE.step--;
+    renderForm();
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   GERAÇÃO DE NÚMEROS
+═══════════════════════════════════════════════════════ */
+function gerarNumeroLocal(dados) {
+  const pfx = dados.perfil || 'OUT';
+  const count = STATE.inscritos.filter(i => i.perfil === dados.perfil).length + 1;
+  return pfx + '-' + String(count).padStart(4, '0');
+}
+
+function gerarExtrasQuiz(numero, acertos) {
+  const extras = [];
+  for (let i = 1; i <= acertos; i++) {
+    extras.push(numero + '-Q' + String(i).padStart(2,'0'));
+  }
+  return extras;
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAINEL
+═══════════════════════════════════════════════════════ */
+function renderPainel() {
+  const total = STATE.inscritos.length;
+  const presentes = STATE.inscritos.filter(i=>i.presente).length;
+  const kg = STATE.inscritos.reduce((acc,i)=>acc+(i.kg||0),0) + STATE.alimentos.reduce((acc,a)=>acc+a.kg,0);
+  const pct = Math.min(100, Math.round((total/1200)*100));
+
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-presentes').textContent = presentes;
+  document.getElementById('stat-kg').textContent = kg;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('checkin-count').textContent = presentes;
+
+  // Setor list
+  const setoresList = SETORES.filter(s=>s.id!=='TODOS').map(s => {
+    const cnt = STATE.inscritos.filter(i=>i.perfil===s.id).length;
+    const pres = STATE.inscritos.filter(i=>i.perfil===s.id && i.presente).length;
+    const pct2 = total > 0 ? Math.round((cnt/total)*100) : 0;
+    return `<div class="setor-row">
+      <span style="font-size:18px">${s.emoji}</span>
+      <div class="name">${s.label.replace('\n',' ')}<div style="font-size:11px;color:var(--txt3)">${pres} presentes</div></div>
+      <div class="mini-bar"><div class="mini-fill" style="width:${pct2}%;background:${s.cor}"></div></div>
+      <div class="count" style="color:${s.cor}">${cnt}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('setor-list').innerHTML = setoresList || '<div class="empty"><div class="icon">📋</div><p>Sem inscritos ainda.</p></div>';
+
+  filtrarInscritos();
+}
+
+function filtrarInscritos() {
+  const q = (document.getElementById('checkin-search')?.value||'').toLowerCase().trim();
+  const lista = document.getElementById('checkin-list');
+  if (!lista) return;
+
+  const filtrados = q.length < 2
+    ? STATE.inscritos.slice(-10).reverse()
+    : STATE.inscritos.filter(i =>
+        i.nome.toLowerCase().includes(q) ||
+        i.numero.toLowerCase().includes(q)
+      );
+
+  if (filtrados.length === 0) {
+    lista.innerHTML = '<div class="empty"><div class="icon">🔍</div><p>Nenhum inscrito encontrado.</p></div>';
+    return;
+  }
+
+  lista.innerHTML = filtrados.map(i => `
+    <div class="inscrito-item ${i.presente?'presente':''}" id="item-${i.numero}">
+      <div class="status-dot"></div>
+      <div class="info">
+        <div class="nome">${i.nome}</div>
+        <div class="sub">${i.numero} · ${i.cidade}</div>
+        <div class="sub">${i.condicao||''}</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="btn btn-ghost btn-sm" onclick="abrirQR('${i.numero}')" title="Ver QR Code" style="padding:8px;min-width:auto">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/></svg>
+        </button>
+        ${i.presente
+          ? `<span class="badge badge-teal">✅ Presente</span>`
+          : `<button class="btn btn-teal btn-sm" onclick="confirmarPresenca('${i.numero}')">Check-in</button>`
+        }
+      </div>
+    </div>`).join('');
+}
+
+async function confirmarPresenca(numero, silencioso) {
+  const inscrito = STATE.inscritos.find(i => i.numero === numero);
+  if (!inscrito) return false;
+  if (inscrito.presente) {
+    if (!silencioso) toast('⚠️ ' + inscrito.nome.split(' ')[0] + ' já fez check-in!', 'warning');
+    return true;
+  }
+  inscrito.presente = true;
+  inscrito.checkinTs = new Date().toLocaleString('pt-BR');
+  if (!silencioso) toast('✅ Check-in: ' + inscrito.nome.split(' ')[0], 'success');
+  renderPainel();
+
+  // Tentar sincronizar com planilha via doPost
+  const url = localStorage.getItem('syncUrl');
+  if (url && url.includes('script.google.com')) {
+    try {
+      await fetch(url.replace('/exec', '/exec'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'checkin', numero }),
+        mode: 'no-cors',
+      });
+    } catch(_) {}
+  }
+  return true;
+}
+
+/* ═══════════════════════════════════════════════════════
+   QR CODE — GERADOR
+═══════════════════════════════════════════════════════ */
+function abrirQR(numero) {
+  const inscrito = STATE.inscritos.find(i => i.numero === numero);
+  if (!inscrito) return;
+
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(numero)}&bgcolor=ffffff&color=1a1828&margin=10`;
+
+  const modal = document.getElementById('qr-modal');
+  modal.style.display = 'flex';
+  modal.style.position = 'fixed';
+  modal.style.inset = '0';
+  modal.style.background = 'rgba(0,0,0,.75)';
+  modal.style.zIndex = '200';
+  modal.style.alignItems = 'flex-end';
+  modal.style.justifyContent = 'center';
+
+  modal.innerHTML = `
+    <div class="modal-sheet" style="max-width:480px;width:100%">
+      <div class="modal-handle"></div>
+      <div class="modal-title">QR Code de Inscrição</div>
+      <div class="modal-sub">Apresente na entrada para check-in rápido</div>
+      <div class="qr-box">
+        <img src="${qrUrl}" alt="QR Code ${numero}" onerror="this.parentElement.innerHTML='<p style=color:#999;font-size:13px>QR indisponível — sem internet</p>'">
+      </div>
+      <div class="qr-numero">${numero}</div>
+      <div class="qr-nome">${inscrito.nome}</div>
+      ${inscrito.presente
+        ? `<div class="info-box teal" style="margin-bottom:16px;text-align:center">✅ Check-in já realizado</div>`
+        : `<button class="btn btn-teal" onclick="confirmarPresencaModal('${numero}')">✅ Fazer Check-in agora</button>`
+      }
+      <button class="btn btn-ghost" style="margin-top:8px" onclick="fecharQR()">Fechar</button>
+    </div>`;
+
+  modal.onclick = function(e) {
+    if (e.target === modal) fecharQR();
+  };
+}
+
+function confirmarPresencaModal(numero) {
+  confirmarPresenca(numero);
+  fecharQR();
+  // Atualiza painel se estiver visível
+  if (document.getElementById('tab-painel').classList.contains('active')) renderPainel();
+}
+
+function fecharQR() {
+  const modal = document.getElementById('qr-modal');
+  modal.style.display = 'none';
+  modal.innerHTML = '';
+}
+
+/* ═══════════════════════════════════════════════════════
+   QR CODE — SCANNER DE CÂMERA
+═══════════════════════════════════════════════════════ */
+let _scannerStream = null;
+let _scannerTimer = null;
+let _scannerLocked = false;
+
+async function abrirScanner() {
+  const overlay = document.getElementById('qr-scanner');
+  const video   = document.getElementById('scanner-video');
+  const result  = document.getElementById('scanner-result');
+
+  result.style.display = 'none';
+  _scannerLocked = false;
+  overlay.style.display = 'flex';
+  overlay.style.flexDirection = 'column';
+
+  try {
+    _scannerStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
+    });
+    video.srcObject = _scannerStream;
+    video.play();
+    video.addEventListener('loadedmetadata', iniciarLeituraQR, { once: true });
+  } catch (err) {
+    overlay.style.display = 'none';
+    if (err.name === 'NotAllowedError') {
+      toast('⚠️ Permissão de câmera negada. Libere nas configurações do navegador.', 'error');
+    } else {
+      toast('⚠️ Câmera não disponível: ' + err.message, 'error');
+    }
+  }
+}
+
+function iniciarLeituraQR() {
+  const video  = document.getElementById('scanner-video');
+  const canvas = document.getElementById('scanner-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  function lerFrame() {
+    if (!_scannerStream || _scannerLocked) return;
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width  = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: 'dontInvert',
+      });
+      if (code && code.data) {
+        processarQRLido(code.data);
+        return;
+      }
+    }
+    _scannerTimer = requestAnimationFrame(lerFrame);
+  }
+  _scannerTimer = requestAnimationFrame(lerFrame);
+}
+
+async function processarQRLido(texto) {
+  _scannerLocked = true;
+  cancelAnimationFrame(_scannerTimer);
+
+  const numero = texto.trim().toUpperCase();
+  const inscrito = STATE.inscritos.find(i => i.numero.toUpperCase() === numero);
+
+  const result = document.getElementById('scanner-result');
+  result.style.display = 'block';
+
+  if (!inscrito) {
+    result.style.background = 'rgba(224,90,48,.95)';
+    result.innerHTML = `❌ Número não encontrado: ${numero}`;
+    setTimeout(() => { _scannerLocked = false; result.style.display='none'; iniciarLeituraQR(); }, 2500);
+    return;
+  }
+
+  if (inscrito.presente) {
+    result.style.background = 'rgba(83,74,183,.95)';
+    result.innerHTML = `⚠️ ${inscrito.nome.split(' ')[0]} já fez check-in!`;
+  } else {
+    await confirmarPresenca(numero, true);
+    result.style.background = 'rgba(29,158,117,.95)';
+    result.innerHTML = `✅ Check-in: <strong>${inscrito.nome.split(' ')[0]}</strong><br><small style="opacity:.8">${numero}</small>`;
+  }
+
+  // Vibrar se disponível
+  if (navigator.vibrate) navigator.vibrate([50, 30, 50]);
+
+  setTimeout(() => {
+    fecharScanner();
+    if (document.getElementById('tab-painel').classList.contains('active')) renderPainel();
+  }, 2000);
+}
+
+function fecharScanner() {
+  cancelAnimationFrame(_scannerTimer);
+  if (_scannerStream) {
+    _scannerStream.getTracks().forEach(t => t.stop());
+    _scannerStream = null;
+  }
+  document.getElementById('qr-scanner').style.display = 'none';
+  document.getElementById('scanner-result').style.display = 'none';
+  _scannerLocked = false;
+}
+
+/* ═══════════════════════════════════════════════════════
+   SORTEIO
+═══════════════════════════════════════════════════════ */
+function renderSorteioTab() {
+  const grid = document.getElementById('setor-select-grid');
+  grid.innerHTML = SETORES.map(s => `
+    <div class="setor-btn ${STATE.setorAtivo===s.id?'active':''}" onclick="selecionarSetor('${s.id}')">
+      <span class="emoji">${s.emoji}</span>
+      ${s.label}
+    </div>`).join('');
+  atualizarPoolInfo();
+  renderHistorico();
+}
+
+function selecionarSetor(id) {
+  STATE.setorAtivo = id;
+  document.querySelectorAll('.setor-btn').forEach(b => b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  atualizarPoolInfo();
+  resetarSorteio();
+}
+
+function getPoolSetor() {
+  const presentes = STATE.inscritos.filter(i => i.presente);
+  if (!STATE.setorAtivo || STATE.setorAtivo === 'TODOS') {
+    return presentes;
+  }
+  const s = SETORES.find(s => s.id === STATE.setorAtivo);
+  if (!s) return [];
+  // Sorteio exclusivo SM-AT+OT-AT juntos quando qualquer um for selecionado
+  if (STATE.setorAtivo === 'SM-AT') {
+    return presentes.filter(i => i.perfil === 'SM-AT' || i.perfil === 'OT-AT');
+  }
+  return presentes.filter(i => i.perfil === STATE.setorAtivo);
+}
+
+function atualizarPoolInfo() {
+  const pool = getPoolSetor();
+  const info = document.getElementById('pool-info');
+  const s = SETORES.find(s => s.id === STATE.setorAtivo);
+
+  // Contar extras de alimento
+  const extras = pool.reduce((acc,i) => acc + (i.numerosAlimento||[]).length, 0);
+  const total  = pool.length + extras;
+
+  if (!STATE.setorAtivo) {
+    info.innerHTML = 'Selecione um setor acima.';
+    info.className = 'info-box';
+  } else {
+    const excl = s && s.id === 'SM-AT' ? ' — <strong>Sorteio Exclusivo Mãe/Pai Atípico</strong>' : '';
+    info.innerHTML = `<strong>${s?.emoji} ${s?.label.replace('\n',' ')}</strong>${excl}<br>
+    Pool: <strong>${pool.length}</strong> inscritos presentes + <strong>${extras}</strong> extras por alimento = <strong style="color:var(--amber)">${total} números</strong>`;
+    info.className = 'info-box' + (s?.id==='SM-AT'?' roxo':'');
+  }
+}
+
+let sorteioInterval = null;
+function realizarSorteio() {
+  const pool = getPoolSetor();
+  if (!STATE.setorAtivo) { toast('Selecione um setor primeiro', 'error'); return; }
+  if (pool.length === 0) { toast('Nenhum inscrito presente neste setor', 'error'); return; }
+
+  const machine = document.getElementById('sorteio-machine');
+  const display  = document.getElementById('num-display');
+  const instrucao = document.getElementById('sorteio-instrucao');
+  machine.classList.remove('winner');
+  instrucao.textContent = 'Sorteando…';
+
+  let count = 0;
+  const maxRolls = 20 + Math.floor(Math.random()*15);
+  sorteioInterval = setInterval(() => {
+    const r = pool[Math.floor(Math.random()*pool.length)];
+    display.textContent = r.numero;
+    display.classList.add('rolling');
+    count++;
+    if (count >= maxRolls) {
+      clearInterval(sorteioInterval);
+      display.classList.remove('rolling');
+
+      // Sorteio final — inclui extras de alimento
+      const poolCompleto = [];
+      pool.forEach(i => {
+        poolCompleto.push(i);
+        (i.numerosAlimento||[]).forEach(n => poolCompleto.push({...i, numero:n, _extra:true}));
+      });
+      const vencedor = poolCompleto[Math.floor(Math.random()*poolCompleto.length)];
+
+      display.textContent = vencedor.numero;
+      machine.classList.add('winner');
+
+      instrucao.innerHTML = '';
+      const wi = document.createElement('div');
+      wi.className = 'winner-info';
+      wi.innerHTML = `<div class="nome">🎉 ${vencedor.nome}</div>
+        <div class="sub">${vencedor.cidade} · ${vencedor.perfil}${vencedor._extra?' · 🥫 número extra':''}</div>`;
+      machine.appendChild(wi);
+
+      // Registrar no histórico local
+      STATE.sorteioHist.unshift({
+        numero: vencedor.numero,
+        nome: vencedor.nome,
+        setor: STATE.setorAtivo,
+        cidade: vencedor.cidade,
+        ts: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),
+      });
+      renderHistorico();
+      toast('🎉 Ganhador: ' + vencedor.nome.split(' ')[0], 'success');
+
+      // P19 — Gravar automaticamente na aba _Sorteio da planilha
+      const premioInput = document.getElementById('sorteio-premio-input');
+      const premioValor = premioInput ? premioInput.value.trim() || '—' : '—';
+      registrarSorteioRemoto({
+        nome:   vencedor.nome,
+        numero: vencedor.numero,
+        setor:  STATE.setorAtivo,
+        premio: premioValor,
+        tipo:   (STATE.setorAtivo === 'mae' || STATE.setorAtivo === 'sm-at' || STATE.setorAtivo === 'ot-at') ? 'exclusivo' : 'geral',
+      });
+    }
+  }, 80);
+}
+
+function resetarSorteio() {
+  clearInterval(sorteioInterval);
+  const machine = document.getElementById('sorteio-machine');
+  const display  = document.getElementById('num-display');
+  const instrucao = document.getElementById('sorteio-instrucao');
+  machine.classList.remove('winner');
+  display.classList.remove('rolling');
+  display.textContent = '— — —';
+  instrucao.textContent = STATE.setorAtivo ? 'Clique em Sortear' : 'Selecione um setor para sortear';
+  const wi = machine.querySelector('.winner-info');
+  if (wi) wi.remove();
+}
+
+function renderHistorico() {
+  const hist = document.getElementById('sorteio-hist');
+  if (STATE.sorteioHist.length === 0) {
+    hist.innerHTML = '<div class="empty"><div class="icon">📋</div><p>Nenhum sorteio realizado ainda.</p></div>';
+    return;
+  }
+  hist.innerHTML = STATE.sorteioHist.map((h,i) => {
+    const s = SETORES.find(s=>s.id===h.setor);
+    return `<div class="hist-item">
+      <div style="font-size:16px;min-width:28px">${i===0?'🥇':i===1?'🥈':'🥉'}</div>
+      <div class="hist-num">${h.numero}</div>
+      <div class="hist-nome">${h.nome}</div>
+      <div class="hist-setor">${s?.emoji||''} ${h.ts}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════════════
+   FICHAS DE SORTEIO
+═══════════════════════════════════════════════════════ */
+let fichasSetorSel = 'TODOS';
+
+function abrirModalFichas() {
+  fichasSetorSel = 'TODOS';
+  const modal = document.getElementById('fichas-modal');
+  modal.classList.add('open');
+
+  // Renderiza botões de setor
+  const btns = document.getElementById('fichas-setor-btns');
+  const opcoes = [{ id:'TODOS', label:'Todos', emoji:'🌟' }, ...SETORES.filter(s => s.id !== 'TODOS')];
+  btns.innerHTML = opcoes.map(s =>
+    `<button class="fichas-setor-btn ${fichasSetorSel===s.id?'sel':''}"
+       onclick="selecionarSetorFichas('${s.id}',this)">
+       ${s.emoji} ${s.label.replace('\n',' ')}
+     </button>`
+  ).join('');
+
+  atualizarPreviewFichas();
+}
+
+function fecharModalFichas() {
+  document.getElementById('fichas-modal').classList.remove('open');
+}
+
+function selecionarSetorFichas(id, el) {
+  fichasSetorSel = id;
+  document.querySelectorAll('.fichas-setor-btn').forEach(b => b.classList.remove('sel'));
+  el.classList.add('sel');
+  atualizarPreviewFichas();
+}
+
+function getFichasPool() {
+  const todos = STATE.inscritos;
+  if (fichasSetorSel === 'TODOS') return todos;
+  if (fichasSetorSel === 'SM-AT') return todos.filter(i => i.perfil === 'SM-AT' || i.perfil === 'OT-AT');
+  return todos.filter(i => i.perfil === fichasSetorSel);
+}
+
+function atualizarPreviewFichas() {
+  const pool = getFichasPool();
+  // Conta fichas principais + extras de alimento + extras de quiz
+  const extrasAlim = pool.reduce((acc,i) => acc + (i.numerosAlimento||[]).length, 0);
+  const extrasQuiz = pool.reduce((acc,i) => acc + (i.numerosExtras||[]).length, 0);
+  const total = pool.length + extrasAlim + extrasQuiz;
+  const info = document.getElementById('fichas-preview-info');
+  const s = fichasSetorSel === 'TODOS' ? '🌟 Todos os setores' :
+    (SETORES.find(s=>s.id===fichasSetorSel)?.emoji + ' ' + SETORES.find(s=>s.id===fichasSetorSel)?.label.replace('\n',' '));
+  info.innerHTML = `<strong>${s}</strong> · ${pool.length} inscritos · <strong>${extrasAlim}</strong> extras alimento · <strong>${extrasQuiz}</strong> extras quiz = <strong style="color:var(--roxo)">${total} fichas</strong>`;
+}
+
+function gerarFichasHTML(pool) {
+  const fichas = [];
+
+  pool.forEach(i => {
+    // Ficha principal
+    fichas.push(gerarFichaHTML(i.numero, i.nome, i.perfil));
+    // Extras quiz
+    (i.numerosExtras||[]).forEach(n => fichas.push(gerarFichaHTML(n, i.nome, i.perfil, '🎯 Quiz')));
+    // Extras alimento
+    (i.numerosAlimento||[]).forEach(n => fichas.push(gerarFichaHTML(n, i.nome, i.perfil, '🥫 Alimento')));
+  });
+
+  return fichas.join('');
+}
+
+function gerarFichaHTML(numero, nome, perfil, tipo) {
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${encodeURIComponent(numero)}&bgcolor=ffffff&color=534AB7&margin=2`;
+  const nomeCorto = nome.length > 22 ? nome.substring(0,21)+'…' : nome;
+  const tipoLabel = tipo ? `<div class="ficha-setor">${tipo}</div>` : '';
+  return `
+  <div class="ficha-item">
+    <div class="ficha-evento">Mães e Pais Atípicos — Norte do ES · 30/05/2026</div>
+    <div class="ficha-numero">${numero}</div>
+    <div class="ficha-nome">${nomeCorto}</div>
+    <div class="ficha-qr"><img src="${qrUrl}" alt="${numero}" loading="lazy"></div>
+    <div class="ficha-setor">${perfil}${tipo ? ' · ' + tipo : ''}</div>
+    <div class="ficha-corte">✂ - - - - - - - - - - - -</div>
+  </div>`;
+}
+
+function imprimirFichas() {
+  const pool = getFichasPool();
+  if (pool.length === 0) { toast('Nenhum inscrito neste setor', 'error'); return; }
+
+  const grid = document.getElementById('fichas-grid-print');
+  const area = document.getElementById('fichas-print-area');
+
+  grid.innerHTML = '<div style="text-align:center;color:#888;font-size:12px;padding:20px;grid-column:1/-1">⏳ Carregando QR Codes… (pode levar alguns segundos)</div>';
+  area.classList.add('ready');
+
+  // Gera fichas e aguarda imagens carregarem
+  setTimeout(() => {
+    grid.innerHTML = gerarFichasHTML(pool);
+    const imgs = grid.querySelectorAll('img');
+    let loaded = 0;
+    const total = imgs.length;
+
+    function tentarImprimir() {
+      fecharModalFichas();
+      window.print();
+      // Limpa após impressão
+      setTimeout(() => { area.classList.remove('ready'); }, 1000);
+    }
+
+    if (total === 0) { tentarImprimir(); return; }
+
+    imgs.forEach(img => {
+      img.onload = img.onerror = () => {
+        loaded++;
+        if (loaded >= total) tentarImprimir();
+      };
+    });
+
+    // Timeout de segurança: imprime mesmo se alguma img falhar
+    setTimeout(() => { if (loaded < total) tentarImprimir(); }, 5000);
+  }, 100);
+}
+
+/* ═══════════════════════════════════════════════════════
+   ALIMENTO
+═══════════════════════════════════════════════════════ */
+let alimInscritoAtual = null;
+
+function buscarInscritoAlimento() {
+  const q = document.getElementById('alim-busca').value.trim().toLowerCase();
+  if (!q) { toast('Digite um nome ou número', 'error'); return; }
+
+  const encontrado = STATE.inscritos.find(i =>
+    i.numero.toLowerCase() === q ||
+    i.nome.toLowerCase().includes(q)
+  );
+
+  if (!encontrado) {
+    toast('Inscrito não encontrado', 'error');
+    document.getElementById('alim-inscrito-card').style.display = 'none';
+    alimInscritoAtual = null;
+    return;
+  }
+
+  alimInscritoAtual = encontrado;
+  document.getElementById('alim-nome').textContent = encontrado.nome;
+  document.getElementById('alim-numero-label').textContent = encontrado.numero + ' · ' + encontrado.cidade;
+  const kgAtual = (encontrado.kg || 0) + STATE.alimentos.filter(a=>a.numero===encontrado.numero).reduce((s,a)=>s+a.kg,0);
+  document.getElementById('alim-kg-atual').textContent = kgAtual > 0 ? `🥫 ${kgAtual} kg já doados` : 'Nenhuma doação registrada';
+  document.getElementById('alim-inscrito-card').style.display = 'block';
+  document.getElementById('alim-result').classList.remove('show');
+}
+
+function setKg(v) {
+  document.getElementById('alim-kg').value = v;
+  document.querySelectorAll('.kg-shortcut').forEach(b => {
+    b.classList.toggle('selected', b.textContent.trim() === v + ' kg');
+  });
+}
+
+function registrarAlimento() {
+  if (!alimInscritoAtual) { toast('Busque um inscrito primeiro', 'error'); return; }
+  const kg = parseInt(document.getElementById('alim-kg').value);
+  if (!kg || kg < 1) { toast('Informe a quantidade em kg', 'error'); return; }
+
+  const numero = alimInscritoAtual.numero;
+
+  // Anti-duplicidade: verificar se já tem registro nesta sessão
+  const jaRegistrou = STATE.alimentos.some(a => a.numero === numero && a.sessao === _getSessao());
+
+  // Gerar números extras
+  const kgExistente = STATE.alimentos.filter(a=>a.numero===numero).reduce((s,a)=>s+a.kg,0) + (alimInscritoAtual.kg||0);
+  const extras = [];
+  for (let i = 1; i <= kg; i++) {
+    extras.push(numero + '-A' + String(kgExistente + i).padStart(2,'0'));
+  }
+
+  // Registrar
+  STATE.alimentos.push({ numero, nome:alimInscritoAtual.nome, kg, extras, sessao:_getSessao(), ts:new Date() });
+
+  // Atualizar o inscrito
+  alimInscritoAtual.kg = (alimInscritoAtual.kg||0) + kg;
+  alimInscritoAtual.numerosAlimento = [...(alimInscritoAtual.numerosAlimento||[]), ...extras];
+
+  // Mostrar resultado
+  const resultBox = document.getElementById('alim-result');
+  document.getElementById('alim-result-title').textContent = `✅ ${alimInscritoAtual.nome.split(' ')[0]} doou ${kg} kg!`;
+  document.getElementById('alim-result-msg').textContent = `${extras.length} número${extras.length!==1?'s':''} extra${extras.length!==1?'s':''} gerado${extras.length!==1?'s':''} — válidos em todos os sorteios!`;
+  document.getElementById('alim-result-nums').innerHTML = extras.join('<br>');
+  resultBox.classList.add('show');
+
+  // Atualizar kg atual
+  const kgTotal = alimInscritoAtual.kg;
+  document.getElementById('alim-kg-atual').textContent = `🥫 ${kgTotal} kg doados no total`;
+
+  renderAlimHist();
+  toast('🥫 ' + kg + ' kg registrados!', 'success');
+}
+
+function renderAlimHist() {
+  const hist = document.getElementById('alim-hist-list');
+  if (!hist) return;
+  if (STATE.alimentos.length === 0) {
+    hist.innerHTML = '<div class="empty"><div class="icon">🥫</div><p>Nenhuma doação registrada.</p></div>';
+    return;
+  }
+  hist.innerHTML = STATE.alimentos.slice().reverse().map(a => `
+    <div class="inscrito-item" style="margin-left:0;margin-right:0">
+      <span style="font-size:20px">🥫</span>
+      <div class="info">
+        <div class="nome">${a.nome}</div>
+        <div class="sub">${a.numero} · ${a.kg} kg · ${a.extras.length} números extras</div>
+      </div>
+      <span class="badge badge-teal">+${a.kg}</span>
+    </div>`).join('');
+}
+
+function _getSessao() {
+  return new Date().toDateString();
+}
+
+/* ═══════════════════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════════════════ */
+let toastTimer;
+function toast(msg, type='info') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.className = '', 2800);
+}
+
+
+/* ═══════════════════════════════════════════════════════
+   INTEGRAÇÃO GOOGLE SHEETS — P6
+═══════════════════════════════════════════════════════ */
+const GS = {
+  url: localStorage.getItem('gs_url') || '',
+  autoSync: localStorage.getItem('gs_autosync') === 'true',
+  autoSyncTimer: null,
+  ultimaSync: null,
+};
+
+/* ── Mapeamento de colunas da planilha Inscritos ──
+   Índice: 0=Numero, 1=Timestamp, 2=Nome, 3=Telefone,
+           4=Email, 5=Cidade, 6=Perfil, 7=EhMae,
+           8=FilhoNome, 9=FilhoIdade, 10=Condicao,
+           11=Quiz, 12=NumerosExtras, 13=Termo1,
+           14=Termo2, 15=KG, 16=ExtrasAlimento,
+           17=DuplicadoFlag, 18=NumAvulso,
+           19=Presente, 20=CheckinTS
+*/
+const COL = {
+  NUMERO:0, TS:1, NOME:2, TELEFONE:3, EMAIL:4, CIDADE:5,
+  PERFIL:6, EH_MAE:7, FILHO_NOME:8, FILHO_IDADE:9, CONDICAO:10,
+  QUIZ:11, EXTRAS_QUIZ:12, TERMO1:13, TERMO2:14,
+  KG:15, EXTRAS_ALIM:16, FLAG_DUP:17, NUM_AVULSO:18,
+  PRESENTE:19, CHECKIN_TS:20
+};
+
+function logSync(msg, tipo='info') {
+  const log = document.getElementById('sync-log');
+  if (!log) return;
+  const ts = new Date().toLocaleTimeString('pt-BR');
+  log.innerHTML += `<br><span class="${tipo}">[${ts}] ${msg}</span>`;
+  log.scrollTop = log.scrollHeight;
+}
+
+function setSyncStatus(status, msg) {
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-status-txt');
+  if (!dot || !txt) return;
+  dot.className = 'sync-dot ' + status;
+  txt.textContent = msg;
+}
+
+function salvarUrl() {
+  const url = document.getElementById('gs-url').value.trim();
+  if (!url) { toast('Cole uma URL válida', 'error'); return; }
+  GS.url = url;
+  localStorage.setItem('gs_url', url);
+  toast('URL salva!', 'success');
+  logSync('URL configurada: ' + url.substring(0,60) + '...', 'ok');
+}
+
+/* ── Detecção de tipo de URL ── */
+function detectarTipoUrl(url) {
+  if (url.includes('script.google.com/macros')) return 'webapp';
+  if (url.includes('docs.google.com/spreadsheets') && url.includes('output=csv')) return 'csv';
+  if (url.includes('docs.google.com/spreadsheets') && url.includes('pub')) return 'csv';
+  return 'unknown';
+}
+
+/* ── Sincronização principal ── */
+async function sincronizarAgora() {
+  const url = GS.url || document.getElementById('gs-url')?.value.trim();
+  if (!url) {
+    toast('Configure a URL primeiro', 'error');
+    logSync('ERRO: URL não configurada', 'err');
+    return;
+  }
+
+  setSyncStatus('loading', 'Sincronizando…');
+  logSync('Iniciando sincronização…', 'info');
+
+  const tipo = detectarTipoUrl(url);
+  logSync('Tipo detectado: ' + tipo, 'info');
+
+  try {
+    if (tipo === 'webapp') {
+      await carregarViaWebApp(url);
+    } else if (tipo === 'csv') {
+      await carregarViaCSV(url);
+    } else {
+      // Tenta como webapp primeiro, depois csv
+      logSync('Tipo desconhecido — tentando como Web App…', 'info');
+      await carregarViaWebApp(url);
+    }
+  } catch(e) {
+    setSyncStatus('error', 'Erro na sincronização — verifique a URL');
+    logSync('ERRO: ' + e.message, 'err');
+    toast('Erro ao sincronizar', 'error');
+  }
+}
+
+/* ── Carregar via Web App (Apps Script doGet) ── */
+async function carregarViaWebApp(url) {
+  logSync('Buscando via Web App…', 'info');
+  const fullUrl = url + (url.includes('?') ? '&' : '?') + 'acao=inscritos&t=' + Date.now();
+
+  const resp = await fetch(fullUrl, { redirect: 'follow' });
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+  const data = await resp.json();
+  if (!data || !data.inscritos) throw new Error('Resposta inválida do servidor');
+
+  logSync('Recebidos: ' + data.inscritos.length + ' inscritos via Web App', 'ok');
+  processarInscritos(data.inscritos);
+}
+
+/* ── Carregar via CSV publicado ── */
+async function carregarViaCSV(url) {
+  logSync('Buscando via CSV…', 'info');
+  const resp = await fetch(url + '&t=' + Date.now(), { redirect: 'follow' });
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+
+  const txt = await resp.text();
+  const linhas = txt.trim().split('\n');
+  logSync('CSV: ' + linhas.length + ' linhas recebidas', 'info');
+
+  // Detectar separador (vírgula ou ponto-e-vírgula)
+  const sep = linhas[0].includes(';') ? ';' : ',';
+  const rows = linhas.slice(1); // skip header
+
+  const inscritos = rows
+    .map(l => parseCsvRow(l, sep))
+    .filter(r => r[COL.NUMERO] && r[COL.NOME])
+    .map(r => csvRowParaInscrito(r));
+
+  logSync('Convertidos: ' + inscritos.length + ' inscritos do CSV', 'ok');
+  processarInscritos(inscritos);
+}
+
+/* ── Parser CSV respeitando aspas ── */
+function parseCsvRow(linha, sep) {
+  const result = [];
+  let campo = '';
+  let dentroAspas = false;
+  for (let i = 0; i < linha.length; i++) {
+    const c = linha[i];
+    if (c === '"') {
+      dentroAspas = !dentroAspas;
+    } else if (c === sep && !dentroAspas) {
+      result.push(campo.trim());
+      campo = '';
+    } else {
+      campo += c;
+    }
+  }
+  result.push(campo.trim());
+  return result;
+}
+
+/* ── Converter linha CSV → objeto inscrito ── */
+function csvRowParaInscrito(r) {
+  const numero = r[COL.NUMERO] || '';
+  const perfil = r[COL.PERFIL] || numero.split('-').slice(0,2).join('-') || 'OUT';
+  const extrasQuiz = r[COL.EXTRAS_QUIZ] ? r[COL.EXTRAS_QUIZ].split(',').map(s=>s.trim()).filter(Boolean) : [];
+  const extrasAlim = r[COL.EXTRAS_ALIM] ? r[COL.EXTRAS_ALIM].split(',').map(s=>s.trim()).filter(Boolean) : [];
+  const ehMae = (r[COL.EH_MAE]||'').toLowerCase() === 'true' || perfil === 'SM-AT' || perfil === 'OT-AT';
+
+  return {
+    numero,
+    nome:      r[COL.NOME] || '',
+    telefone:  r[COL.TELEFONE] || '',
+    email:     r[COL.EMAIL] || '',
+    cidade:    r[COL.CIDADE] || '',
+    perfil,
+    ehMae,
+    filhoNome:  r[COL.FILHO_NOME] || '',
+    filhoIdade: r[COL.FILHO_IDADE] || '',
+    condicao:   r[COL.CONDICAO] || '',
+    quizAcertos: parseInt(r[COL.QUIZ]) || 0,
+    numerosExtras: extrasQuiz,
+    numerosAlimento: extrasAlim,
+    kg: parseInt(r[COL.KG]) || 0,
+    presente: (r[COL.PRESENTE]||'').includes('Presente') || (r[COL.PRESENTE]||'').includes('✅'),
+    checkinTs: r[COL.CHECKIN_TS] || '',
+    _origem: 'planilha',
+  };
+}
+
+/* ── Processar inscritos recebidos ── */
+function processarInscritos(novos) {
+  // Mesclar: manter check-ins feitos localmente, atualizar do servidor
+  const localMap = {};
+  STATE.inscritos.filter(i => i._origem !== 'planilha').forEach(i => { localMap[i.numero] = i; });
+  const localCheckins = {};
+  STATE.inscritos.filter(i => i.presente && i._origem === 'planilha').forEach(i => { localCheckins[i.numero] = i.checkinTs; });
+
+  const merged = novos.map(n => {
+    if (localCheckins[n.numero]) {
+      n.presente = true;
+      n.checkinTs = localCheckins[n.numero];
+    }
+    return n;
+  });
+
+  // Adicionar os locais que não existem na planilha (inscrições feitas no app)
+  Object.values(localMap).forEach(local => {
+    if (!merged.find(m => m.numero === local.numero)) merged.push(local);
+  });
+
+  STATE.inscritos = merged;
+
+  const presentes = merged.filter(i => i.presente).length;
+  const smAt = merged.filter(i => i.perfil === 'SM-AT').length;
+  const otAt = merged.filter(i => i.perfil === 'OT-AT').length;
+
+  // Atualizar resumo
+  document.getElementById('dados-resumo').style.display = 'block';
+  document.getElementById('d-total').textContent = merged.length;
+  document.getElementById('d-presentes').textContent = presentes;
+  document.getElementById('d-smAt').textContent = smAt;
+  document.getElementById('d-otAt').textContent = otAt;
+
+  GS.ultimaSync = new Date();
+  const ts = GS.ultimaSync.toLocaleTimeString('pt-BR');
+  document.getElementById('d-ultima-sync').textContent = 'Última sincronização: ' + ts;
+
+  setSyncStatus('ok', '✅ Conectado — ' + merged.length + ' inscritos carregados');
+  logSync('✅ Concluído! ' + merged.length + ' inscritos (' + presentes + ' presentes, ' + smAt + ' SM-AT, ' + otAt + ' OT-AT)', 'ok');
+  toast('✅ ' + merged.length + ' inscritos sincronizados!', 'success');
+
+  // Atualizar painel se estiver aberto
+  if (document.getElementById('tab-painel').classList.contains('active')) renderPainel();
+
+  // P14: verificar marcos de inscrição e disparar notificações se necessário
+  if (typeof verificarMarcosInscrição === 'function') verificarMarcosInscrição();
+}
+
+/* ── Importar JSON offline ── */
+function importarJSON() {
+  const raw = document.getElementById('json-offline').value.trim();
+  if (!raw) { toast('Cole o JSON primeiro', 'error'); return; }
+  try {
+    let parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    // Suporta formato {inscritos:[...]} ou array direto
+    if (!Array.isArray(parsed)) {
+      if (parsed.inscritos) parsed = parsed.inscritos;
+      else throw new Error('Formato inválido');
+    }
+    logSync('JSON: ' + parsed.length + ' entradas recebidas', 'info');
+
+    // Se os objetos já têm o formato do app, usa direto
+    // Se têm formato de array (CSV), converte
+    const inscritos = parsed.map(item => {
+      if (typeof item === 'object' && item.numero) return { ...item, _origem: 'planilha' };
+      if (Array.isArray(item)) return csvRowParaInscrito(item);
+      return null;
+    }).filter(Boolean);
+
+    processarInscritos(inscritos);
+    logSync('JSON importado com sucesso!', 'ok');
+  } catch(e) {
+    toast('JSON inválido: ' + e.message, 'error');
+    logSync('ERRO ao parsear JSON: ' + e.message, 'err');
+  }
+}
+
+/* ── Auto sync ── */
+function toggleAutoSync() {
+  GS.autoSync = !GS.autoSync;
+  localStorage.setItem('gs_autosync', GS.autoSync);
+
+  const toggle = document.getElementById('auto-sync-toggle');
+  const thumb  = document.getElementById('auto-sync-thumb');
+  if (GS.autoSync) {
+    toggle.style.background = 'var(--teal)';
+    thumb.style.left = '23px';
+    thumb.style.background = '#fff';
+    iniciarAutoSync();
+    toast('Auto-sync ativado (60s)', 'success');
+  } else {
+    toggle.style.background = 'var(--border-lt)';
+    thumb.style.left = '3px';
+    thumb.style.background = 'var(--txt3)';
+    pararAutoSync();
+    toast('Auto-sync desativado', 'info');
+  }
+}
+
+function iniciarAutoSync() {
+  pararAutoSync();
+  if (GS.url) {
+    GS.autoSyncTimer = setInterval(() => {
+      logSync('Auto-sync…', 'info');
+      sincronizarAgora();
+    }, 60000);
+  }
+}
+
+function pararAutoSync() {
+  if (GS.autoSyncTimer) { clearInterval(GS.autoSyncTimer); GS.autoSyncTimer = null; }
+}
+
+function limparDados() {
+  if (!confirm('Limpar todos os inscritos da memória? Dados não sincronizados serão perdidos.')) return;
+  STATE.inscritos = [];
+  STATE.alimentos = [];
+  document.getElementById('dados-resumo').style.display = 'none';
+  setSyncStatus('offline', 'Dados limpos — sem inscritos na memória');
+  logSync('Dados limpos da memória', 'info');
+  toast('Dados limpos', 'info');
+}
+
+/* ── Relatório Final ── */
+function gerarRelatorio() {
+  const ins  = STATE.inscritos;
+  const total = ins.length;
+  const pres  = ins.filter(i => i.presente).length;
+  const pctPres = total > 0 ? Math.round((pres/total)*100) : 0;
+  const kg    = ins.reduce((a,i) => a+(i.kg||0), 0) +
+                STATE.alimentos.reduce((a,x) => a+x.kg, 0);
+  const extras = ins.reduce((a,i) => a+(i.numerosAlimento||[]).length+(i.numerosExtras||[]).length, 0);
+
+  // Por setor
+  const setoresStat = SETORES.filter(s => s.id !== 'TODOS').map(s => {
+    const tot  = ins.filter(i => i.perfil === s.id).length;
+    const pr   = ins.filter(i => i.perfil === s.id && i.presente).length;
+    return { ...s, tot, pr };
+  }).filter(s => s.tot > 0);
+
+  // Voluntários
+  const volTotal = VOL.lista.length;
+  const volPorFunc = VOL_FUNCOES.map(f => ({
+    ...f, c: VOL.lista.filter(v => v.funcao === f.id).length
+  })).filter(f => f.c > 0);
+
+  // Sorteios
+  const sorteios = STATE.sorteioHist;
+
+  const agora = new Date().toLocaleString('pt-BR', { timeZone:'America/Sao_Paulo' });
+
+  const html = `
+    <div style="color:var(--roxo);font-weight:700;font-size:15px;margin-bottom:10px">
+      🌸 Mães e Pais Atípicos do Norte do ES<br>
+      <span style="color:var(--txt3);font-size:12px;font-weight:400">30/05/2026 · Centro de Vivência Amélia Boroto</span>
+    </div>
+
+    <div style="border-bottom:1px solid var(--border);margin-bottom:10px;padding-bottom:6px;font-size:11px;color:var(--txt3)">
+      Relatório gerado em ${agora}
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:var(--roxo);font-family:var(--font-mono)">${total}</div>
+        <div style="font-size:11px;color:var(--txt3)">inscritos</div>
+      </div>
+      <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:var(--teal);font-family:var(--font-mono)">${pres}</div>
+        <div style="font-size:11px;color:var(--txt3)">presentes (${pctPres}%)</div>
+      </div>
+      <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:22px;font-weight:700;color:var(--amber);font-family:var(--font-mono)">${kg}</div>
+        <div style="font-size:11px;color:var(--txt3)">kg doados 🥫</div>
+      </div>
+      <div style="background:var(--bg4);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:22px;font-weight:700;font-family:var(--font-mono)">${extras}</div>
+        <div style="font-size:11px;color:var(--txt3)">números extras</div>
+      </div>
+    </div>
+
+    <div style="font-weight:600;font-size:12px;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px">Por setor</div>
+    ${setoresStat.map(s => `
+      <div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)">
+        <span>${s.emoji}</span>
+        <span style="flex:1;font-size:13px">${s.label.replace('\n',' ')}</span>
+        <span style="font-family:var(--font-mono);font-size:12px;color:${s.cor}">${s.pr}/${s.tot}</span>
+      </div>`).join('')}
+
+    ${volTotal > 0 ? `
+    <div style="font-weight:600;font-size:12px;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin:12px 0 6px">
+      Voluntários (${volTotal})
+    </div>
+    ${volPorFunc.map(f => `
+      <div style="display:flex;align-items:center;gap:8px;padding:4px 0">
+        <span>${f.emoji}</span>
+        <span style="flex:1;font-size:13px">${f.label}</span>
+        <span style="font-family:var(--font-mono);font-size:12px;color:var(--roxo)">${f.c}</span>
+      </div>`).join('')}` : ''}
+
+    ${sorteios.length > 0 ? `
+    <div style="font-weight:600;font-size:12px;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;margin:12px 0 6px">
+      Sorteios realizados (${sorteios.length})
+    </div>
+    ${sorteios.map((h,i) => {
+      const s = SETORES.find(s=>s.id===h.setor);
+      return `<div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px">
+        <span>${i===0?'🥇':i===1?'🥈':'🏅'}</span>
+        <span style="flex:1"><strong>${h.numero}</strong> — ${h.nome}</span>
+        <span style="font-size:11px;color:var(--txt3)">${s?.emoji||''} ${h.ts}</span>
+      </div>`;
+    }).join('')}` : ''}
+  `;
+
+  document.getElementById('relatorio-body').innerHTML = html;
+  document.getElementById('relatorio-output').style.display = 'block';
+  toast('📊 Relatório gerado!', 'success');
+}
+
+/* ── P19: Gravar ganhador na aba _Sorteio da planilha ── */
+async function registrarSorteioRemoto(dados) {
+  const url = STATE.appsScriptUrl || localStorage.getItem('gs_url');
+  if (!url || url.includes('COLE_AQUI') || !url.startsWith('http')) return; // silencioso se sem URL
+
+  try {
+    const resp = await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify({
+        acao: 'registrarSorteio',
+        nome:   dados.nome,
+        numero: dados.numero,
+        premio: dados.premio || '—',
+        setor:  dados.setor  || '—',
+        tipo:   dados.tipo   || 'geral',
+      }),
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      console.log('[P19] Sorteio registrado na planilha:', dados.numero);
+    } else {
+      console.warn('[P19] Aviso ao registrar sorteio:', data.erro);
+    }
+  } catch (e) {
+    // Falha silenciosa — o sorteio local já foi registrado
+    console.warn('[P19] Erro ao gravar sorteio na planilha:', e.message);
+  }
+}
+
+/* ── P20: QR Code de divulgação da página de inscrição ── */
+function atualizarQRDivulg() {
+  const input = document.getElementById('qr-divulg-url');
+  const wrap  = document.getElementById('qr-divulg-wrap');
+  const empty = document.getElementById('qr-divulg-empty');
+  const img   = document.getElementById('qr-divulg-img');
+  const label = document.getElementById('qr-divulg-url-label');
+  const hint  = document.getElementById('qr-divulg-hint');
+
+  const url = input.value.trim();
+  if (!url || !url.startsWith('http')) {
+    wrap.style.display  = 'none';
+    empty.style.display = 'block';
+    hint.textContent    = 'Cole a URL do GitHub Pages para gerar o QR Code.';
+    return;
+  }
+
+  // Salvar no localStorage para persistir
+  try { localStorage.setItem('inscricao_url', url); } catch(_) {}
+
+  const encoded = encodeURIComponent(url);
+  const qrUrl   = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encoded}&color=534AB7&bgcolor=FFFFFF&margin=10&format=png`;
+
+  img.src = qrUrl;
+  label.textContent = url;
+  wrap.style.display  = 'block';
+  empty.style.display = 'none';
+  hint.textContent    = '✅ QR Code gerado! Baixe ou compartilhe.';
+  input.style.borderColor = 'var(--teal)';
+}
+
+function baixarQRDivulg() {
+  const url = document.getElementById('qr-divulg-url').value.trim();
+  if (!url) return;
+
+  const encoded = encodeURIComponent(url);
+  const qrUrl   = `https://api.qrserver.com/v1/create-qr-code/?size=600x600&data=${encoded}&color=534AB7&bgcolor=FFFFFF&margin=20&format=png`;
+
+  // Criar link temporário para download
+  const a = document.createElement('a');
+  a.href     = qrUrl;
+  a.download = 'qrcode-inscricao-maespais-nes.png';
+  a.target   = '_blank';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  toast('⬇️ QR Code sendo baixado...', 'success');
+}
+
+function copiarURLInscricao() {
+  const url = document.getElementById('qr-divulg-url').value.trim();
+  if (!url) { toast('⚠️ Nenhuma URL configurada', 'error'); return; }
+  navigator.clipboard.writeText(url).then(() => {
+    toast('✅ Link copiado!', 'success');
+  }).catch(() => {
+    toast('🔗 ' + url);
+  });
+}
+
+function abrirURLInscricao() {
+  const url = document.getElementById('qr-divulg-url').value.trim();
+  if (!url || !url.startsWith('http')) { toast('⚠️ URL inválida', 'error'); return; }
+  window.open(url, '_blank');
+}
+
+function inicializarQRDivulg() {
+  // Recuperar URL salva
+  try {
+    const salva = localStorage.getItem('inscricao_url');
+    if (salva) {
+      document.getElementById('qr-divulg-url').value = salva;
+      atualizarQRDivulg();
+    }
+  } catch(_) {}
+}
+
+/* ── P18: Relatório PDF remoto via Apps Script ── */
+async function gerarRelatorioPDFRemoto(enviarEmail) {
+  const btn    = document.getElementById('btn-gerar-pdf');
+  const status = document.getElementById('pdf-status');
+
+  if (!STATE.appsScriptUrl || STATE.appsScriptUrl.includes('COLE_AQUI') || !STATE.appsScriptUrl.startsWith('http')) {
+    status.style.display = 'block';
+    status.style.background = '#EF9F2718';
+    status.style.border = '1px solid #EF9F2740';
+    status.style.color = '#EF9F27';
+    status.innerHTML = '⚙️ Configure a URL do Apps Script na seção de sincronização acima.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<div style="width:16px;height:16px;border:2px solid #0f0e1740;border-top-color:#0f0e17;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;display:inline-block"></div> Gerando…';
+  status.style.display = 'none';
+
+  try {
+    const resp = await fetch(STATE.appsScriptUrl, {
+      method: 'POST',
+      body: JSON.stringify({
+        acao: 'gerarRelatorio',
+        enviarEmail: enviarEmail !== false,
+      }),
+    });
+    const data = await resp.json();
+    status.style.display = 'block';
+
+    if (data.ok) {
+      const s = data.stats || {};
+      status.style.background = '#5BB8F510';
+      status.style.border = '1px solid #5BB8F540';
+      status.style.color = '#5BB8F5';
+      status.innerHTML =
+        `✅ <strong>Relatório gerado!</strong><br>` +
+        `👥 Presentes: ${s.totalPresentes||0} / ${s.totalInscritos||0} (${s.taxaPresenca||0}%)<br>` +
+        `🌾 Alimentos: ${s.totalKg||0} kg · 🎁 Sorteados: ${s.totalSorteados||0}<br>` +
+        (enviarEmail !== false ? `✉️ Email enviado para maesepaisatipicosdonortees@gmail.com<br>` : '') +
+        (data.docUrl ? `<a href="${data.docUrl}" target="_blank" style="color:#5BB8F5;font-weight:600">📄 Abrir Google Doc ↗</a>` : '') +
+        (data.pdfUrl ? `&nbsp; <a href="${data.pdfUrl}" target="_blank" style="color:#5BB8F5;font-weight:600">📥 PDF ↗</a>` : '');
+    } else {
+      status.style.background = '#E05A3018';
+      status.style.border = '1px solid #E05A3040';
+      status.style.color = '#E05A30';
+      status.innerHTML = '❌ Erro: ' + (data.erro || 'Falha ao gerar relatório.');
+    }
+  } catch (e) {
+    status.style.display = 'block';
+    status.style.background = '#E05A3018';
+    status.style.border = '1px solid #E05A3040';
+    status.style.color = '#E05A30';
+    status.innerHTML = '❌ Erro de conexão. Verifique a URL do Apps Script e tente novamente.';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '📥 Gerar PDF + Enviar Email';
+  }
+}
+
+/* ── Exportar CSV de presenças ── */
+function exportarCSV() {
+  const ins = STATE.inscritos;
+  if (ins.length === 0) { toast('Sem inscritos para exportar', 'error'); return; }
+
+  const header = ['Numero','Nome','Cidade','Perfil','EhMae','FilhoNome','Condicao','Presente','CheckinTS','KG','ExtrasAlimento','ExtrasQuiz'];
+  const rows = ins.map(i => [
+    i.numero, i.nome, i.cidade, i.perfil,
+    i.ehMae ? 'Sim' : 'Não',
+    i.filhoNome || '', i.condicao || '',
+    i.presente ? 'Presente' : 'Ausente',
+    i.checkinTs || '',
+    i.kg || 0,
+    (i.numerosAlimento||[]).join(';'),
+    (i.numerosExtras||[]).join(';'),
+  ]);
+
+  const csvContent = [header, ...rows]
+    .map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `maespais_nes_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('⬇️ CSV baixado!', 'success');
+}
+
+/* ── Inicializar aba Dados ── */
+function initDadosTab() {
+  const savedUrl = localStorage.getItem('gs_url');
+  if (savedUrl) {
+    GS.url = savedUrl;
+    document.getElementById('gs-url').value = savedUrl;
+    logSync('URL restaurada do armazenamento local', 'ok');
+  }
+  if (GS.autoSync) {
+    const toggle = document.getElementById('auto-sync-toggle');
+    const thumb  = document.getElementById('auto-sync-thumb');
+    toggle.style.background = 'var(--teal)';
+    thumb.style.left = '23px';
+    thumb.style.background = '#fff';
+    iniciarAutoSync();
+  }
+}
+
+
+
+/* ═══════════════════════════════════════════════════════
+   VOLUNTÁRIOS
+═══════════════════════════════════════════════════════ */
+const VOL_FUNCOES = [
+  { id:'recepcao',   emoji:'🪪', label:'Recepção',           cor:'var(--roxo)' },
+  { id:'sorteio',    emoji:'🎲', label:'Sorteio',             cor:'var(--amber)' },
+  { id:'alimento',   emoji:'🥫', label:'Alimento',            cor:'var(--teal)' },
+  { id:'palco',      emoji:'🎤', label:'Palco / Eventos',     cor:'#a855f7' },
+  { id:'comunicacao',emoji:'📢', label:'Comunicação',         cor:'#3b82f6' },
+  { id:'primeiros',  emoji:'🚑', label:'Primeiros Socorros',  cor:'var(--red)' },
+];
+
+let VOL = {
+  lista: [],          // [{id, nome, funcao, ts}]
+  funcSelecionada: null,
+};
+
+/* ── Abrir/fechar seção ── */
+function toggleVoluntarios() {
+  const header = document.getElementById('vol-header');
+  const body   = document.getElementById('vol-body');
+  const isOpen = body.classList.contains('open');
+  if (isOpen) {
+    body.classList.remove('open');
+    header.classList.remove('open');
+  } else {
+    body.classList.add('open');
+    header.classList.add('open');
+    renderVoluntarios();
+  }
+}
+
+/* ── Render grade de funções ── */
+function renderVolFuncoes() {
+  const grid = document.getElementById('vol-funcs-grid');
+  grid.innerHTML = VOL_FUNCOES.map(f => {
+    const count = VOL.lista.filter(v => v.funcao === f.id).length;
+    const sel   = VOL.funcSelecionada === f.id ? 'selected' : '';
+    return `
+      <div class="vol-func-card ${sel}" onclick="selecionarFuncao('${f.id}')">
+        ${count > 0 ? `<span class="count">${count}</span>` : ''}
+        <span class="emoji">${f.emoji}</span>
+        <div class="label">${f.label}</div>
+      </div>`;
+  }).join('');
+}
+
+/* ── Selecionar função ── */
+function selecionarFuncao(id) {
+  VOL.funcSelecionada = id;
+  const f = VOL_FUNCOES.find(x => x.id === id);
+  document.getElementById('vol-func-selecionada').innerHTML =
+    `<span style="color:${f.cor}">${f.emoji} ${f.label} selecionada</span>`;
+  renderVolFuncoes();
+}
+
+/* ── Dashboard por área ── */
+function renderVolDashboard() {
+  const dash = document.getElementById('vol-dashboard');
+  if (VOL.lista.length === 0) { dash.innerHTML = ''; return; }
+  dash.innerHTML = VOL_FUNCOES.map(f => {
+    const count = VOL.lista.filter(v => v.funcao === f.id).length;
+    if (count === 0) return '';
+    return `
+      <div class="vol-dash-card">
+        <span class="emoji">${f.emoji}</span>
+        <div class="info">
+          <div class="label">${f.label}</div>
+          <div class="val">${count}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/* ── Lista de voluntários ── */
+function renderVolLista() {
+  const el = document.getElementById('vol-list');
+  if (VOL.lista.length === 0) {
+    el.innerHTML = '<div class="vol-empty">Nenhum voluntário cadastrado ainda.</div>';
+    return;
+  }
+  // Agrupar por função
+  const agrupado = VOL_FUNCOES.map(f => ({
+    ...f,
+    membros: VOL.lista.filter(v => v.funcao === f.id),
+  })).filter(f => f.membros.length > 0);
+
+  el.innerHTML = agrupado.map(f => `
+    <div style="margin-bottom:8px">
+      <div style="font-size:11px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px;padding:4px 0 6px">
+        ${f.emoji} ${f.label} (${f.membros.length})
+      </div>
+      ${f.membros.map(v => `
+        <div class="vol-item">
+          <span class="vol-emoji">${f.emoji}</span>
+          <div class="vol-info">
+            <div class="vol-nome">${v.nome}</div>
+            <div class="vol-func">${f.label} · ${v.turno || 'Dia todo'} · ${v.ts}</div>
+          </div>
+          <div style="display:flex;gap:6px;align-items:center">
+            ${v.sincronizado
+              ? `<span style="font-size:10px;color:var(--teal)" title="Salvo na planilha">☁️</span>`
+              : `<span style="font-size:10px;color:var(--txt3)" title="Não sincronizado">○</span>`
+            }
+            <button class="vol-remove" onclick="removerVoluntario('${v.id}')" title="Remover">✕</button>
+          </div>
+        </div>`).join('')}
+    </div>`).join('');
+}
+
+/* ── Badge total ── */
+function atualizarBadgeVol() {
+  const badge = document.getElementById('vol-total-badge');
+  if (VOL.lista.length > 0) {
+    badge.textContent = VOL.lista.length;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+/* ── Render completo ── */
+function renderVoluntarios() {
+  renderVolFuncoes();
+  renderVolDashboard();
+  renderVolLista();
+  atualizarBadgeVol();
+}
+
+/* ── Cadastrar voluntário ── */
+function cadastrarVoluntario() {
+  const nomeInput  = document.getElementById('vol-nome-input');
+  const turnoInput = document.getElementById('vol-turno-input');
+  const nome  = nomeInput.value.trim();
+  const turno = turnoInput?.value || 'Dia todo';
+  if (!nome) { toast('Digite o nome do voluntário', 'error'); return; }
+  if (!VOL.funcSelecionada) { toast('Selecione uma função primeiro', 'error'); return; }
+
+  const agora = new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+  const vol = {
+    id: 'vol_' + Date.now(),
+    nome,
+    funcao: VOL.funcSelecionada,
+    turno,
+    ts: agora,
+    dispositivo: navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop',
+    sincronizado: false,
+  };
+  VOL.lista.push(vol);
+  salvarVoluntariosLocal();
+  renderVoluntarios();
+
+  const f = VOL_FUNCOES.find(x => x.id === VOL.funcSelecionada);
+  toast(`✅ ${nome} → ${f.emoji} ${f.label}`, 'success');
+  nomeInput.value = '';
+
+  // Mostrar botão de sync se URL configurada
+  if (GS.url && GS.url.includes('script.google.com')) {
+    document.getElementById('btn-sync-vol').style.display = 'inline-flex';
+  }
+}
+
+/* ── Persistência localStorage ── */
+function salvarVoluntariosLocal() {
+  try { localStorage.setItem('vol_lista', JSON.stringify(VOL.lista)); } catch(_) {}
+}
+
+function restaurarVoluntariosLocal() {
+  try {
+    const salvo = JSON.parse(localStorage.getItem('vol_lista') || '[]');
+    if (salvo.length > 0) {
+      VOL.lista = salvo;
+      renderVoluntarios();
+      if (GS.url && GS.url.includes('script.google.com')) {
+        document.getElementById('btn-sync-vol').style.display = 'inline-flex';
+      }
+    }
+  } catch(_) {}
+}
+
+/* ── Sincronizar voluntários com planilha ── */
+async function sincronizarVoluntarios() {
+  const url = GS.url || localStorage.getItem('gs_url');
+  const statusEl = document.getElementById('vol-sync-status');
+  if (!url || !url.includes('script.google.com')) {
+    toast('Configure a URL do Apps Script na aba Dados primeiro', 'error');
+    return;
+  }
+  const naoPendentes = VOL.lista.filter(v => !v.sincronizado);
+  if (naoPendentes.length === 0) {
+    toast('Todos os voluntários já foram sincronizados ✅', 'success');
+    return;
+  }
+
+  statusEl.style.display = 'block';
+  statusEl.style.color = 'var(--amber)';
+  statusEl.textContent = `⏳ Enviando ${naoPendentes.length} voluntário(s)…`;
+
+  let enviados = 0;
+  let erros = 0;
+
+  for (const v of naoPendentes) {
+    try {
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'voluntario', voluntario: v }),
+        mode: 'no-cors',
+      });
+      v.sincronizado = true;
+      enviados++;
+    } catch(_) {
+      erros++;
+    }
+  }
+
+  salvarVoluntariosLocal();
+  renderVoluntarios();
+
+  if (erros === 0) {
+    statusEl.style.color = 'var(--teal)';
+    statusEl.textContent = `✅ ${enviados} voluntário(s) sincronizado(s) com a planilha!`;
+    toast('Voluntários salvos na planilha ✅', 'success');
+  } else {
+    statusEl.style.color = 'var(--red)';
+    statusEl.textContent = `⚠️ ${enviados} ok · ${erros} com erro (sem internet?)`;
+    toast(`${erros} erro(s) ao sincronizar`, 'error');
+  }
+}
+
+/* ── Remover voluntário ── */
+function removerVoluntario(id) {
+  const v = VOL.lista.find(x => x.id === id);
+  if (!v) return;
+  if (!confirm(`Remover "${v.nome}" da equipe?`)) return;
+  VOL.lista = VOL.lista.filter(x => x.id !== id);
+  salvarVoluntariosLocal();
+  renderVoluntarios();
+  toast('Voluntário removido', 'info');
+}
+
+/* ── Inicializar grade de funções (sem abrir) ── */
+renderVolFuncoes();
+restaurarVoluntariosLocal();
+
+/* ═══════════════════════════════════════════════════════
+   DADOS DE DEMONSTRAÇÃO
+═══════════════════════════════════════════════════════ */
+function carregarDemoData() {
+  const demos = [
+    {nome:'Ana Paula Ferreira',telefone:'27999110001',email:'',cidade:'São Mateus',perfil:'SM-AT',ehMae:true,filhoNome:'Lucas Ferreira',condicao:'TEA Nível 2',presente:true,numero:'SM-AT-0001',kg:2,numerosAlimento:['SM-AT-0001-A01','SM-AT-0001-A02'],numerosExtras:['SM-AT-0001-Q01'],quizAcertos:1},
+    {nome:'Carla Mendes Santos',telefone:'27999110002',email:'',cidade:'São Mateus',perfil:'SM-AT',ehMae:true,filhoNome:'Beatriz Mendes',condicao:'TEA Nível 1',presente:true,numero:'SM-AT-0002',kg:0,numerosAlimento:[],numerosExtras:[],quizAcertos:0},
+    {nome:'Fernanda Lima Costa',telefone:'27999110003',email:'',cidade:'Boa Esperança',perfil:'OT-AT',ehMae:true,filhoNome:'Rafael Lima',condicao:'Síndrome de Down',presente:false,numero:'OT-AT-0001',kg:0,numerosAlimento:[],numerosExtras:['OT-AT-0001-Q01','OT-AT-0001-Q02'],quizAcertos:2},
+    {nome:'Dr. Marcos Vieira',telefone:'27999110004',email:'',cidade:'São Mateus',perfil:'PR-SA',ehMae:false,presente:true,numero:'PR-SA-0001',kg:0,numerosAlimento:[],numerosExtras:[],quizAcertos:0},
+    {nome:'Profa. Juliana Pires',telefone:'27999110005',email:'',cidade:'Jaguaré',perfil:'PR-ED',ehMae:false,presente:true,numero:'PR-ED-0001',kg:3,numerosAlimento:['PR-ED-0001-A01','PR-ED-0001-A02','PR-ED-0001-A03'],numerosExtras:[],quizAcertos:0},
+    {nome:'Roberto Correia',telefone:'27999110006',email:'',cidade:'São Mateus',perfil:'FAM',ehMae:false,presente:false,numero:'FAM-0001',kg:0,numerosAlimento:[],numerosExtras:[],quizAcertos:0},
+    {nome:'Secretaria de Saúde',telefone:'27999110007',email:'',cidade:'São Mateus',perfil:'PR-AS',ehMae:false,presente:true,numero:'PR-AS-0001',kg:0,numerosAlimento:[],numerosExtras:[],quizAcertos:0},
+  ];
+  STATE.inscritos.push(...demos);
+}
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════ */
+carregarDemoData();
+renderForm();
+// Restaurar URL salva se existir
+(function(){
+  const savedUrl = localStorage.getItem('gs_url');
+  if (savedUrl) GS.url = savedUrl;
+})();
+
+// P20 — Restaurar URL de inscrição salva para QR Code
+inicializarQRDivulg();
+
+/* ═══════════════════════════════════════════════════════
+   PWA — PRIORIDADE 10
+   Service Worker · Manifest · Offline · Fila de Check-ins
+═══════════════════════════════════════════════════════ */
+
+// ── Configuração PWA ──
+const PWA = {
+  swRegistration: null,
+  installPrompt:  null,
+  isOnline:       navigator.onLine,
+  filaCheckins:   JSON.parse(localStorage.getItem('pwa_fila') || '[]'),
+  cacheNome:      'maespais-v13',
+};
+
+// ── P13: manifest.json real referenciado no <head> — sem blob necessário ──
+// Manifesto lido diretamente de ./manifest.json pelo navegador
+
+// ── P13: Registrar Service Worker externo (sw.js na raiz) ──
+async function registrarServiceWorker() {
+  if (!('serviceWorker' in navigator)) {
+    atualizarStatusPWA();
+    return;
+  }
+
+  try {
+    // sw.js fica na raiz do repositório GitHub Pages
+    PWA.swRegistration = await navigator.serviceWorker.register('./sw.js', { scope: './' });
+    console.log('[PWA] Service Worker registrado via sw.js externo');
+
+    // Escutar por atualizações
+    PWA.swRegistration.addEventListener('updatefound', () => {
+      const newWorker = PWA.swRegistration.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          console.log('[PWA] Nova versão disponível');
+        }
+      });
+    });
+
+    // Cachear a página atual
+    navigator.serviceWorker.ready.then(reg => {
+      if (reg.active) {
+        reg.active.postMessage({ tipo: 'cachear-pagina', url: location.href });
+      }
+    });
+  } catch(err) {
+    console.warn('[PWA] SW falhou:', err.message);
+    // Fallback informativo — não quebra o app
+  }
+  atualizarStatusPWA();
+}
+
+// ── Detectar prompt de instalação ──
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  PWA.installPrompt = e;
+
+  // Mostrar bar de instalação se não foi dispensada
+  if (!localStorage.getItem('pwa_install_dispensado')) {
+    setTimeout(() => {
+      document.getElementById('pwa-install-bar').classList.add('show');
+    }, 3000);
+  }
+
+  // Mostrar linha de instalar no card de status
+  document.getElementById('pwa-install-row').style.display = 'flex';
+  atualizarStatusPWA();
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('pwa-install-bar').classList.remove('show');
+  document.getElementById('pwa-install-row').style.display = 'none';
+  PWA.installPrompt = null;
+  toast('💜 App instalado com sucesso!', 'success');
+  atualizarStatusPWA();
+});
+
+// ── Instalar PWA ──
+async function instalarPWA() {
+  if (!PWA.installPrompt) {
+    toast('Instale manualmente: Menu do navegador → "Adicionar à tela inicial"', 'info');
+    return;
+  }
+  PWA.installPrompt.prompt();
+  const { outcome } = await PWA.installPrompt.userChoice;
+  if (outcome === 'accepted') {
+    PWA.installPrompt = null;
+    document.getElementById('pwa-install-bar').classList.remove('show');
+  }
+}
+
+function dispensarInstall() {
+  document.getElementById('pwa-install-bar').classList.remove('show');
+  localStorage.setItem('pwa_install_dispensado', '1');
+}
+
+// ── Monitor de conectividade ──
+function handleOnline() {
+  PWA.isOnline = true;
+  document.getElementById('offline-banner').classList.remove('show');
+  atualizarStatusPWA();
+  // Tentar enviar fila de check-ins pendentes
+  sincronizarFila();
+  toast('✅ Conexão restaurada — sincronizando…', 'success');
+}
+
+function handleOffline() {
+  PWA.isOnline = false;
+  document.getElementById('offline-banner').classList.add('show');
+  atualizarStatusPWA();
+  toast('⚠️ Sem internet — modo offline ativo', 'warning');
+}
+
+window.addEventListener('online',  handleOnline);
+window.addEventListener('offline', handleOffline);
+
+// ── Fila de check-ins offline ──
+function salvarFilaCheckins() {
+  localStorage.setItem('pwa_fila', JSON.stringify(PWA.filaCheckins));
+}
+
+// Interceptar confirmarPresenca para enfileirar quando offline
+const _confirmarPresencaOriginal = confirmarPresenca;
+confirmarPresenca = async function(numero, silencioso) {
+  const resultado = await _confirmarPresencaOriginal(numero, silencioso);
+
+  // Se há URL configurada e está offline, enfileirar
+  const url = GS.url || localStorage.getItem('gs_url');
+  if (url && !PWA.isOnline && resultado !== false) {
+    // Verificar se já está na fila
+    if (!PWA.filaCheckins.find(c => c.numero === numero)) {
+      PWA.filaCheckins.push({ numero, ts: new Date().toISOString() });
+      salvarFilaCheckins();
+      toast('📋 Check-in salvo — será enviado ao reconectar', 'info');
+    }
+    atualizarStatusPWA();
+  }
+
+  return resultado;
+};
+
+// ── Sincronizar fila quando voltar online ──
+async function sincronizarFila() {
+  if (!PWA.filaCheckins.length) return;
+  const url = GS.url || localStorage.getItem('gs_url');
+  if (!url || !PWA.isOnline) return;
+
+  let enviados = 0;
+  const erros = [];
+
+  for (const item of [...PWA.filaCheckins]) {
+    try {
+      await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'checkin', numero: item.numero }),
+        mode: 'no-cors',
+      });
+      // Remover da fila (no-cors não retorna dados, assumir sucesso)
+      PWA.filaCheckins = PWA.filaCheckins.filter(c => c.numero !== item.numero);
+      enviados++;
+    } catch(err) {
+      erros.push(item.numero);
+    }
+  }
+
+  salvarFilaCheckins();
+  atualizarStatusPWA();
+
+  if (enviados > 0) {
+    toast(`📤 ${enviados} check-in(s) sincronizado(s) com a planilha!`, 'success');
+    logSync(`✅ Fila: ${enviados} check-ins enviados`, 'ok');
+  }
+}
+
+// ── Forçar atualização do cache ──
+async function forcarCacheAgora() {
+  toast('🔄 Atualizando cache…', 'info');
+  if (!('caches' in window)) { toast('Cache não suportado neste navegador', 'error'); return; }
+
+  try {
+    // Cachear recursos estáticos importantes
+    const cache = await caches.open(PWA.cacheNome);
+    const recursos = [
+      'https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap',
+      'https://cdnjs.cloudflare.com/ajax/libs/jsqr/1.4.0/jsQR.min.js',
+    ];
+
+    // Cachear QR codes dos inscritos que existem na memória
+    const qrUrls = STATE.inscritos.slice(0, 50).map(i =>
+      `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(i.numero)}&bgcolor=ffffff&color=1a1828&margin=10`
+    );
+
+    let count = 0;
+    for (const url of [...recursos, ...qrUrls]) {
+      try {
+        const resp = await fetch(url);
+        if (resp && resp.ok) { await cache.put(url, resp); count++; }
+      } catch(_) {}
+    }
+
+    toast(`✅ Cache atualizado! ${count} recursos salvos offline`, 'success');
+    logSync(`Cache: ${count} recursos cacheados`, 'ok');
+    atualizarStatusPWA();
+  } catch(err) {
+    toast('Erro ao cachear: ' + err.message, 'error');
+  }
+}
+
+// ── Atualizar painel de status PWA ──
+async function atualizarStatusPWA() {
+  // Conexão
+  const connBadge = document.getElementById('pwa-conn-badge');
+  const connSub   = document.getElementById('pwa-conn-sub');
+  if (!connBadge) return;
+  if (PWA.isOnline) {
+    connBadge.className = 'pwa-status-badge pwa-ok'; connBadge.textContent = '● Online';
+    connSub.textContent = 'Conectado à internet';
+  } else {
+    connBadge.className = 'pwa-status-badge pwa-warn'; connBadge.textContent = '● Offline';
+    connSub.textContent = 'Sem conexão — dados locais ativos';
+  }
+
+  // Service Worker
+  const swBadge = document.getElementById('pwa-sw-badge');
+  const swSub   = document.getElementById('pwa-sw-sub');
+  if ('serviceWorker' in navigator) {
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (reg) {
+      swBadge.className = 'pwa-status-badge pwa-ok'; swBadge.textContent = '✓ Ativo';
+      swSub.textContent = 'App funciona sem internet';
+    } else {
+      swBadge.className = 'pwa-status-badge pwa-warn'; swBadge.textContent = 'Aguardando';
+      swSub.textContent = 'Registrando…';
+    }
+  } else {
+    swBadge.className = 'pwa-status-badge pwa-no'; swBadge.textContent = '✗ N/D';
+    swSub.textContent = 'Navegador não suporta';
+  }
+
+  // Cache
+  const cacheBadge = document.getElementById('pwa-cache-badge');
+  const cacheSub   = document.getElementById('pwa-cache-sub');
+  if ('caches' in window) {
+    const keys = await caches.keys();
+    if (keys.includes(PWA.cacheNome)) {
+      const cache  = await caches.open(PWA.cacheNome);
+      const cached = await cache.keys();
+      cacheBadge.className = 'pwa-status-badge pwa-ok';
+      cacheBadge.textContent = `${cached.length} itens`;
+      cacheSub.textContent = `${cached.length} arquivos salvos offline`;
+    } else {
+      cacheBadge.className = 'pwa-status-badge pwa-no';
+      cacheBadge.textContent = 'Vazio';
+      cacheSub.textContent = 'Clique em "Atualizar cache"';
+    }
+  } else {
+    cacheBadge.className = 'pwa-status-badge pwa-no'; cacheBadge.textContent = '✗ N/D';
+    cacheSub.textContent = 'Navegador não suporta';
+  }
+
+  // Fila
+  const queueBadge = document.getElementById('pwa-queue-badge');
+  const queueSub   = document.getElementById('pwa-queue-sub');
+  const qtd = PWA.filaCheckins.length;
+  queueBadge.textContent = qtd;
+  if (qtd > 0) {
+    queueBadge.className = 'pwa-status-badge pwa-warn';
+    queueSub.textContent = `${qtd} check-in(s) aguardando envio`;
+  } else {
+    queueBadge.className = 'pwa-status-badge pwa-ok';
+    queueSub.textContent = 'Todos sincronizados';
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   PRIORIDADE 14 — PUSH NOTIFICATIONS (LOCAL)
+   · Permissão + UI amigável
+   · Alertas de inscrição: 1000 / 1150 / 1200
+   · Lembrete D-1 voluntários: 29/05 às 18h
+   · Confirmação de instalação / boas-vindas
+═══════════════════════════════════════════════════════ */
+
+const NOTIF = {
+  // Marcos de inscrição que disparam alerta
+  marcos: [1000, 1150, 1200],
+  // Quais marcos já notificados (persistidos no localStorage)
+  marcosVistos: JSON.parse(localStorage.getItem('notif_marcos') || '[]'),
+  // ID dos timers agendados
+  timers: [],
+  // Chave de preferência
+  KEY: 'notif_ativo',
+};
+
+// ── Inicializa UI de notificações ──
+function initNotificacoes() {
+  const perm = Notification?.permission;
+  if (!('Notification' in window)) {
+    document.getElementById('notif-request-area').innerHTML =
+      '<p style="font-size:13px;color:var(--txt3)">Este navegador não suporta notificações.</p>';
+    return;
+  }
+  if (perm === 'granted') {
+    mostrarNotifAtivo();
+    agendarLembretes();
+  } else if (perm === 'denied') {
+    document.getElementById('notif-blocked').style.display = 'block';
+    document.getElementById('notif-request-area').querySelector('button').style.display = 'none';
+  }
+}
+
+// ── Solicitar permissão ──
+async function solicitarNotificacoes() {
+  if (!('Notification' in window)) { toast('Navegador não suporta notificações', 'error'); return; }
+  const btn = document.getElementById('btn-ativar-notif');
+  btn.textContent = '⏳ Aguardando…';
+  btn.disabled = true;
+
+  try {
+    const perm = await Notification.requestPermission();
+    if (perm === 'granted') {
+      localStorage.setItem(NOTIF.KEY, '1');
+      mostrarNotifAtivo();
+      agendarLembretes();
+      // Notificação de boas-vindas
+      setTimeout(() => enviarNotificacao(
+        '🎉 NES — Notificações ativas!',
+        'Você será avisado sobre marcos de inscrição e lembretes do evento.'
+      ), 600);
+      toast('🔔 Notificações ativadas!', 'success');
+    } else {
+      document.getElementById('notif-blocked').style.display = 'block';
+      btn.textContent = '🔔 Ativar notificações';
+      btn.disabled = false;
+      toast('Permissão negada pelo navegador', 'warning');
+    }
+  } catch(e) {
+    btn.textContent = '🔔 Ativar notificações';
+    btn.disabled = false;
+    toast('Erro ao solicitar permissão', 'error');
+  }
+}
+
+// ── Mostrar área de notificações ativas ──
+function mostrarNotifAtivo() {
+  document.getElementById('notif-request-area').style.display = 'none';
+  document.getElementById('notif-blocked').style.display = 'none';
+  document.getElementById('notif-active-area').style.display = 'block';
+  renderAgendaNotif();
+}
+
+// ── Renderizar lista de alertas agendados ──
+function renderAgendaNotif() {
+  const lista = document.getElementById('notif-agenda-list');
+  if (!lista) return;
+
+  const agora = Date.now();
+  const d1 = new Date('2025-05-29T18:00:00-03:00').getTime(); // D-1: 29/05/2025 18h BRT → ajustar conforme ano
+  // Usar 2026
+  const d1_2026 = new Date('2026-05-29T18:00:00-03:00').getTime();
+  const d1Restante = d1_2026 - agora;
+  const d1Label = d1Restante > 0
+    ? `em ${formatarTempo(d1Restante)}`
+    : '(já passou)';
+
+  const totalAtual = STATE.inscritos.length;
+
+  const items = [
+    ...NOTIF.marcos.map(m => {
+      const visto = NOTIF.marcosVistos.includes(m);
+      const alcancado = totalAtual >= m;
+      return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:16px">${alcancado ? (visto ? '✅' : '🔔') : '⏳'}</span>
+        <span style="flex:1">${m.toLocaleString('pt-BR')} inscrições ${alcancado ? '— <span style="color:var(--teal)">atingido</span>' : ''}</span>
+        ${visto ? '<span style="font-size:11px;color:var(--teal)">Enviado</span>' : '<span style="font-size:11px;color:var(--txt3)">Pendente</span>'}
+      </div>`;
+    }),
+    `<div style="display:flex;align-items:center;gap:8px;padding:6px 0">
+      <span style="font-size:16px">⏰</span>
+      <span style="flex:1">Lembrete D-1 voluntários — 29/05 às 18h</span>
+      <span style="font-size:11px;color:var(--txt3)">${d1Label}</span>
+    </div>`,
+  ];
+
+  lista.innerHTML = items.join('');
+}
+
+function formatarTempo(ms) {
+  const h = Math.floor(ms / 3600000);
+  const d = Math.floor(h / 24);
+  if (d > 1) return `${d} dias`;
+  if (h > 1) return `${h} horas`;
+  return 'menos de 1h';
+}
+
+// ── Enviar notificação local ──
+function enviarNotificacao(titulo, corpo, opts = {}) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  try {
+    const n = new Notification(titulo, {
+      body: corpo,
+      icon: './icons/icon-192.png',
+      badge: './icons/icon-192.png',
+      vibrate: [200, 100, 200],
+      tag: opts.tag || 'nes-' + Date.now(),
+      requireInteraction: opts.requireInteraction || false,
+      ...opts,
+    });
+    n.onclick = function() {
+      window.focus();
+      if (opts.url) window.location.hash = opts.url;
+      n.close();
+    };
+  } catch(e) {
+    console.warn('[NOTIF] Erro:', e);
+  }
+}
+
+// ── Verificar marcos de inscrição ──
+function verificarMarcosInscrição() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  const total = STATE.inscritos.length;
+
+  for (const marco of NOTIF.marcos) {
+    if (total >= marco && !NOTIF.marcosVistos.includes(marco)) {
+      NOTIF.marcosVistos.push(marco);
+      localStorage.setItem('notif_marcos', JSON.stringify(NOTIF.marcosVistos));
+
+      const msg = marco === 1200
+        ? '🚨 Limite atingido! 1.200 inscrições — encerrar inscrições.'
+        : marco === 1150
+        ? '⚠️ Atenção: 1.150 inscrições. Faltam apenas 50 para o limite!'
+        : `🎯 Marco atingido: ${marco.toLocaleString('pt-BR')} inscrições!`;
+
+      enviarNotificacao(
+        `💜 NES — ${marco.toLocaleString('pt-BR')} inscrições!`,
+        msg,
+        { tag: `marco-${marco}`, requireInteraction: marco >= 1150 }
+      );
+
+      toast(`🔔 Marco: ${marco.toLocaleString('pt-BR')} inscrições!`, 'success');
+
+      // Atualizar agenda visual
+      renderAgendaNotif();
+    }
+  }
+}
+
+// ── Agendar lembrete D-1 voluntários ──
+function agendarLembretes() {
+  // Cancelar timers anteriores
+  NOTIF.timers.forEach(t => clearTimeout(t));
+  NOTIF.timers = [];
+
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+  // D-1: 29/05/2026 às 18:00 BRT (UTC-3)
+  const d1 = new Date('2026-05-29T21:00:00Z').getTime(); // 18h BRT = 21h UTC
+  const agora = Date.now();
+  const delta = d1 - agora;
+
+  if (delta > 0) {
+    const t = setTimeout(() => {
+      enviarNotificacao(
+        '⏰ NES — Amanhã é o grande dia!',
+        'Lembre os voluntários: evento CMMPANE/NES amanhã, 30/05/2026 no Centro de Vivência Amélia Boroto. Verifique escalas e materiais! 💜',
+        { tag: 'lembrete-d1', requireInteraction: true, url: '#painel' }
+      );
+      toast('⏰ Lembrete D-1 disparado!', 'info');
+    }, delta);
+    NOTIF.timers.push(t);
+  }
+
+  // Lembrete no dia: 30/05/2026 às 07:00 BRT
+  const dDia = new Date('2026-05-30T10:00:00Z').getTime(); // 07h BRT = 10h UTC
+  const deltaDia = dDia - agora;
+  if (deltaDia > 0) {
+    const t2 = setTimeout(() => {
+      enviarNotificacao(
+        '🎉 Dia do evento! — CMMPANE/NES',
+        'Bom dia! Hoje é o dia do evento. Acesse o Painel para gerenciar check-ins. Boa sorte! 💜',
+        { tag: 'lembrete-dia', requireInteraction: true, url: '#painel' }
+      );
+    }, deltaDia);
+    NOTIF.timers.push(t2);
+  }
+
+  renderAgendaNotif();
+}
+
+// ── Testar notificação ──
+function testarNotificacao() {
+  if (!('Notification' in window) || Notification.permission !== 'granted') {
+    toast('Ative as notificações primeiro', 'warning'); return;
+  }
+  enviarNotificacao(
+    '🧪 Teste — NES',
+    'Notificações funcionando! Você receberá alertas automáticos sobre o evento CMMPANE.',
+    { tag: 'teste-notif' }
+  );
+  toast('🔔 Notificação de teste enviada!', 'success');
+}
+
+// ── Desativar notificações ──
+function desativarNotificacoes() {
+  NOTIF.timers.forEach(t => clearTimeout(t));
+  NOTIF.timers = [];
+  localStorage.removeItem(NOTIF.KEY);
+  document.getElementById('notif-active-area').style.display = 'none';
+  document.getElementById('notif-request-area').style.display = 'block';
+  const btn = document.getElementById('btn-ativar-notif');
+  if (btn) { btn.textContent = '🔔 Ativar notificações'; btn.disabled = false; }
+  toast('Notificações desativadas', 'info');
+}
+
+// ── Hook: verificar marcos ao atualizar painel ──
+const _renderPainelOriginal = renderPainel;
+renderPainel = function() {
+  _renderPainelOriginal();
+  verificarMarcosInscrição();
+};
+
+/* ═══════════════════════════════════════════════════════
+   P16 — FIREBASE CLOUD MESSAGING (FCM)
+   Notificações com app fechado via Firebase
+═══════════════════════════════════════════════════════ */
+const FCM = {
+  app: null,
+  messaging: null,
+  token: null,
+  vapidKey: null,
+  config: null,
+  KEY_CONFIG: 'fcm_config',
+  KEY_VAPID:  'fcm_vapid',
+  KEY_TOKEN:  'fcm_token',
+};
+
+/** Inicializa FCM se já houver config salva */
+function fcmInit() {
+  try {
+    const savedConfig = localStorage.getItem(FCM.KEY_CONFIG);
+    const savedVapid  = localStorage.getItem(FCM.KEY_VAPID);
+    if (!savedConfig || !savedVapid) return; // ainda não configurado
+
+    FCM.config   = JSON.parse(savedConfig);
+    FCM.vapidKey = savedVapid;
+
+    // Só inicializa uma vez
+    if (!FCM.app) {
+      FCM.app = firebase.initializeApp(FCM.config);
+    }
+    if (!FCM.messaging) {
+      FCM.messaging = firebase.messaging(FCM.app);
+    }
+
+    fcmMostrarAtivo();
+    fcmObterToken();
+  } catch(e) {
+    console.warn('[FCM] Init falhou:', e.message);
+  }
+}
+
+/** Salva a configuração e inicia */
+async function fcmSalvarConfig() {
+  const vapidInput  = document.getElementById('fcm-vapid-input');
+  const configInput = document.getElementById('fcm-config-input');
+
+  const vapid     = (vapidInput?.value || '').trim();
+  const configRaw = (configInput?.value || '').trim();
+
+  if (!vapid || vapid.length < 20) {
+    toast('Cole a chave VAPID completa', 'error'); return;
+  }
+  if (!configRaw) {
+    toast('Cole o firebaseConfig em JSON', 'error'); return;
+  }
+
+  let config;
+  try {
+    config = JSON.parse(configRaw);
+    if (!config.apiKey || !config.projectId) throw new Error('JSON inválido');
+  } catch(e) {
+    toast('JSON inválido — verifique o formato', 'error'); return;
+  }
+
+  // Verificar se Firebase SDK carregou
+  if (typeof firebase === 'undefined') {
+    toast('Firebase SDK não carregou. Verifique a conexão.', 'error'); return;
+  }
+
+  // Salvar
+  localStorage.setItem(FCM.KEY_CONFIG, JSON.stringify(config));
+  localStorage.setItem(FCM.KEY_VAPID, vapid);
+  FCM.config   = config;
+  FCM.vapidKey = vapid;
+
+  // Inicializar
+  try {
+    if (!FCM.app) FCM.app = firebase.initializeApp(config);
+    if (!FCM.messaging) FCM.messaging = firebase.messaging(FCM.app);
+
+    fcmMostrarAtivo();
+    toast('🔥 Firebase configurado! Obtendo token…', 'success');
+    await fcmObterToken();
+  } catch(e) {
+    toast('Erro ao inicializar Firebase: ' + e.message, 'error');
+    console.error('[FCM]', e);
+  }
+}
+
+/** Carrega config salva nos campos (para editar) */
+function fcmCarregarConfig() {
+  const savedConfig = localStorage.getItem(FCM.KEY_CONFIG);
+  const savedVapid  = localStorage.getItem(FCM.KEY_VAPID);
+  if (!savedConfig && !savedVapid) {
+    toast('Nenhuma configuração salva ainda', 'info'); return;
+  }
+  const vi = document.getElementById('fcm-vapid-input');
+  const ci = document.getElementById('fcm-config-input');
+  if (vi && savedVapid) vi.value = savedVapid;
+  if (ci && savedConfig) ci.value = JSON.stringify(JSON.parse(savedConfig), null, 2);
+  toast('Configuração carregada — edite e salve', 'info');
+}
+
+/** Mostra a área ativa e esconde o setup */
+function fcmMostrarAtivo() {
+  const setupArea  = document.getElementById('fcm-setup-area');
+  const activeArea = document.getElementById('fcm-active-area');
+  const badge      = document.getElementById('fcm-status-badge');
+  if (setupArea)  setupArea.style.display  = 'none';
+  if (activeArea) activeArea.style.display = 'block';
+  if (badge) {
+    badge.textContent = 'Ativo';
+    badge.className   = 'fcm-badge ok';
+  }
+}
+
+/** Obtém (ou recupera do cache) o token FCM */
+async function fcmObterToken() {
+  if (!FCM.messaging || !FCM.vapidKey) return;
+
+  const subEl = document.getElementById('fcm-sub-status');
+  const tokEl = document.getElementById('fcm-token-display');
+
+  // Verificar permissão de notificação
+  if (Notification.permission === 'denied') {
+    if (subEl) subEl.textContent = 'Permissão negada pelo navegador';
+    if (tokEl) tokEl.textContent = 'Ative as notificações nas configurações do navegador';
+    return;
+  }
+
+  if (Notification.permission !== 'granted') {
+    const perm = await Notification.requestPermission();
+    if (perm !== 'granted') {
+      if (subEl) subEl.textContent = 'Permissão negada';
+      return;
+    }
+  }
+
+  try {
+    if (subEl) subEl.textContent = 'Registrando service worker…';
+
+    const token = await FCM.messaging.getToken({
+      vapidKey: FCM.vapidKey,
+      serviceWorkerRegistration: await navigator.serviceWorker.getRegistration('./firebase-messaging-sw.js')
+        .then(r => r || navigator.serviceWorker.register('./firebase-messaging-sw.js')),
+    });
+
+    if (token) {
+      FCM.token = token;
+      localStorage.setItem(FCM.KEY_TOKEN, token);
+      if (tokEl) tokEl.textContent = token;
+      if (subEl) subEl.textContent = 'Token obtido — notificações ativas';
+      toast('✅ FCM token obtido!', 'success');
+    } else {
+      if (subEl) subEl.textContent = 'Token não gerado — verifique a config';
+    }
+  } catch(e) {
+    console.error('[FCM] getToken:', e);
+    if (subEl) subEl.textContent = 'Erro: ' + (e.message || 'verifique config');
+    if (tokEl) tokEl.textContent = 'Falhou: ' + e.code;
+    // Não bloqueia o app
+  }
+}
+
+/** Handler de mensagem em foreground */
+function fcmConfigureForeground() {
+  if (!FCM.messaging) return;
+  FCM.messaging.onMessage((payload) => {
+    console.log('[FCM] Mensagem recebida:', payload);
+    const { title, body } = payload.notification || {};
+    if (title) {
+      enviarNotificacao(title, body || '', { tag: 'fcm-' + Date.now() });
+      toast('🔥 ' + title, 'success');
+    }
+  });
+}
+
+/** Copia o token para o clipboard */
+function fcmCopiarToken() {
+  const tok = FCM.token || localStorage.getItem(FCM.KEY_TOKEN);
+  if (!tok) { toast('Token não disponível ainda', 'warning'); return; }
+  navigator.clipboard.writeText(tok)
+    .then(() => toast('📋 Token copiado!', 'success'))
+    .catch(() => {
+      // Fallback
+      const ta = document.createElement('textarea');
+      ta.value = tok; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy');
+      ta.remove(); toast('📋 Token copiado!', 'success');
+    });
+}
+
+/** Envia uma notificação de teste pelo FCM */
+async function fcmTestar() {
+  const tok = FCM.token || localStorage.getItem(FCM.KEY_TOKEN);
+  if (!tok) { toast('Obtenha o token FCM primeiro', 'warning'); return; }
+
+  // Testar apenas com Notification API local (o envio real via servidor está no guia)
+  enviarNotificacao(
+    '🔥 Teste FCM — NES',
+    'Push notification via Firebase funcionando! App pode estar fechado.',
+    { tag: 'fcm-teste-' + Date.now() }
+  );
+  toast('🧪 Notificação de teste enviada (local).\nPara teste real, envie pelo Firebase Console usando o token copiado.', 'info');
+}
+
+/** Reseta toda a configuração Firebase */
+function fcmResetarConfig() {
+  if (!confirm('Resetar configuração do Firebase? Você precisará configurar novamente.')) return;
+  localStorage.removeItem(FCM.KEY_CONFIG);
+  localStorage.removeItem(FCM.KEY_VAPID);
+  localStorage.removeItem(FCM.KEY_TOKEN);
+  FCM.app = null; FCM.messaging = null; FCM.token = null;
+
+  const setupArea  = document.getElementById('fcm-setup-area');
+  const activeArea = document.getElementById('fcm-active-area');
+  const badge      = document.getElementById('fcm-status-badge');
+  if (setupArea)  setupArea.style.display  = 'block';
+  if (activeArea) activeArea.style.display = 'none';
+  if (badge) { badge.textContent = 'Inativo'; badge.className = 'fcm-badge off'; }
+
+  const vi = document.getElementById('fcm-vapid-input');
+  const ci = document.getElementById('fcm-config-input');
+  if (vi) vi.value = '';
+  if (ci) ci.value = '';
+
+  toast('🗑️ Configuração Firebase resetada', 'info');
+}
+
+/** Atualiza UI do card FCM na aba Dados */
+function fcmAtualizarUI() {
+  const savedConfig = localStorage.getItem(FCM.KEY_CONFIG);
+  const savedVapid  = localStorage.getItem(FCM.KEY_VAPID);
+  const savedToken  = localStorage.getItem(FCM.KEY_TOKEN);
+
+  if (savedConfig && savedVapid) {
+    fcmMostrarAtivo();
+    const subEl = document.getElementById('fcm-sub-status');
+    const tokEl = document.getElementById('fcm-token-display');
+    if (subEl) subEl.textContent = savedToken ? 'Token ativo — notificações habilitadas' : 'Config salva, token pendente';
+    if (tokEl) tokEl.textContent = savedToken || 'Token não obtido ainda — reabra a aba Dados';
+    FCM.token = savedToken;
+  }
+}
+
+// ── Init PWA ──
+(async function initPWA() {
+  // Mostrar banner offline se já começa sem internet
+  if (!navigator.onLine) handleOffline();
+
+  // Registrar Service Worker
+  await registrarServiceWorker();
+
+  // Atualizar status após 1s (dar tempo ao SW)
+  setTimeout(atualizarStatusPWA, 1200);
+
+  // Atualizar status quando a aba Dados for aberta
+  const _initDadosOriginal = initDadosTab;
+  initDadosTab = function() {
+    _initDadosOriginal();
+    atualizarStatusPWA();
+    initNotificacoes();
+    fcmAtualizarUI();
+    // Inicializar FCM se já configurado
+    if (localStorage.getItem('fcm_config') && localStorage.getItem('fcm_vapid')) {
+      fcmInit();
+      setTimeout(fcmConfigureForeground, 1500);
+    }
+  };
+
+  // Verificar fila pendente ao iniciar
+  if (PWA.filaCheckins.length > 0 && navigator.onLine) {
+    setTimeout(sincronizarFila, 2000);
+  }
+
+  // Init notificações após 500ms (dar tempo ao DOM)
+  setTimeout(initNotificacoes, 500);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#534AB7">
+<meta name="description" content="Inscrição gratuita — Mães e Pais Atípicos do Norte do ES · 30/05/2026">
+<meta property="og:title" content="Inscrição — Mães e Pais Atípicos NES">
+<meta property="og:description" content="Evento gratuito · 30 de maio de 2026 · São Mateus - ES. Inscreva-se!">
+<meta property="og:image" content="./icons/icon-512.png">
+<title>Inscrição — Mães e Pais Atípicos NES</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ─── RESET & TOKENS ─────────────────────────────────── */
+:root {
+  --roxo:      #534AB7;
+  --roxo-lt:   #6b63cc;
+  --roxo-dk:   #3f3893;
+  --roxo-bg:   #EEEDFE18;
+  --teal:      #1D9E75;
+  --teal-bg:   #1D9E7518;
+  --amber:     #EF9F27;
+  --amber-bg:  #EF9F2718;
+  --red:       #e05252;
+  --red-bg:    #e0525218;
+  --azul:      #5BB8F5;
+  --azul-bg:   #5BB8F518;
+
+  --bg:        #0f0e17;
+  --bg2:       #1a1828;
+  --bg3:       #252340;
+  --card:      #1e1c30;
+  --card2:     #23213a;
+
+  --txt:       #f0eeff;
+  --txt2:      #b8b4d8;
+  --txt3:      #7a7698;
+  --border:    #3d3a5c;
+  --border2:   #2d2b48;
+
+  --font:      'DM Sans', system-ui, sans-serif;
+  --mono:      'DM Mono', monospace;
+
+  --r-sm:      8px;
+  --r-md:      12px;
+  --r-lg:      16px;
+  --r-xl:      20px;
+  --r-full:    999px;
+
+  --shadow:    0 4px 24px #00000040;
+  --shadow-sm: 0 2px 8px #00000030;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--txt);
+  font-family: var(--font);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  /* subtle grain texture */
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% -10%, #534AB720 0%, transparent 60%);
+}
+
+/* ─── TOPO HERO ──────────────────────────────────────── */
+.hero {
+  text-align: center;
+  padding: 36px 24px 0;
+  position: relative;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, #534AB730 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--roxo-bg);
+  border: 1px solid #534AB740;
+  border-radius: var(--r-full);
+  padding: 5px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #a8a0f0;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.hero-emoji {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 10px;
+  display: block;
+  filter: drop-shadow(0 4px 12px #534AB760);
+}
+.hero h1 {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 6px;
+  letter-spacing: -.3px;
+}
+.hero h1 span { color: #a8a0f0; }
+.hero-sub {
+  font-size: 13px;
+  color: var(--txt3);
+  line-height: 1.6;
+}
+.hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 18px auto 0;
+  max-width: 320px;
+}
+.hero-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--txt2);
+}
+.hero-info-row .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--roxo);
+  flex-shrink: 0;
+}
+
+/* ─── PROGRESS BAR ───────────────────────────────────── */
+.progress-wrap {
+  padding: 24px 20px 0;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.progress-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+.progress-line-bg {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  height: 2px;
+  background: var(--border2);
+  z-index: 0;
+}
+.progress-line-fill {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  height: 2px;
+  background: var(--roxo);
+  z-index: 1;
+  transition: width .4s cubic-bezier(.4,0,.2,1);
+}
+.p-step {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+  z-index: 2;
+}
+.p-step-circle {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  transition: all .3s ease;
+  border: 2px solid var(--border);
+  background: var(--bg2);
+  color: var(--txt3);
+}
+.p-step.active .p-step-circle {
+  background: var(--roxo);
+  border-color: var(--roxo);
+  color: #fff;
+  box-shadow: 0 0 0 4px #534AB730;
+}
+.p-step.done .p-step-circle {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+.p-step-label {
+  font-size: 10px;
+  color: var(--txt3);
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+.p-step.active .p-step-label { color: var(--txt2); }
+.p-step.done .p-step-label { color: var(--teal); }
+
+/* ─── FORM WRAPPER ───────────────────────────────────── */
+.form-wrap {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+/* ─── ETAPA CARD ─────────────────────────────────────── */
+.etapa {
+  display: none;
+  animation: fadeUp .3s ease forwards;
+}
+.etapa.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.etapa-header {
+  margin-bottom: 20px;
+}
+.etapa-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--roxo);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.etapa-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--txt);
+  line-height: 1.3;
+}
+.etapa-desc {
+  font-size: 13px;
+  color: var(--txt3);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+/* ─── CAMPOS ─────────────────────────────────────────── */
+.field {
+  margin-bottom: 14px;
+}
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--txt2);
+  margin-bottom: 6px;
+  letter-spacing: .2px;
+}
+.field label .req { color: var(--amber); margin-left: 2px; }
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--txt);
+  font-family: var(--font);
+  font-size: 15px;
+  padding: 13px 14px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.field input::placeholder,
+.field textarea::placeholder { color: var(--txt3); }
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--roxo);
+  box-shadow: 0 0 0 3px #534AB730;
+}
+.field input.error,
+.field select.error { border-color: var(--red); }
+
+.field select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7698' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 40px;
+  cursor: pointer;
+}
+.field select option { background: var(--card); }
+
+.field-error {
+  font-size: 11px;
+  color: var(--red);
+  margin-top: 5px;
+  display: none;
+}
+.field-error.show { display: block; }
+
+.field-hint {
+  font-size: 11px;
+  color: var(--txt3);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+
+/* campo com ícone */
+.field-icon-wrap {
+  position: relative;
+}
+.field-icon-wrap input { padding-left: 40px; }
+.field-icon {
+  position: absolute;
+  left: 13px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 15px;
+  pointer-events: none;
+}
+
+/* row de dois campos */
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* ─── PERFIL CARDS ───────────────────────────────────── */
+.perfil-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.perfil-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 12px;
+  cursor: pointer;
+  transition: all .2s ease;
+  text-align: center;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+.perfil-card:active { transform: scale(.97); }
+.perfil-card.selected {
+  border-color: var(--roxo);
+  background: var(--roxo-bg);
+}
+.perfil-card .perfil-icon {
+  font-size: 26px;
+  margin-bottom: 6px;
+  display: block;
+}
+.perfil-card .perfil-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--txt2);
+  line-height: 1.3;
+}
+.perfil-card .perfil-code {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--txt3);
+  margin-top: 3px;
+}
+.perfil-card.selected .perfil-label { color: var(--txt); }
+.perfil-card.selected .perfil-code { color: #a8a0f0; }
+.perfil-card .check-mark {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--roxo);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}
+.perfil-card.selected .check-mark { display: flex; }
+
+/* cidade toggle mãe/pai */
+.cidade-toggle {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  display: flex;
+  margin-bottom: 14px;
+}
+.cidade-toggle button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--txt3);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 11px 8px;
+  cursor: pointer;
+  transition: all .2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.cidade-toggle button.active {
+  background: var(--roxo);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* ─── QUIZ ───────────────────────────────────────────── */
+.quiz-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 18px;
+  margin-bottom: 14px;
+}
+.quiz-num {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--roxo);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.quiz-pergunta {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--txt);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.quiz-opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.quiz-opcao {
+  background: var(--bg2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 11px 14px;
+  font-size: 13px;
+  color: var(--txt2);
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  -webkit-tap-highlight-color: transparent;
+}
+.quiz-opcao:active { transform: scale(.98); }
+.quiz-opcao .opcao-dot {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+  transition: all .2s;
+}
+.quiz-opcao.selected {
+  border-color: var(--roxo);
+  background: var(--roxo-bg);
+  color: var(--txt);
+}
+.quiz-opcao.selected .opcao-dot {
+  background: var(--roxo);
+  border-color: var(--roxo);
+}
+.quiz-opcao.certa {
+  border-color: var(--teal);
+  background: var(--teal-bg);
+  color: var(--txt);
+}
+.quiz-opcao.certa .opcao-dot {
+  background: var(--teal);
+  border-color: var(--teal);
+}
+.quiz-opcao.errada {
+  border-color: var(--red);
+  background: var(--red-bg);
+  color: var(--txt3);
+}
+.quiz-feedback {
+  font-size: 12px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: var(--r-sm);
+  display: none;
+}
+.quiz-feedback.show { display: block; }
+.quiz-feedback.acerto {
+  background: var(--teal-bg);
+  color: var(--teal);
+  border: 1px solid #1D9E7540;
+}
+.quiz-feedback.erro {
+  background: var(--red-bg);
+  color: var(--red);
+  border: 1px solid #e0525240;
+}
+
+.quiz-score-bar {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.quiz-score-icon { font-size: 22px; }
+.quiz-score-text { font-size: 13px; color: var(--txt2); line-height: 1.4; }
+.quiz-score-text strong { color: var(--amber); }
+
+/* ─── TERMOS ─────────────────────────────────────────── */
+.termo-item {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.termo-item input[type="checkbox"] {
+  width: 20px; height: 20px;
+  accent-color: var(--roxo);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.termo-item label {
+  font-size: 13px;
+  color: var(--txt2);
+  line-height: 1.6;
+  cursor: pointer;
+}
+.termo-item label strong { color: var(--txt); }
+
+/* ─── INFO BOX ───────────────────────────────────────── */
+.info-box {
+  background: var(--amber-bg);
+  border: 1px solid #EF9F2740;
+  border-radius: var(--r-md);
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: var(--amber);
+  line-height: 1.6;
+  display: flex;
+  gap: 10px;
+}
+.info-box.teal {
+  background: var(--teal-bg);
+  border-color: #1D9E7540;
+  color: var(--teal);
+}
+.info-box.roxo {
+  background: var(--roxo-bg);
+  border-color: #534AB740;
+  color: #a8a0f0;
+}
+.info-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+
+/* ─── FILHO TOGGLE ───────────────────────────────────── */
+.toggle-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 14px;
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+.toggle-label { font-size: 13px; color: var(--txt2); line-height: 1.4; }
+.toggle-label strong { display: block; color: var(--txt); font-size: 14px; margin-bottom: 2px; }
+
+.toggle-switch {
+  width: 44px; height: 24px;
+  border-radius: 12px;
+  background: var(--border);
+  position: relative;
+  flex-shrink: 0;
+  transition: background .2s;
+}
+.toggle-switch::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform .2s;
+}
+.toggle-wrap.on .toggle-switch { background: var(--roxo); }
+.toggle-wrap.on .toggle-switch::after { transform: translateX(20px); }
+
+.filho-fields { display: none; }
+.filho-fields.show { display: block; }
+
+/* ─── BOTÕES ─────────────────────────────────────────── */
+.btn-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+.btn {
+  flex: 1;
+  padding: 15px 20px;
+  border-radius: var(--r-lg);
+  border: none;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(.97); }
+.btn-primary {
+  background: var(--roxo);
+  color: #fff;
+  box-shadow: 0 4px 16px #534AB740;
+}
+.btn-primary:hover { background: var(--roxo-lt); }
+.btn-primary:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+}
+.btn-secondary {
+  background: var(--card);
+  color: var(--txt2);
+  border: 1px solid var(--border);
+  flex: none;
+  width: 52px;
+  padding: 0;
+  font-size: 18px;
+}
+.btn-secondary:hover { background: var(--bg3); }
+
+/* loading spinner */
+.btn-spinner {
+  width: 18px; height: 18px;
+  border: 2px solid #ffffff40;
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── TELA CONFIRMAÇÃO ───────────────────────────────── */
+#tela-confirmacao {
+  display: none;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+  text-align: center;
+  animation: fadeUp .4s ease;
+}
+#tela-confirmacao.show { display: block; }
+
+.confirm-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  display: block;
+  filter: drop-shadow(0 8px 24px #1D9E7540);
+  animation: pop .5s cubic-bezier(.34,1.56,.64,1) .1s both;
+}
+@keyframes pop {
+  from { transform: scale(.5); opacity: 0; }
+  to   { transform: scale(1);  opacity: 1; }
+}
+
+.confirm-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--txt);
+  margin-bottom: 6px;
+}
+.confirm-sub {
+  font-size: 14px;
+  color: var(--txt3);
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+.numero-card {
+  background: var(--card);
+  border: 2px solid var(--azul);
+  border-radius: var(--r-xl);
+  padding: 24px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.numero-card::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #5BB8F530, transparent 70%);
+}
+.numero-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--txt3);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.numero-valor {
+  font-family: var(--mono);
+  font-size: 32px;
+  font-weight: 500;
+  color: var(--azul);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+.numero-nome {
+  font-size: 14px;
+  color: var(--txt2);
+  margin-top: 6px;
+}
+
+.extras-lista {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.extras-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--txt3);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  margin-bottom: 10px;
+}
+.extras-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+}
+.extra-tag {
+  font-family: var(--mono);
+  font-size: 12px;
+  background: var(--azul-bg);
+  border: 1px solid #5BB8F540;
+  color: var(--azul);
+  padding: 4px 10px;
+  border-radius: var(--r-full);
+}
+
+.confirm-info-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.confirm-info-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 12px;
+}
+.confirm-info-icon { font-size: 18px; margin-bottom: 4px; }
+.confirm-info-label {
+  font-size: 10px;
+  color: var(--txt3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 3px;
+}
+.confirm-info-val {
+  font-size: 12px;
+  color: var(--txt2);
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+.btn-share-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.btn-share {
+  flex: 1;
+  padding: 13px 16px;
+  border-radius: var(--r-md);
+  border: none;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  -webkit-tap-highlight-color: transparent;
+  transition: all .2s;
+}
+.btn-share:active { transform: scale(.97); }
+.btn-wpp  { background: #25D366; color: #fff; }
+.btn-wpp:hover  { background: #1fba58; }
+.btn-copy { background: var(--card); border: 1px solid var(--border); color: var(--txt2); }
+.btn-copy:hover { background: var(--bg3); }
+
+.confirm-footer {
+  font-size: 12px;
+  color: var(--txt3);
+  line-height: 1.7;
+  padding: 0 8px;
+}
+.confirm-footer a {
+  color: var(--azul);
+  text-decoration: none;
+}
+
+/* ─── TELA ERRO ──────────────────────────────────────── */
+#tela-erro {
+  display: none;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 40px 16px;
+  text-align: center;
+}
+#tela-erro.show { display: block; }
+
+/* ─── LOADER OVERLAY ─────────────────────────────────── */
+#loader {
+  position: fixed;
+  inset: 0;
+  background: #0f0e17e8;
+  z-index: 100;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+#loader.show { display: flex; }
+.loader-ring {
+  width: 52px; height: 52px;
+  border: 3px solid var(--border);
+  border-top-color: var(--roxo);
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+.loader-text {
+  font-size: 14px;
+  color: var(--txt2);
+}
+
+/* ─── TOAST ──────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-full);
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--txt);
+  z-index: 200;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ─── FOOTER ─────────────────────────────────────────── */
+.page-footer {
+  text-align: center;
+  padding: 0 16px 32px;
+  font-size: 11px;
+  color: var(--txt3);
+  line-height: 1.8;
+}
+.page-footer a { color: #a8a0f0; text-decoration: none; }
+
+/* ─── UTILIDADES ─────────────────────────────────────── */
+.hidden { display: none !important; }
+.mt8  { margin-top: 8px; }
+.mt14 { margin-top: 14px; }
+.divider {
+  height: 1px;
+  background: var(--border2);
+  margin: 18px 0;
+}
+
+/* ─── VAGAS COUNTER (P22) ────────────────────────────── */
+.vagas-wrap {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px 20px 0;
+}
+.vagas-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 16px;
+  position: relative;
+  overflow: hidden;
+}
+.vagas-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--roxo), var(--azul));
+}
+.vagas-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.vagas-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--txt3);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.vagas-label .dot-live {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--teal);
+  animation: pulse-live 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse-live {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: .4; transform: scale(.7); }
+}
+.vagas-nums {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--txt2);
+}
+.vagas-nums strong { color: var(--txt); }
+.vagas-bar-bg {
+  height: 8px;
+  background: var(--bg2);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+.vagas-bar-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--roxo), var(--azul));
+  transition: width 1s cubic-bezier(.4,0,.2,1);
+  min-width: 4px;
+}
+.vagas-bar-fill.quase {
+  background: linear-gradient(90deg, var(--amber), #e07b1a);
+}
+.vagas-bar-fill.critico {
+  background: linear-gradient(90deg, var(--red), #c0392b);
+}
+.vagas-restantes {
+  font-size: 12px;
+  color: var(--txt3);
+  text-align: right;
+}
+.vagas-restantes strong { color: var(--amber); }
+.vagas-restantes.critico strong { color: var(--red); }
+
+/* ─── TELA ESGOTAMENTO (P24) ─────────────────────────── */
+#tela-esgotamento {
+  display: none;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+  text-align: center;
+}
+#tela-esgotamento.show { display: block; }
+.esg-icon {
+  font-size: 72px;
+  display: block;
+  margin-bottom: 20px;
+  animation: pop .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+.esg-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--txt);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.esg-sub {
+  font-size: 14px;
+  color: var(--txt3);
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+.esg-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  padding: 24px 20px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+.esg-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--txt2);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.espera-field { margin-bottom: 12px; }
+.espera-field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--txt3);
+  margin-bottom: 6px;
+  letter-spacing: .2px;
+  text-transform: uppercase;
+}
+.espera-field input {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  color: var(--txt);
+  font-family: var(--font);
+  font-size: 15px;
+  padding: 12px 14px;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  -webkit-appearance: none;
+}
+.espera-field input:focus {
+  border-color: var(--roxo);
+  box-shadow: 0 0 0 3px #534AB730;
+}
+.espera-field input.error { border-color: var(--red); }
+.espera-error {
+  font-size: 11px;
+  color: var(--red);
+  margin-top: 5px;
+  display: none;
+}
+.btn-espera {
+  width: 100%;
+  padding: 15px;
+  border-radius: var(--r-lg);
+  border: none;
+  font-family: var(--font);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--roxo);
+  color: #fff;
+  box-shadow: 0 4px 16px #534AB740;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-espera:active { transform: scale(.97); }
+.btn-espera:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+.esg-footer {
+  font-size: 12px;
+  color: var(--txt3);
+  line-height: 1.8;
+}
+.esg-footer a { color: #a8a0f0; text-decoration: none; }
+.espera-sucesso { display: none; text-align: center; padding: 20px 0 0; }
+.espera-sucesso.show { display: block; }
+.espera-sucesso-icon { font-size: 40px; margin-bottom: 10px; display: block; }
+.espera-sucesso-txt { font-size: 14px; color: var(--teal); font-weight: 600; }
+.espera-sucesso-sub { font-size: 12px; color: var(--txt3); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-ring"></div>
+  <div class="loader-text">Enviando inscrição…</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- HERO                                   -->
+<!-- ══════════════════════════════════════ -->
+<div class="hero">
+  <div class="hero-badge">🎉 Inscrição Gratuita</div>
+  <span class="hero-emoji">💜</span>
+  <h1>Mães e Pais<br><span>Atípicos do Norte do ES</span></h1>
+  <p class="hero-sub">CMMPANE/NES · Encontro Anual 2026</p>
+  <div class="hero-info">
+    <div class="hero-info-row"><span class="dot"></span> 30 de maio de 2026 · Sábado</div>
+    <div class="hero-info-row"><span class="dot"></span> Centro de Vivência Amélia Boroto · São Mateus</div>
+    <div class="hero-info-row"><span class="dot"></span> Entrada gratuita · Vagas limitadas</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- CONTADOR DE VAGAS AO VIVO (P22)       -->
+<!-- ══════════════════════════════════════ -->
+<div class="vagas-wrap" id="vagas-wrap">
+  <div class="vagas-card">
+    <div class="vagas-top">
+      <div class="vagas-label">
+        <span class="dot-live"></span>
+        Vagas disponíveis · ao vivo
+      </div>
+      <div class="vagas-nums"><strong id="vg-inscritos">—</strong> / 1.200</div>
+    </div>
+    <div class="vagas-bar-bg">
+      <div class="vagas-bar-fill" id="vg-barra" style="width:0%"></div>
+    </div>
+    <div class="vagas-restantes" id="vg-restantes">Carregando…</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- PROGRESS                              -->
+<!-- ══════════════════════════════════════ -->
+<div class="progress-wrap" id="progress-wrap">
+  <div class="progress-steps">
+    <div class="progress-line-bg"></div>
+    <div class="progress-line-fill" id="progress-fill"></div>
+    <div class="p-step active" id="ps1">
+      <div class="p-step-circle" id="pc1">1</div>
+      <div class="p-step-label">Dados</div>
+    </div>
+    <div class="p-step" id="ps2">
+      <div class="p-step-circle" id="pc2">2</div>
+      <div class="p-step-label">Perfil</div>
+    </div>
+    <div class="p-step" id="ps3">
+      <div class="p-step-circle" id="pc3">3</div>
+      <div class="p-step-label">Filho</div>
+    </div>
+    <div class="p-step" id="ps4">
+      <div class="p-step-circle" id="pc4">4</div>
+      <div class="p-step-label">Quiz</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- FORMULÁRIO                            -->
+<!-- ══════════════════════════════════════ -->
+<div class="form-wrap" id="form-wrap">
+
+  <!-- ─── ETAPA 1: DADOS PESSOAIS ─── -->
+  <div class="etapa active" id="etapa1">
+    <div class="etapa-header">
+      <div class="etapa-num">Etapa 1 de 4</div>
+      <div class="etapa-title">Seus dados pessoais</div>
+      <div class="etapa-desc">Informe seus dados para receber a confirmação por WhatsApp.</div>
+    </div>
+
+    <div class="field">
+      <label>Nome completo <span class="req">*</span></label>
+      <div class="field-icon-wrap">
+        <span class="field-icon">👤</span>
+        <input type="text" id="f-nome" placeholder="Seu nome completo" autocomplete="name" inputmode="text">
+      </div>
+      <div class="field-error" id="err-nome">Por favor, informe seu nome completo.</div>
+    </div>
+
+    <div class="field">
+      <label>WhatsApp <span class="req">*</span></label>
+      <div class="field-icon-wrap">
+        <span class="field-icon">📱</span>
+        <input type="tel" id="f-telefone" placeholder="(27) 99999-9999" autocomplete="tel" inputmode="tel" maxlength="15">
+      </div>
+      <div class="field-error" id="err-telefone">Informe um número de WhatsApp válido.</div>
+      <div class="field-hint">📍 Apenas números do Espírito Santo (DDD 27 ou 28).</div>
+    </div>
+
+    <div class="field">
+      <label>E-mail <span class="req">*</span></label>
+      <div class="field-icon-wrap">
+        <span class="field-icon">✉️</span>
+        <input type="email" id="f-email" placeholder="seu@email.com" autocomplete="email" inputmode="email">
+      </div>
+      <div class="field-error" id="err-email">Informe um e-mail válido.</div>
+    </div>
+
+    <div class="field">
+      <label>Cidade <span class="req">*</span></label>
+      <div class="field-icon-wrap">
+        <span class="field-icon">📍</span>
+        <input type="text" id="f-cidade" placeholder="Ex: São Mateus" autocomplete="address-level2" inputmode="text">
+      </div>
+      <div class="field-error" id="err-cidade">Informe sua cidade.</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="irParaEtapa(2)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ─── ETAPA 2: PERFIL ─── -->
+  <div class="etapa" id="etapa2">
+    <div class="etapa-header">
+      <div class="etapa-num">Etapa 2 de 4</div>
+      <div class="etapa-title">Qual é o seu perfil?</div>
+      <div class="etapa-desc">Selecione a opção que melhor descreve sua participação no evento.</div>
+    </div>
+
+    <!-- Toggle mãe/pai de SM ou outra cidade -->
+    <div id="perfil-mae-wrap" class="hidden">
+      <div class="info-box roxo">
+        <span class="info-icon">💡</span>
+        <span>Mãe ou pai de São Mateus tem setor especial no sorteio!</span>
+      </div>
+      <div class="cidade-toggle" id="cidade-toggle">
+        <button class="active" onclick="setCidadePerfil('sm', this)">📍 São Mateus</button>
+        <button onclick="setCidadePerfil('outra', this)">🗺️ Outra cidade</button>
+      </div>
+    </div>
+
+    <div class="perfil-grid" id="perfil-grid">
+      <div class="perfil-card" onclick="selecionarPerfil(this, 'mae')" data-perfil="mae">
+        <span class="check-mark">✓</span>
+        <span class="perfil-icon">💜</span>
+        <div class="perfil-label">Mãe atípica</div>
+        <div class="perfil-code">SM-AT / OT-AT</div>
+      </div>
+      <div class="perfil-card" onclick="selecionarPerfil(this, 'pai')" data-perfil="pai">
+        <span class="check-mark">✓</span>
+        <span class="perfil-icon">💙</span>
+        <div class="perfil-label">Pai atípico</div>
+        <div class="perfil-code">SM-AT / OT-AT</div>
+      </div>
+      <div class="perfil-card" onclick="selecionarPerfil(this, 'prof_saude')" data-perfil="prof_saude">
+        <span class="check-mark">✓</span>
+        <span class="perfil-icon">⚕️</span>
+        <div class="perfil-label">Profissional de saúde</div>
+        <div class="perfil-code">PR-SA</div>
+      </div>
+      <div class="perfil-card" onclick="selecionarPerfil(this, 'prof_educ')" data-perfil="prof_educ">
+        <span class="check-mark">✓</span>
+        <span class="perfil-icon">🎓</span>
+        <div class="perfil-label">Profissional de educação</div>
+        <div class="perfil-code">PR-ED</div>
+      </div>
+      <div class="perfil-card" onclick="selecionarPerfil(this, 'prof_assist')" data-perfil="prof_assist">
+        <span class="check-mark">✓</span>
+        <span class="perfil-icon">🤝</span>
+        <div class="perfil-label">Assistência social</div>
+        <div class="perfil-code">PR-AS</div>
+      </div>
+      <div class="perfil-card" onclick="selecionarPerfil(this, 'familiar')" data-perfil="familiar">
+        <span class="check-mark">✓</span>
+        <span class="perfil-icon">👨‍👩‍👧</span>
+        <div class="perfil-label">Familiar / apoiador</div>
+        <div class="perfil-code">FAM</div>
+      </div>
+      <div class="perfil-card" onclick="selecionarPerfil(this, 'outro')" data-perfil="outro" style="grid-column:1/-1">
+        <span class="check-mark">✓</span>
+        <span class="perfil-icon">🌟</span>
+        <div class="perfil-label">Outro / não identificado</div>
+        <div class="perfil-code">OUT</div>
+      </div>
+    </div>
+    <div class="field-error show" id="err-perfil" style="margin-bottom:14px;display:none">Selecione um perfil para continuar.</div>
+
+    <div class="info-box">
+      <span class="info-icon">🎁</span>
+      <span>Mães e pais atípicos participam de um <strong>sorteio exclusivo</strong> além do sorteio geral!</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="irParaEtapa(1)">←</button>
+      <button class="btn btn-primary" onclick="irParaEtapa(3)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ─── ETAPA 3: FILHO ─── -->
+  <div class="etapa" id="etapa3">
+    <div class="etapa-header">
+      <div class="etapa-num">Etapa 3 de 4</div>
+      <div class="etapa-title">Dados do filho</div>
+      <div class="etapa-desc">Opcional. Preencha se você é mãe ou pai de pessoa atípica.</div>
+    </div>
+
+    <div class="toggle-wrap" id="filho-toggle" onclick="toggleFilho()">
+      <div class="toggle-label">
+        <strong>Tem filho atípico?</strong>
+        Preencher dados do filho
+      </div>
+      <div class="toggle-switch"></div>
+    </div>
+
+    <div class="filho-fields" id="filho-fields">
+      <div class="field">
+        <label>Nome do filho</label>
+        <div class="field-icon-wrap">
+          <span class="field-icon">🧒</span>
+          <input type="text" id="f-filho-nome" placeholder="Nome do filho" autocomplete="off">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Idade</label>
+          <input type="number" id="f-filho-idade" placeholder="Ex: 8" min="0" max="99" inputmode="numeric">
+        </div>
+        <div class="field">
+          <label>Condição</label>
+          <select id="f-filho-condicao">
+            <option value="">Selecionar…</option>
+            <option value="TEA">TEA (Autismo)</option>
+            <option value="TDAH">TDAH</option>
+            <option value="DI">Deficiência Intelectual</option>
+            <option value="Down">Síndrome de Down</option>
+            <option value="PC">Paralisia Cerebral</option>
+            <option value="AF">Altas Habilidades</option>
+            <option value="TGD">TGD</option>
+            <option value="Outra">Outra condição</option>
+          </select>
+        </div>
+      </div>
+      <div class="divider"></div>
+    </div>
+
+    <div class="info-box teal">
+      <span class="info-icon">🌾</span>
+      <span>Vai trazer <strong>1 kg de alimento</strong>? Cada kg vale <strong>+1 número</strong> no sorteio (qualquer perfil)! Informe na entrada do evento.</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="irParaEtapa(2)">←</button>
+      <button class="btn btn-primary" onclick="irParaEtapa(4)">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- ─── ETAPA 4: QUIZ + TERMOS ─── -->
+  <div class="etapa" id="etapa4">
+    <div class="etapa-header">
+      <div class="etapa-num">Etapa 4 de 4</div>
+      <div class="etapa-title">Quiz + confirmação</div>
+      <div class="etapa-desc">Cada resposta certa vale <strong>+1 número extra</strong> no sorteio!</div>
+    </div>
+
+    <div class="quiz-score-bar">
+      <span class="quiz-score-icon">🎯</span>
+      <div class="quiz-score-text">
+        Acertos: <strong id="acertos-count">0 de 3</strong> — você pode ganhar até <strong>3 números extras</strong>
+      </div>
+    </div>
+
+    <!-- Pergunta 1 -->
+    <div class="quiz-card" id="qcard1">
+      <div class="quiz-num">Pergunta 1</div>
+      <div class="quiz-pergunta">O que significa a sigla TEA?</div>
+      <div class="quiz-opcoes">
+        <div class="quiz-opcao" onclick="responder(1, this, false)"><div class="opcao-dot"></div>Transtorno de Estudo e Aprendizado</div>
+        <div class="quiz-opcao" onclick="responder(1, this, true)"><div class="opcao-dot"></div>Transtorno do Espectro Autista</div>
+        <div class="quiz-opcao" onclick="responder(1, this, false)"><div class="opcao-dot"></div>Transtorno Emocional na Adolescência</div>
+      </div>
+      <div class="quiz-feedback" id="qfb1"></div>
+    </div>
+
+    <!-- Pergunta 2 -->
+    <div class="quiz-card" id="qcard2">
+      <div class="quiz-num">Pergunta 2</div>
+      <div class="quiz-pergunta">Qual lei brasileira garante atendimento educacional especializado para pessoas com deficiência?</div>
+      <div class="quiz-opcoes">
+        <div class="quiz-opcao" onclick="responder(2, this, false)"><div class="opcao-dot"></div>Lei Maria da Penha (11.340/2006)</div>
+        <div class="quiz-opcao" onclick="responder(2, this, false)"><div class="opcao-dot"></div>ECA — Estatuto da Criança (8.069/1990)</div>
+        <div class="quiz-opcao" onclick="responder(2, this, true)"><div class="opcao-dot"></div>Lei Brasileira de Inclusão (13.146/2015)</div>
+      </div>
+      <div class="quiz-feedback" id="qfb2"></div>
+    </div>
+
+    <!-- Pergunta 3 -->
+    <div class="quiz-card" id="qcard3">
+      <div class="quiz-num">Pergunta 3</div>
+      <div class="quiz-pergunta">O que é o laudo médico e para que serve no contexto da inclusão?</div>
+      <div class="quiz-opcoes">
+        <div class="quiz-opcao" onclick="responder(3, this, false)"><div class="opcao-dot"></div>Um comprovante de residência exigido pelas escolas</div>
+        <div class="quiz-opcao" onclick="responder(3, this, true)"><div class="opcao-dot"></div>Documento que comprova o diagnóstico e garante acesso a direitos e apoios</div>
+        <div class="quiz-opcao" onclick="responder(3, this, false)"><div class="opcao-dot"></div>Um relatório só necessário para receber benefícios financeiros</div>
+      </div>
+      <div class="quiz-feedback" id="qfb3"></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Termos -->
+    <div class="etapa-header" style="margin-bottom:14px">
+      <div class="etapa-title" style="font-size:15px">Termos de participação</div>
+    </div>
+
+    <div class="termo-item" onclick="toggleCheck('termo1')">
+      <input type="checkbox" id="termo1" onclick="event.stopPropagation()">
+      <label for="termo1"><strong>Autorizo uso de imagem.</strong> Concordo com a captação e uso de fotos/vídeos do evento para fins de divulgação da CMMPANE/NES nas redes sociais.</label>
+    </div>
+
+    <div class="termo-item" onclick="toggleCheck('termo2')">
+      <input type="checkbox" id="termo2" onclick="event.stopPropagation()">
+      <label for="termo2"><strong>Estou ciente:</strong> Para retirar prêmio sorteado é necessário documento com foto + certidão do filho + laudo médico (mãe/pai atípico).</label>
+    </div>
+
+    <div class="field-error show" id="err-termos" style="margin-bottom:14px;display:none">
+      É necessário aceitar os termos para finalizar a inscrição.
+    </div>
+
+    <div class="info-box" style="margin-bottom:6px">
+      <span class="info-icon">⚠️</span>
+      <span>Inscrição sujeita a confirmação. Limite de <strong>1.200 vagas</strong>. Você receberá confirmação pelo WhatsApp.</span>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="irParaEtapa(3)">←</button>
+      <button class="btn btn-primary" id="btn-enviar" onclick="enviarInscricao()">
+        Confirmar inscrição ✓
+      </button>
+    </div>
+  </div>
+
+</div><!-- /form-wrap -->
+
+<!-- ══════════════════════════════════════ -->
+<!-- TELA CONFIRMAÇÃO                       -->
+<!-- ══════════════════════════════════════ -->
+<div id="tela-confirmacao">
+  <span class="confirm-icon">🎉</span>
+  <div class="confirm-title">Inscrição confirmada!</div>
+  <div class="confirm-sub">Seu número foi gerado com sucesso.<br>Guarde — você vai precisar no dia do evento.</div>
+
+  <div class="numero-card">
+    <div class="numero-label">Seu número de inscrição</div>
+    <div class="numero-valor" id="conf-numero">—</div>
+    <div class="numero-nome" id="conf-nome">—</div>
+    <div class="extras-lista" id="extras-lista" style="display:none">
+      <div class="extras-label">Números extras (quiz)</div>
+      <div class="extras-tags" id="extras-tags"></div>
+    </div>
+  </div>
+
+  <div class="confirm-info-cards">
+    <div class="confirm-info-card">
+      <div class="confirm-info-icon">📅</div>
+      <div class="confirm-info-label">Data</div>
+      <div class="confirm-info-val">30 de maio de 2026 · Sábado</div>
+    </div>
+    <div class="confirm-info-card">
+      <div class="confirm-info-icon">📍</div>
+      <div class="confirm-info-label">Local</div>
+      <div class="confirm-info-val">Centro de Vivência Amélia Boroto</div>
+    </div>
+    <div class="confirm-info-card">
+      <div class="confirm-info-icon">🎁</div>
+      <div class="confirm-info-label">Prêmios</div>
+      <div class="confirm-info-val">Ventilador Arno + Airfryer + surpresas</div>
+    </div>
+    <div class="confirm-info-card">
+      <div class="confirm-info-icon">🌾</div>
+      <div class="confirm-info-label">Alimento</div>
+      <div class="confirm-info-val">1 kg = +1 número extra no sorteio</div>
+    </div>
+  </div>
+
+  <div class="btn-share-row">
+    <button class="btn-share btn-wpp" id="btn-wpp-share">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+      WhatsApp
+    </button>
+    <button class="btn-share btn-copy" id="btn-copiar-num" onclick="copiarNumero()">
+      📋 Copiar número
+    </button>
+  </div>
+
+  <div class="confirm-footer">
+    📩 Você também receberá confirmação pelo WhatsApp cadastrado.<br>
+    Dúvidas? <a href="https://www.instagram.com/maes_atipicas_do_norte_do_es" target="_blank">@maes_atipicas_do_norte_do_es</a><br>
+    <a href="https://chat.whatsapp.com/EDMwzlfTfHkGwwbQCeiFiq" target="_blank">💬 Entrar na comunidade WhatsApp</a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- TELA ESGOTAMENTO (P24)                -->
+<!-- ══════════════════════════════════════ -->
+<div id="tela-esgotamento">
+  <span class="esg-icon">🔒</span>
+  <div class="esg-title">Vagas esgotadas</div>
+  <div class="esg-sub">
+    As 1.200 vagas do evento foram preenchidas.<br>
+    Entre na lista de espera — você será avisado se abrirem novas vagas.
+  </div>
+
+  <div class="esg-card">
+    <div class="esg-card-title">📋 Lista de espera</div>
+
+    <div id="espera-form">
+      <div class="espera-field">
+        <label>Nome completo</label>
+        <input type="text" id="esp-nome" placeholder="Seu nome completo" inputmode="text" autocomplete="name">
+        <div class="espera-error" id="esp-err-nome">Informe seu nome.</div>
+      </div>
+      <div class="espera-field">
+        <label>WhatsApp</label>
+        <input type="tel" id="esp-telefone" placeholder="(27) 99999-9999" inputmode="tel" maxlength="15">
+        <div class="espera-error" id="esp-err-tel">Informe um número válido do ES (DDD 27 ou 28).</div>
+      </div>
+      <div class="espera-field">
+        <label>E-mail</label>
+        <input type="email" id="esp-email" placeholder="seu@email.com" inputmode="email" autocomplete="email">
+        <div class="espera-error" id="esp-err-email">Informe um e-mail válido.</div>
+      </div>
+      <button class="btn-espera" id="btn-espera" onclick="entrarListaEspera()">
+        Entrar na lista de espera
+      </button>
+    </div>
+
+    <div class="espera-sucesso" id="espera-sucesso">
+      <span class="espera-sucesso-icon">✅</span>
+      <div class="espera-sucesso-txt">Você está na lista de espera!</div>
+      <div class="espera-sucesso-sub">Você será avisado por WhatsApp e e-mail se abrirem novas vagas.</div>
+    </div>
+  </div>
+
+  <div class="esg-footer">
+    Dúvidas? <a href="https://www.instagram.com/maes_atipicas_do_norte_do_es" target="_blank">@maes_atipicas_do_norte_do_es</a><br>
+    <a href="https://chat.whatsapp.com/EDMwzlfTfHkGwwbQCeiFiq" target="_blank">💬 Entrar na comunidade WhatsApp</a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- FOOTER                                 -->
+<!-- ══════════════════════════════════════ -->
+<div class="page-footer" id="page-footer">
+  <div style="margin-bottom:6px">💜 CMMPANE/NES · Mães e Pais Atípicos do Norte do ES</div>
+  <div><a href="mailto:maesepaisatipicosdonortees@gmail.com">maesepaisatipicosdonortees@gmail.com</a></div>
+  <div style="margin-top:4px"><a href="https://www.instagram.com/maes_atipicas_do_norte_do_es" target="_blank">@maes_atipicas_do_norte_do_es</a></div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
+<!-- JAVASCRIPT                             -->
+<!-- ══════════════════════════════════════ -->
+<script>
+// ─── CONFIG ───────────────────────────────────────────
+// ⚠️  Cole aqui a URL do Apps Script após implantar como Web App
+const APPS_SCRIPT_URL = 'COLE_AQUI_A_URL_DO_APPS_SCRIPT';
+
+// ─── LIMITES DE VAGAS ─────────────────────────────────
+const LIMITE_PRINCIPAL   = 1200;  // Fecha inscrições
+const LIMITE_REABERTO    = 1500;  // Fecha de vez se reaberto
+const INTERVALO_CONTAGEM = 30000; // Atualiza a cada 30s (ms)
+
+// DDDs válidos do Espírito Santo
+const DDDS_ES = ['27', '28'];
+
+// ─── ESTADO ───────────────────────────────────────────
+const state = {
+  etapaAtual: 1,
+  perfilSelecionado: null,
+  cidadeMAP: 'sm',
+  filhoToggle: false,
+  quizRespostas: { 1: null, 2: null, 3: null },
+  acertos: 0,
+  totalInscritos: 0,
+  inscricoesAbertas: true,  // controlado pelo servidor
+};
+
+// ─── CONTADOR DE VAGAS AO VIVO (P22 + P24) ───────────
+
+// ─── HELPER: Fetch com timeout ────────────────────────
+async function fetchComTimeout(url, opcoes = {}, timeoutMs = 15000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const response = await fetch(url, {
+      ...opcoes,
+      signal: controller.signal,
+    });
+    clearTimeout(timeoutId);
+    return response;
+  } catch (erro) {
+    clearTimeout(timeoutId);
+    if (erro.name === 'AbortError') {
+      throw new Error('Requisição expirou. Verifique sua conexão e tente novamente.');
+    }
+    throw erro;
+  }
+}
+
+// ─── CONTADOR DE VAGAS AO VIVO (P22 + P24) ───────────
+async function buscarContagem() {
+  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('COLE_AQUI')) {
+    // Modo demo: simula 847 inscritos
+    console.warn('[MODO DEMO] Usando dados simulados. Configure APPS_SCRIPT_URL para usar dados reais.');
+    renderizarContagem(847, true);
+    return;
+  }
+  try {
+    const url = APPS_SCRIPT_URL + '?acao=contagem&t=' + Date.now();
+    const resp = await fetchComTimeout(url, { method: 'GET' });
+    const data = await resp.json();
+    const total  = data.total  ?? 0;
+    const aberto = data.aberto ?? true;
+    renderizarContagem(total, aberto);
+  } catch (e) {
+    // falha silenciosa — mantém último valor
+  }
+}
+
+function renderizarContagem(total, aberto) {
+  state.totalInscritos    = total;
+  state.inscricoesAbertas = aberto;
+
+  const limite    = aberto ? LIMITE_PRINCIPAL : LIMITE_REABERTO;
+  const restantes = Math.max(0, limite - total);
+  const pct       = Math.min(100, (total / limite) * 100);
+
+  // Atualiza números
+  const elInscritos  = document.getElementById('vg-inscritos');
+  const elBarra      = document.getElementById('vg-barra');
+  const elRestantes  = document.getElementById('vg-restantes');
+
+  if (elInscritos) elInscritos.textContent = total.toLocaleString('pt-BR');
+
+  if (elBarra) {
+    elBarra.style.width = pct + '%';
+    elBarra.classList.remove('quase', 'critico');
+    if (pct >= 95)      elBarra.classList.add('critico');
+    else if (pct >= 80) elBarra.classList.add('quase');
+  }
+
+  if (elRestantes) {
+    if (restantes <= 0) {
+      elRestantes.innerHTML = '<strong style="color:var(--red)">Vagas esgotadas</strong>';
+    } else if (restantes <= 50) {
+      elRestantes.classList.add('critico');
+      elRestantes.innerHTML = 'Apenas <strong>' + restantes + ' vagas</strong> restantes!';
+    } else if (restantes <= 200) {
+      elRestantes.classList.remove('critico');
+      elRestantes.innerHTML = '<strong>' + restantes + ' vagas</strong> disponíveis — corra!';
+    } else {
+      elRestantes.classList.remove('critico');
+      elRestantes.innerHTML = '<strong>' + restantes + ' vagas</strong> disponíveis';
+    }
+  }
+
+  // Se esgotado → mostrar tela de esgotamento
+  if (!aberto || total >= limite) {
+    mostrarTelaEsgotamento();
+  }
+}
+
+function mostrarTelaEsgotamento() {
+  // Ocultar tudo exceto hero e vagas
+  document.getElementById('progress-wrap').style.display = 'none';
+  document.getElementById('form-wrap').style.display     = 'none';
+  document.getElementById('page-footer').style.display   = 'none';
+  document.getElementById('tela-confirmacao').style.display = 'none';
+
+  document.getElementById('tela-esgotamento').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── LISTA DE ESPERA ──────────────────────────────────
+document.getElementById('esp-telefone').addEventListener('input', function(e) {
+  let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+  if (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+  else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d+)$/, '($1) $2-$3');
+  else if (v.length > 2) v = v.replace(/^(\d{2})(\d+)$/, '($1) $2');
+  e.target.value = v;
+});
+
+async function entrarListaEspera() {
+  const nome  = document.getElementById('esp-nome').value.trim();
+  const tel   = document.getElementById('esp-telefone').value.replace(/\D/g, '');
+  const email = document.getElementById('esp-email').value.trim();
+
+  let ok = true;
+
+  document.getElementById('esp-err-nome').style.display  = !nome ? 'block' : 'none';
+  document.getElementById('esp-nome').classList.toggle('error', !nome);
+  if (!nome) ok = false;
+
+  const ddd = tel.slice(0, 2);
+  const telValido = tel.length >= 10 && DDDS_ES.includes(ddd);
+  document.getElementById('esp-err-tel').style.display   = !telValido ? 'block' : 'none';
+  document.getElementById('esp-telefone').classList.toggle('error', !telValido);
+  if (!telValido) ok = false;
+
+  const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  document.getElementById('esp-err-email').style.display = !emailValido ? 'block' : 'none';
+  document.getElementById('esp-email').classList.toggle('error', !emailValido);
+  if (!emailValido) ok = false;
+
+  if (!ok) return;
+
+  const btn = document.getElementById('btn-espera');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="btn-spinner"></div> Cadastrando…';
+
+  try {
+    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('COLE_AQUI')) {
+      // Modo demo
+      await new Promise(r => setTimeout(r, 800));
+    } else {
+      await fetchComTimeout(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ acao: 'listaEspera', nome, telefone: tel, email }),
+      });
+    }
+    document.getElementById('espera-form').style.display = 'none';
+    document.getElementById('espera-sucesso').classList.add('show');
+  } catch(e) {
+    btn.disabled = false;
+    btn.innerHTML = 'Entrar na lista de espera';
+    mostrarToast('❌ Erro ao cadastrar. Tente novamente.');
+  }
+}
+
+// ─── VALIDAÇÃO DE TELEFONE ES ─────────────────────────
+function validarTelefoneES(tel) {
+  const digits = tel.replace(/\D/g, '');
+  // Validar comprimento: deve ter 10 ou 11 dígitos (DDD + número)
+  if (digits.length < 10 || digits.length > 11) {
+    return { ok: false, msg: 'Informe um número válido com DDD (10 ou 11 dígitos).' };
+  }
+  const ddd = digits.slice(0, 2);
+  if (!DDDS_ES.includes(ddd)) {
+    return {
+      ok: false,
+      msg: 'Este evento é exclusivo para moradores do ES. Informe um número com DDD 27 ou 28.'
+    };
+  }
+  // Validar se é número de celular (9º dígito deve ser 9 para celular)
+  if (digits.length === 11 && digits[2] !== '9') {
+    return { ok: false, msg: 'Informe um número de celular válido (com 9 após o DDD).' };
+  }
+  return { ok: true };
+}
+}
+
+// ─── NAVEGAÇÃO ENTRE ETAPAS ───────────────────────────
+function irParaEtapa(num) {
+  if (num > state.etapaAtual && !validarEtapa(state.etapaAtual)) return;
+  const antiga = state.etapaAtual;
+  state.etapaAtual = num;
+  document.getElementById('etapa' + antiga).classList.remove('active');
+  document.getElementById('etapa' + num).classList.add('active');
+  atualizarProgress(num);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function atualizarProgress(etapa) {
+  for (let i = 1; i <= 4; i++) {
+    const step   = document.getElementById('ps' + i);
+    const circle = document.getElementById('pc' + i);
+    step.classList.remove('active', 'done');
+    if (i < etapa) {
+      step.classList.add('done');
+      circle.textContent = '✓';
+    } else if (i === etapa) {
+      step.classList.add('active');
+      circle.textContent = i;
+    } else {
+      circle.textContent = i;
+    }
+  }
+  const pct  = ((etapa - 1) / 3) * 100;
+  const fill = document.getElementById('progress-fill');
+  fill.style.width = pct + '%';
+}
+
+// ─── VALIDAÇÃO POR ETAPA ──────────────────────────────
+function validarEtapa(etapa) {
+  let ok = true;
+
+  if (etapa === 1) {
+    const nome     = document.getElementById('f-nome').value.trim();
+    const telefone = document.getElementById('f-telefone').value;
+    const email    = document.getElementById('f-email').value.trim();
+    const cidade   = document.getElementById('f-cidade').value.trim();
+
+    // Validação ES
+    const telCheck = validarTelefoneES(telefone);
+
+    mostrarErro('nome',     !nome);
+    mostrarErro('email',    !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email));
+    mostrarErro('cidade',   !cidade);
+
+    // Mensagem customizada para telefone
+    const errTelEl    = document.getElementById('err-telefone');
+    const inputTelEl  = document.getElementById('f-telefone');
+    if (!telCheck.ok) {
+      errTelEl.textContent = telCheck.msg;
+      errTelEl.style.display = 'block';
+      inputTelEl.classList.add('error');
+      ok = false;
+    } else {
+      errTelEl.style.display = 'none';
+      inputTelEl.classList.remove('error');
+    }
+
+    ok = ok && !!nome
+      && telCheck.ok
+      && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)
+      && !!cidade;
+  }
+
+  if (etapa === 2) {
+    const semPerfil = !state.perfilSelecionado;
+    document.getElementById('err-perfil').style.display = semPerfil ? 'block' : 'none';
+    ok = !semPerfil;
+  }
+
+  if (etapa === 4) {
+    const t1 = document.getElementById('termo1').checked;
+    const t2 = document.getElementById('termo2').checked;
+    const semTermos = !t1 || !t2;
+    document.getElementById('err-termos').style.display = semTermos ? 'block' : 'none';
+    ok = !semTermos;
+  }
+
+  return ok;
+}
+
+function mostrarErro(campo, show) {
+  const el    = document.getElementById('err-' + campo);
+  const input = document.getElementById('f-' + campo);
+  if (el)    el.style.display = show ? 'block' : 'none';
+  if (input) input.classList.toggle('error', show);
+}
+
+// ─── FORMATAÇÃO TELEFONE ──────────────────────────────
+document.getElementById('f-telefone').addEventListener('input', function(e) {
+  let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+  if (v.length > 10)      v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+  else if (v.length > 6)  v = v.replace(/^(\d{2})(\d{4})(\d+)$/, '($1) $2-$3');
+  else if (v.length > 2)  v = v.replace(/^(\d{2})(\d+)$/, '($1) $2');
+  e.target.value = v;
+  // Feedback DDD em tempo real
+  const digits = v.replace(/\D/g, '');
+  const errEl  = document.getElementById('err-telefone');
+  if (digits.length >= 2) {
+    const ddd = digits.slice(0, 2);
+    if (!DDDS_ES.includes(ddd)) {
+      errEl.textContent    = '⚠️ DDD ' + ddd + ' não é do ES. Use DDD 27 ou 28.';
+      errEl.style.display  = 'block';
+      this.classList.add('error');
+    } else {
+      errEl.style.display = 'none';
+      this.classList.remove('error');
+    }
+  } else {
+    errEl.style.display = 'none';
+    this.classList.remove('error');
+  }
+});
+
+// Limpar erros ao digitar
+['f-nome','f-email','f-cidade'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.addEventListener('input', () => {
+    mostrarErro(id.replace('f-', ''), false);
+  });
+});
+
+// ─── PERFIL ───────────────────────────────────────────
+function selecionarPerfil(card, perfil) {
+  document.querySelectorAll('.perfil-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state.perfilSelecionado = perfil;
+  document.getElementById('err-perfil').style.display = 'none';
+  const isMaePai = perfil === 'mae' || perfil === 'pai';
+  document.getElementById('perfil-mae-wrap').classList.toggle('hidden', !isMaePai);
+}
+
+function setCidadePerfil(cidade, btn) {
+  state.cidadeMAP = cidade;
+  document.querySelectorAll('.cidade-toggle button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ─── FILHO TOGGLE ─────────────────────────────────────
+function toggleFilho() {
+  state.filhoToggle = !state.filhoToggle;
+  document.getElementById('filho-toggle').classList.toggle('on', state.filhoToggle);
+  document.getElementById('filho-fields').classList.toggle('show', state.filhoToggle);
+}
+
+// ─── QUIZ ─────────────────────────────────────────────
+const quizRespondido = { 1: false, 2: false, 3: false };
+
+function responder(num, opcao, certa) {
+  if (quizRespondido[num]) return;
+  quizRespondido[num]      = true;
+  state.quizRespostas[num] = certa;
+
+  const opcoes = opcao.parentElement.querySelectorAll('.quiz-opcao');
+  opcoes.forEach(op => {
+    op.style.pointerEvents = 'none';
+    op.classList.remove('selected');
+  });
+  opcao.classList.add(certa ? 'certa' : 'errada');
+
+  if (!certa) {
+    opcoes.forEach(op => {
+      if (op.onclick.toString().includes('true')) op.classList.add('certa');
+    });
+  }
+
+  const fb = document.getElementById('qfb' + num);
+  fb.classList.add('show');
+  if (certa) {
+    fb.classList.add('acerto');
+    fb.textContent = '✅ Correto! +1 número extra ganho.';
+  } else {
+    fb.classList.add('erro');
+    fb.textContent = '❌ Resposta errada. Sem número extra nesta pergunta.';
+  }
+
+  state.acertos = Object.values(state.quizRespostas).filter(Boolean).length;
+  document.getElementById('acertos-count').textContent = state.acertos + ' de 3';
+}
+
+// ─── TOGGLE CHECKBOX ──────────────────────────────────
+function toggleCheck(id) {
+  const cb = document.getElementById(id);
+  cb.checked = !cb.checked;
+  document.getElementById('err-termos').style.display = 'none';
+}
+
+// ─── CALCULAR PERFIL FINAL ────────────────────────────
+function calcularPerfilFinal() {
+  const p      = state.perfilSelecionado;
+  const c      = state.cidadeMAP;
+  const cidade = document.getElementById('f-cidade').value.trim().toLowerCase();
+  if (p === 'mae' || p === 'pai') {
+    const ehSM = c === 'sm' || cidade.includes('são mateus') || cidade.includes('sao mateus') || cidade.includes('s. mateus');
+    return ehSM ? 'SM-AT' : 'OT-AT';
+  }
+  const mapa = { prof_saude:'PR-SA', prof_educ:'PR-ED', prof_assist:'PR-AS', familiar:'FAM', outro:'OUT' };
+  return mapa[p] || 'OUT';
+}
+
+function calcularEhMae() {
+  return state.perfilSelecionado === 'mae' || state.perfilSelecionado === 'pai';
+}
+
+// ─── ENVIAR INSCRIÇÃO ─────────────────────────────────
+async function enviarInscricao() {
+  if (!validarEtapa(4)) return;
+
+  // Bloqueio final se esgotado (segurança dupla)
+  if (!state.inscricoesAbertas) {
+    mostrarTelaEsgotamento();
+    return;
+  }
+
+  const btn = document.getElementById('btn-enviar');
+  btn.disabled = true;
+  btn.innerHTML = '<div class="btn-spinner"></div> Enviando…';
+  document.getElementById('loader').classList.add('show');
+
+  const perfil        = calcularPerfilFinal();
+  const ehMae         = calcularEhMae();
+  const nome          = document.getElementById('f-nome').value.trim();
+  const tel           = document.getElementById('f-telefone').value.replace(/\D/g, '');
+  const email         = document.getElementById('f-email').value.trim();
+  const cidade        = document.getElementById('f-cidade').value.trim();
+  const filhoNome     = document.getElementById('f-filho-nome').value.trim();
+  const filhoIdade    = document.getElementById('f-filho-idade').value.trim();
+  const filhoCondicao = document.getElementById('f-filho-condicao').value;
+
+  const payload = {
+    acao: 'inscricaoPublica',
+    nome, telefone: tel, email, cidade, perfil, ehMae,
+    filhoNome, filhoIdade, filhoCondicao,
+    quizAcertos: state.acertos,
+    termo1: document.getElementById('termo1').checked,
+    termo2: document.getElementById('termo2').checked,
+    origem: 'inscricao.html',
+    ts: new Date().toISOString(),
+  };
+
+  try {
+    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('COLE_AQUI')) {
+      throw new Error('URL_NAO_CONFIGURADA');
+    }
+
+    const resp = await fetchComTimeout(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await resp.json();
+
+    if (data.ok) {
+      // Verificar se esgotou ao enviar
+      if (data.esgotado) {
+        document.getElementById('loader').classList.remove('show');
+        mostrarTelaEsgotamento();
+        return;
+      }
+      mostrarConfirmacao(data, nome, perfil);
+      // Atualizar contador após inscrição
+      setTimeout(buscarContagem, 2000);
+    } else {
+      throw new Error(data.erro || 'Erro ao processar inscrição.');
+    }
+
+  } catch (err) {
+    document.getElementById('loader').classList.remove('show');
+    btn.disabled = false;
+    btn.innerHTML = 'Confirmar inscrição ✓';
+
+    if (err.message === 'URL_NAO_CONFIGURADA') {
+      mostrarToast('⚙️ Modo demonstração — configure a URL do Apps Script');
+      const fakeData = {
+        ok: true,
+        numero: perfil + '-' + String(Math.floor(Math.random() * 900) + 100).padStart(4, '0'),
+        numerosExtras: Array.from({length: state.acertos}, (_, i) =>
+          perfil + '-' + String(Math.floor(Math.random() * 900) + 100).padStart(4, '0') + '-Q0' + (i+1)
+        ),
+      };
+      setTimeout(() => mostrarConfirmacao(fakeData, nome, perfil), 500);
+      return;
+    }
+
+    mostrarToast('❌ Erro ao enviar. Verifique sua conexão e tente novamente.');
+  }
+}
+
+// ─── TELA DE CONFIRMAÇÃO ──────────────────────────────
+function mostrarConfirmacao(data, nome, perfil) {
+  document.getElementById('loader').classList.remove('show');
+  document.getElementById('form-wrap').style.display      = 'none';
+  document.getElementById('progress-wrap').style.display  = 'none';
+  document.getElementById('page-footer').style.display    = 'none';
+  document.getElementById('vagas-wrap').style.display     = 'none';
+  document.getElementById('tela-confirmacao').classList.add('show');
+
+  document.getElementById('conf-numero').textContent = data.numero || '—';
+  document.getElementById('conf-nome').textContent   = nome;
+
+  if (data.numerosExtras && data.numerosExtras.length > 0) {
+    const lista = document.getElementById('extras-lista');
+    const tags  = document.getElementById('extras-tags');
+    lista.style.display = 'block';
+    tags.innerHTML = data.numerosExtras.map(n =>
+      `<div class="extra-tag">${n}</div>`
+    ).join('');
+  }
+
+  const msg = encodeURIComponent(
+    `🎉 Inscrição confirmada!\n\n` +
+    `👤 ${nome}\n` +
+    `🔢 Número: ${data.numero}\n` +
+    (data.numerosExtras && data.numerosExtras.length > 0
+      ? `🎯 Extras (quiz): ${data.numerosExtras.join(', ')}\n`
+      : '') +
+    `\n📅 30/05/2026 · Centro de Vivência Amélia Boroto\n` +
+    `📍 São Mateus - ES\n\n` +
+    `💜 Mães e Pais Atípicos do Norte do ES\n` +
+    `@maes_atipicas_do_norte_do_es`
+  );
+  document.getElementById('btn-wpp-share').onclick = () =>
+    window.open('https://wa.me/?text=' + msg, '_blank');
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── COPIAR NÚMERO ────────────────────────────────────
+function copiarNumero() {
+  const num = document.getElementById('conf-numero').textContent;
+  navigator.clipboard.writeText(num).then(() => {
+    mostrarToast('✅ Número copiado!');
+  }).catch(() => {
+    mostrarToast('📋 ' + num);
+  });
+}
+
+// ─── TOAST ────────────────────────────────────────────
+let toastTimer;
+function mostrarToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
+}
+
+// ─── INIT ─────────────────────────────────────────────
+atualizarProgress(1);
+buscarContagem();
+setInterval(buscarContagem, INTERVALO_CONTAGEM);
+</script>
+</body>
+</html>
