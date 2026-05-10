@@ -716,6 +716,85 @@ body {
   text-align: center;
 }
 
+/* ─── ACESSIBILIDADE ───────────────────────────────────────────────────── */
+.acess-section {
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin: 14px 0;
+  cursor: pointer;
+}
+.acess-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.acess-header-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.acess-icon { font-size: 22px; line-height: 1; }
+.acess-header strong { display: block; font-size: 14px; color: #166534; }
+.acess-hint { display: block; font-size: 12px; color: #6b7280; margin-top: 2px; }
+.acess-toggle-wrap {
+  width: 44px; height: 24px;
+  background: #d1d5db;
+  border-radius: 12px;
+  position: relative;
+  cursor: pointer;
+  transition: background .2s;
+  flex-shrink: 0;
+}
+.acess-toggle-wrap.on { background: #16a34a; }
+.acess-toggle-wrap .toggle-switch {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 18px; height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.acess-toggle-wrap.on .toggle-switch { transform: translateX(20px); }
+.acess-body {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #bbf7d0;
+}
+.acess-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+.acess-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: var(--font);
+  resize: vertical;
+  box-sizing: border-box;
+  line-height: 1.5;
+  color: #374151;
+}
+.acess-textarea:focus {
+  outline: none;
+  border-color: #16a34a;
+  box-shadow: 0 0 0 3px rgba(22,163,74,.1);
+}
+.acess-counter {
+  text-align: right;
+  font-size: 11px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
 /* ─── BOTÕES ─────────────────────────────────────────── */
 .btn-row {
   display: flex;
@@ -1550,6 +1629,33 @@ body {
       </div>
     </div>
 
+    <!-- Campo de acessibilidade -->
+    <div class="acess-section" id="acess-section">
+      <div class="acess-header" onclick="toggleAcess()">
+        <div class="acess-header-left">
+          <span class="acess-icon">♿</span>
+          <div>
+            <strong>Algum acompanhante precisa de acessibilidade?</strong>
+            <span class="acess-hint">Cadeira de rodas, autismo, surdez, mobilidade reduzida, etc.</span>
+          </div>
+        </div>
+        <div class="acess-toggle-wrap" id="acess-toggle" onclick="event.stopPropagation(); toggleAcess()">
+          <div class="toggle-switch"></div>
+        </div>
+      </div>
+      <div class="acess-body" id="acess-body" style="display:none">
+        <label for="f-acessibilidade" class="acess-label">Descreva as necessidades <span style="color:#9ca3af;font-weight:400">(opcional, mas muito útil para organização)</span></label>
+        <textarea
+          id="f-acessibilidade"
+          class="acess-textarea"
+          rows="3"
+          maxlength="500"
+          placeholder="Ex: filho usa cadeira de rodas, avó com mobilidade reduzida, criança com TEA precisa de espaço calmo..."
+        ></textarea>
+        <div class="acess-counter"><span id="acess-char-count">0</span>/500 caracteres</div>
+      </div>
+    </div>
+
     <div class="info-box teal">
       <span class="info-icon">🌾</span>
       <span>Vai trazer <strong>1 kg de alimento</strong>? Cada kg vale <strong>+1 número</strong> no sorteio (qualquer perfil)! Informe na entrada do evento.</span>
@@ -2109,6 +2215,30 @@ function toggleFilho() {
   document.getElementById('filho-fields').classList.toggle('show', state.filhoToggle);
 }
 
+// ─── ACESSIBILIDADE ─────────────────────────────────────────────────────
+function toggleAcess() {
+  const toggle = document.getElementById('acess-toggle');
+  const body = document.getElementById('acess-body');
+  const isOn = toggle.classList.toggle('on');
+  body.style.display = isOn ? 'block' : 'none';
+  if (!isOn) {
+    const ta = document.getElementById('f-acessibilidade');
+    if (ta) ta.value = '';
+    const counter = document.getElementById('acess-char-count');
+    if (counter) counter.textContent = '0';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const ta = document.getElementById('f-acessibilidade');
+  if (ta) {
+    ta.addEventListener('input', () => {
+      const counter = document.getElementById('acess-char-count');
+      if (counter) counter.textContent = ta.value.length;
+    });
+  }
+});
+
 // ─── ACOMPANHANTES ─────────────────────────────────────────────────────
 function ajustarAcomp(cat, delta) {
   const novo = Math.max(0, (state.acomp[cat] || 0) + delta);
@@ -2229,6 +2359,11 @@ async function enviarInscricao() {
     if (outrosQuem) acompJson.outros_quem = outrosQuem;
     const totalAcomp = Object.entries(state.acomp).reduce((s, [, v]) => s + v, 0);
 
+    // Montar acessibilidade
+    const acessToggle = document.getElementById('acess-toggle');
+    const acessAtivo = acessToggle && acessToggle.classList.contains('on');
+    const acessTexto = acessAtivo ? (document.getElementById('f-acessibilidade')?.value.trim() || '') : '';
+
     const payloadBackend = {
       nome: payload.nome, email: payload.email, telefone: payload.telefone,
       tipo: payload.perfil, cidade: payload.cidade || '', estado: 'ES',
@@ -2237,6 +2372,7 @@ async function enviarInscricao() {
       autorizacaoImagem: payload.termo1 || false, lgpd: payload.termo2 || false,
       acompanhantesJson: JSON.stringify(acompJson),
       totalAcompanhantes: totalAcomp,
+      necessidadesAcessibilidade: acessTexto || null,
     };
     const resp = await fetchComTimeout(API_INSCREVER, {
       method: 'POST',
