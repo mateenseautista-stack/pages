@@ -74,6 +74,29 @@ body {
     radial-gradient(ellipse 80% 60% at 50% -10%, #534AB720 0%, transparent 60%);
 }
 
+/* ─── BANNER DINÂMICO ───────────────────────────────── */
+.banner-dinamico {
+  width: 100%;
+  max-width: 680px;
+  margin: 0 auto;
+  display: block;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  box-shadow: 0 8px 32px #00000050;
+  margin-top: 20px;
+  margin-bottom: 0;
+}
+.banner-dinamico img {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+.banner-dinamico-wrap {
+  padding: 20px 16px 0;
+  display: flex;
+  justify-content: center;
+}
 /* ─── TOPO HERO ──────────────────────────────────────── */
 .hero {
   text-align: center;
@@ -1133,6 +1156,15 @@ body {
 <div class="toast" id="toast"></div>
 
 <!-- ══════════════════════════════════════ -->
+<!-- BANNER DINÂMICO                        -->
+<!-- ══════════════════════════════════════ -->
+<div class="banner-dinamico-wrap" id="banner-dinamico-wrap" style="display:none">
+  <div class="banner-dinamico">
+    <img id="banner-dinamico-img" src="" alt="Banner do 4º Encontro de Mães e Pais Atípicos do Norte do ES" loading="eager">
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════ -->
 <!-- HERO                                   -->
 <!-- ══════════════════════════════════════ -->
 <div class="hero">
@@ -2141,10 +2173,35 @@ function mostrarToast(msg) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 3500);
 }
 
+// ─── BANNER DINÂMICO ─────────────────────────────────
+async function carregarBannerDinamico() {
+  try {
+    const resp = await fetch(BACKEND_URL + '/api/banner?t=' + Date.now());
+    if (!resp.ok) return;
+    const data = await resp.json();
+    if (data.bannerUrl) {
+      const img = document.getElementById('banner-dinamico-img');
+      const wrap = document.getElementById('banner-dinamico-wrap');
+      if (img && wrap) {
+        // Garante URL absoluta
+        const url = data.bannerUrl.startsWith('/')
+          ? BACKEND_URL + data.bannerUrl
+          : data.bannerUrl;
+        img.src = url;
+        img.onload = () => { wrap.style.display = 'flex'; };
+        img.onerror = () => { wrap.style.display = 'none'; };
+      }
+    }
+  } catch (e) {
+    // falha silenciosa — o hero continua visível normalmente
+  }
+}
+
 // ─── INIT ─────────────────────────────────────────────
 atualizarProgress(1);
 buscarContagem();
 setInterval(buscarContagem, INTERVALO_CONTAGEM);
+carregarBannerDinamico();
 </script>
 </body>
 </html>
