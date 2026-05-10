@@ -648,6 +648,74 @@ body {
 .filho-fields { display: none; }
 .filho-fields.show { display: block; }
 
+/* ─── ACOMPANHANTES ─────────────────────────────────────── */
+.acomp-section {
+  background: #f9f7ff;
+  border: 1.5px solid #e0d4f7;
+  border-radius: 14px;
+  padding: 16px;
+  margin: 18px 0 14px;
+}
+.acomp-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.acomp-icon { font-size: 22px; line-height: 1; }
+.acomp-header strong { display: block; font-size: 15px; color: #3b1d8a; }
+.acomp-hint { font-size: 12px; color: #9ca3af; }
+.acomp-grid { display: flex; flex-direction: column; gap: 8px; }
+.acomp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #ede9fb;
+}
+.acomp-label { font-size: 14px; color: #374151; }
+.acomp-counter { display: flex; align-items: center; gap: 10px; }
+.acomp-btn {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 2px solid #7c3aed;
+  background: #fff;
+  color: #7c3aed;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s;
+}
+.acomp-btn:hover { background: #7c3aed; color: #fff; }
+.acomp-val { min-width: 22px; text-align: center; font-size: 16px; font-weight: 700; color: #3b1d8a; }
+.acomp-outros-desc {
+  margin-top: 10px;
+  padding: 10px;
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #ede9fb;
+}
+.acomp-outros-desc label { font-size: 13px; font-weight: 600; color: #374151; display: block; margin-bottom: 6px; }
+.acomp-outros-desc input {
+  width: 100%; padding: 9px 12px;
+  border: 1.5px solid #d1d5db; border-radius: 8px;
+  font-size: 14px; font-family: var(--font);
+  box-sizing: border-box;
+}
+.acomp-total {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: #ede9fb;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #3b1d8a;
+  text-align: center;
+}
+
 /* ─── BOTÕES ─────────────────────────────────────────── */
 .btn-row {
   display: flex;
@@ -1403,6 +1471,85 @@ body {
       <div class="divider"></div>
     </div>
 
+    <!-- ─── ACOMPANHANTES ─── -->
+    <div class="acomp-section">
+      <div class="acomp-header">
+        <span class="acomp-icon">👨‍👩‍👧‍👦</span>
+        <div>
+          <strong>Quem mais vai com você?</strong>
+          <span class="acomp-hint">Opcional — nos ajuda a estimar o público total</span>
+        </div>
+      </div>
+
+      <div class="acomp-grid">
+        <!-- Filho(a) -->
+        <div class="acomp-row">
+          <span class="acomp-label">🧒 Filho(a) / dependente</span>
+          <div class="acomp-counter">
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('filho', -1)">−</button>
+            <span class="acomp-val" id="acomp-filho">0</span>
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('filho', 1)">+</button>
+          </div>
+        </div>
+        <!-- Amigo(a) do filho -->
+        <div class="acomp-row">
+          <span class="acomp-label">🤝 Amigo(a) do filho</span>
+          <div class="acomp-counter">
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('amigo_filho', -1)">−</button>
+            <span class="acomp-val" id="acomp-amigo_filho">0</span>
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('amigo_filho', 1)">+</button>
+          </div>
+        </div>
+        <!-- Tio(a) / familiar -->
+        <div class="acomp-row">
+          <span class="acomp-label">👨‍👩‍👦 Tio(a) / familiar da criança</span>
+          <div class="acomp-counter">
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('familiar', -1)">−</button>
+            <span class="acomp-val" id="acomp-familiar">0</span>
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('familiar', 1)">+</button>
+          </div>
+        </div>
+        <!-- Amiga(o) da mãe/pai -->
+        <div class="acomp-row">
+          <span class="acomp-label">💜 Amiga(o) da mãe/pai</span>
+          <div class="acomp-counter">
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('amigo_mae', -1)">−</button>
+            <span class="acomp-val" id="acomp-amigo_mae">0</span>
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('amigo_mae', 1)">+</button>
+          </div>
+        </div>
+        <!-- Avô / Avó -->
+        <div class="acomp-row">
+          <span class="acomp-label">👴👵 Avô / Avó da criança</span>
+          <div class="acomp-counter">
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('avo', -1)">−</button>
+            <span class="acomp-val" id="acomp-avo">0</span>
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('avo', 1)">+</button>
+          </div>
+        </div>
+        <!-- Outros -->
+        <div class="acomp-row">
+          <span class="acomp-label">🌟 Outros acompanhantes</span>
+          <div class="acomp-counter">
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('outros', -1)">−</button>
+            <span class="acomp-val" id="acomp-outros">0</span>
+            <button type="button" class="acomp-btn" onclick="ajustarAcomp('outros', 1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campo livre para Outros -->
+      <div class="acomp-outros-desc" id="acomp-outros-desc" style="display:none">
+        <label for="f-acomp-outros-quem">Quem são? <span style="font-weight:400;color:#9ca3af">(opcional)</span></label>
+        <input type="text" id="f-acomp-outros-quem" placeholder="Ex: cunhada, vizinha, madrinha…" autocomplete="off" maxlength="120">
+      </div>
+
+      <!-- Total resumido -->
+      <div class="acomp-total" id="acomp-total" style="display:none">
+        <span>👥 Total de acompanhantes: <strong id="acomp-total-num">0</strong> pessoa(s)</span>
+      </div>
+    </div>
+
     <div class="info-box teal">
       <span class="info-icon">🌾</span>
       <span>Vai trazer <strong>1 kg de alimento</strong>? Cada kg vale <strong>+1 número</strong> no sorteio (qualquer perfil)! Informe na entrada do evento.</span>
@@ -1644,6 +1791,7 @@ const state = {
   perfilSelecionado: null,
   cidadeMAP: 'sm',
   filhoToggle: false,
+  acomp: { filho: 0, amigo_filho: 0, familiar: 0, amigo_mae: 0, avo: 0, outros: 0 },
   quizRespostas: { 1: null, 2: null, 3: null },
   acertos: 0,
   totalInscritos: 0,
@@ -1961,7 +2109,24 @@ function toggleFilho() {
   document.getElementById('filho-fields').classList.toggle('show', state.filhoToggle);
 }
 
-// ─── QUIZ ─────────────────────────────────────────────
+// ─── ACOMPANHANTES ─────────────────────────────────────────────────────
+function ajustarAcomp(cat, delta) {
+  const novo = Math.max(0, (state.acomp[cat] || 0) + delta);
+  state.acomp[cat] = novo;
+  const el = document.getElementById('acomp-' + cat);
+  if (el) el.textContent = novo;
+  // Mostrar/ocultar campo livre de outros
+  const outrosDesc = document.getElementById('acomp-outros-desc');
+  if (outrosDesc) outrosDesc.style.display = state.acomp.outros > 0 ? 'block' : 'none';
+  // Calcular total
+  const total = Object.values(state.acomp).reduce((s, v) => s + v, 0);
+  const totalEl = document.getElementById('acomp-total');
+  const totalNum = document.getElementById('acomp-total-num');
+  if (totalEl) totalEl.style.display = total > 0 ? 'block' : 'none';
+  if (totalNum) totalNum.textContent = total;
+}
+
+// ─── QUIZ ─────────────────────────────────────────────────────
 const quizRespondido = { 1: false, 2: false, 3: false };
 
 function responder(num, opcao, certa) {
@@ -2058,12 +2223,20 @@ async function enviarInscricao() {
 
   try {
     // Adaptar payload para o formato do backend CMMPANE-NES
+    // Montar acompanhantes
+    const outrosQuem = document.getElementById('f-acomp-outros-quem')?.value.trim() || '';
+    const acompJson = { ...state.acomp };
+    if (outrosQuem) acompJson.outros_quem = outrosQuem;
+    const totalAcomp = Object.entries(state.acomp).reduce((s, [, v]) => s + v, 0);
+
     const payloadBackend = {
       nome: payload.nome, email: payload.email, telefone: payload.telefone,
       tipo: payload.perfil, cidade: payload.cidade || '', estado: 'ES',
       nomeFilho: payload.filhoNome || '', idadeFilho: payload.filhoIdade || '',
       diagnostico: payload.filhoCondicao || '', comoSoube: payload.origem || '',
       autorizacaoImagem: payload.termo1 || false, lgpd: payload.termo2 || false,
+      acompanhantesJson: JSON.stringify(acompJson),
+      totalAcompanhantes: totalAcomp,
     };
     const resp = await fetchComTimeout(API_INSCREVER, {
       method: 'POST',
