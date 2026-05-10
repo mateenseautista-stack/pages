@@ -1587,7 +1587,7 @@ body {
 // ─── CONFIG ───────────────────────────────────────────
 // ⚠️  Cole aqui a URL do Apps Script após implantar como Web App
 // ── URLs do Backend CMMPANE-NES (Manus WebDev) ──────────────────────
-const BACKEND_URL = 'BACKEND_URL_PLACEHOLDER';
+const BACKEND_URL = 'BACKEND_URL_PLACEHOLDER'; // Substituir pela URL pública após publicar
 const API_STATUS   = BACKEND_URL + '/api/status';
 const API_INSCREVER = BACKEND_URL + '/api/inscrever';
 const API_ESPERA   = BACKEND_URL + '/api/lista-espera';
@@ -2075,6 +2075,11 @@ async function enviarInscricao() {
 
 // ─── TELA DE CONFIRMAÇÃO ──────────────────────────────
 function mostrarConfirmacao(data, nome, perfil) {
+  // Se o backend retornou checkInToken, redirecionar para a página de QR Code pessoal
+  if (data.checkInToken && BACKEND_URL && BACKEND_URL !== 'BACKEND_URL_PLACEHOLDER') {
+    window.location.href = BACKEND_URL + '/confirmacao/' + data.checkInToken;
+    return;
+  }
   document.getElementById('loader').classList.remove('show');
   document.getElementById('form-wrap').style.display      = 'none';
   document.getElementById('progress-wrap').style.display  = 'none';
