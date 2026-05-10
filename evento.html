@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>4º Encontro de Mães e Pais Atípicos do Norte do ES — 30/05/2026</title>
+
+<!-- SEO & Open Graph (WhatsApp, Facebook, Telegram) -->
+<meta name="description" content="4º Encontro de Mães e Pais Atípicos do Norte do ES · 30 de maio de 2026 · Praça Amélia Boroto, São Mateus/ES · Das 12h às 19h · Entrada gratuita!">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mateenseautista-stack.github.io/pages/evento.html">
+<meta property="og:title" content="4º Encontro de Mães e Pais Atípicos do Norte do ES">
+<meta property="og:description" content="30 de maio de 2026 · Praça Amélia Boroto, São Mateus/ES · Das 12h às 19h · Palestras, SPA para mães, sorteios, brinquedos e muito mais! Inscreva-se gratuitamente!">
+<meta property="og:image" content="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/banner-evento_ac3dedcb.jpg">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="1200">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="CMMPANE — Mães e Pais Atípicos do Norte do ES">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="4º Encontro de Mães e Pais Atípicos do Norte do ES">
+<meta name="twitter:description" content="30 de maio de 2026 · São Mateus/ES · Inscreva-se gratuitamente!">
+<meta name="twitter:image" content="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/banner-evento_ac3dedcb.jpg">
+
+<!-- WhatsApp específico -->
+<meta name="theme-color" content="#1a3a8f">
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #0d1b4b 0%, #1a3a8f 50%, #0d1b4b 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px 40px;
+  }
+
+  .container {
+    max-width: 480px;
+    width: 100%;
+  }
+
+  /* Logo topo */
+  .logo-topo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .logo-topo img {
+    width: 90px;
+    height: 90px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    object-fit: cover;
+  }
+
+  /* Banner principal */
+  .banner-wrapper {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    margin-bottom: 24px;
+  }
+  .banner-wrapper img {
+    width: 100%;
+    display: block;
+  }
+
+  /* Info cards */
+  .info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .info-card {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 14px;
+    padding: 14px 12px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+  }
+  .info-card .icon { font-size: 24px; margin-bottom: 6px; }
+  .info-card .label { font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; }
+  .info-card .value { font-size: 14px; font-weight: 700; color: #fff; margin-top: 2px; }
+
+  /* Destaques */
+  .destaques {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 20px;
+  }
+  .destaques h3 {
+    color: #ffd700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .destaque-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.9);
+    font-size: 14px;
+  }
+  .destaque-item:last-child { border-bottom: none; }
+  .destaque-item .di { font-size: 20px; min-width: 28px; text-align: center; }
+
+  /* Botão principal */
+  .btn-inscricao {
+    display: block;
+    width: 100%;
+    background: linear-gradient(135deg, #e63946, #ff6b6b);
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 800;
+    padding: 18px 24px;
+    border-radius: 16px;
+    box-shadow: 0 6px 24px rgba(230,57,70,0.5);
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    animation: pulse 2s infinite;
+  }
+  .btn-inscricao:active { transform: scale(0.97); }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 6px 24px rgba(230,57,70,0.5); }
+    50% { box-shadow: 0 6px 36px rgba(230,57,70,0.8); }
+  }
+
+  .btn-inscricao .btn-sub {
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0.85;
+    margin-top: 2px;
+  }
+
+  /* Status vagas */
+  .vagas-status {
+    background: rgba(255,215,0,0.15);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 10px;
+    padding: 10px 14px;
+    text-align: center;
+    color: #ffd700;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+
+  /* Compartilhar */
+  .compartilhar {
+    text-align: center;
+    color: rgba(255,255,255,0.5);
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  /* Rodapé */
+  .rodape {
+    margin-top: 24px;
+    text-align: center;
+    color: rgba(255,255,255,0.35);
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Logo -->
+    <div class="logo-topo">
+      <img src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/logo-cmmpane_347f4b2f.jpeg" alt="CMMPANE — Mães e Pais Atípicos do Norte do ES">
+    </div>
+
+    <!-- Banner principal -->
+    <div class="banner-wrapper">
+      <img src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/banner-evento_ac3dedcb.jpg" alt="4º Encontro de Mães e Pais Atípicos do Norte do ES — 30 de maio de 2026">
+    </div>
+
+    <!-- Info rápida -->
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="icon">📅</div>
+        <div class="label">Data</div>
+        <div class="value">30/05/2026</div>
+      </div>
+      <div class="info-card">
+        <div class="icon">🕐</div>
+        <div class="label">Horário</div>
+        <div class="value">12h às 19h</div>
+      </div>
+      <div class="info-card">
+        <div class="icon">📍</div>
+        <div class="label">Local</div>
+        <div class="value">Praça Amélia Boroto</div>
+      </div>
+      <div class="info-card">
+        <div class="icon">🏙️</div>
+        <div class="label">Cidade</div>
+        <div class="value">São Mateus/ES</div>
+      </div>
+    </div>
+
+    <!-- Destaques -->
+    <div class="destaques">
+      <h3>✨ O que vai ter no evento</h3>
+      <div class="destaque-item"><span class="di">🎤</span> Palestras informativas para famílias atípicas</div>
+      <div class="destaque-item"><span class="di">🩺</span> Pré mutirão de consultas para mães e filhos</div>
+      <div class="destaque-item"><span class="di">💆‍♀️</span> SPA especial para as mães</div>
+      <div class="destaque-item"><span class="di">🎁</span> Sorteios de vales no valor de R$500,00</div>
+      <div class="destaque-item"><span class="di">🧸</span> 8 brinquedos para crianças atípicas</div>
+      <div class="destaque-item"><span class="di">🌟</span> Uma super surpresa no evento!</div>
+      <div class="destaque-item"><span class="di">🍿</span> Pipoca, picolé, algodão doce e cachorro quente</div>
+    </div>
+
+    <!-- Status vagas -->
+    <div class="vagas-status" id="vagas-status">
+      🎟️ Inscrição gratuita — vagas limitadas!
+    </div>
+
+    <!-- Botão principal -->
+    <a href="./inscricao.html" class="btn-inscricao">
+      QUERO ME INSCREVER AGORA!
+      <span class="btn-sub">Clique aqui — é gratuito e rápido!</span>
+    </a>
+
+    <div class="compartilhar">
+      📲 Compartilhe com outras famílias atípicas!
+    </div>
+
+    <div class="rodape">
+      CMMPANE — Mães e Pais Atípicos do Norte do ES<br>
+      Inclusão · Respeito · Empatia · Amor
+    </div>
+  </div>
+
+  <script>
+    // Verificar status de vagas em tempo real
+    const BACKEND = 'https://cmmpaneapi-udws6mcd.manus.space';
+    fetch(BACKEND + '/api/status')
+      .then(r => r.json())
+      .then(data => {
+        const el = document.getElementById('vagas-status');
+        if (!data || !el) return;
+        const total = data.totalInscritos || 0;
+        const limite = data.limiteNormal || 1200;
+        const restantes = Math.max(0, limite - total);
+        if (data.status === 'lista_espera' || data.status === 'encerrado') {
+          el.style.background = 'rgba(230,57,70,0.15)';
+          el.style.borderColor = 'rgba(230,57,70,0.3)';
+          el.style.color = '#ff6b6b';
+          el.textContent = '⚠️ Vagas esgotadas — inscreva-se na lista de espera!';
+        } else if (restantes <= 100) {
+          el.style.background = 'rgba(230,100,0,0.15)';
+          el.style.borderColor = 'rgba(230,100,0,0.3)';
+          el.style.color = '#ff9944';
+          el.textContent = `🔥 Últimas ${restantes} vagas disponíveis! Inscreva-se agora!`;
+        } else {
+          el.textContent = `🎟️ ${restantes} vagas disponíveis — inscrição gratuita!`;
+        }
+      })
+      .catch(() => {});
+  </script>
+</body>
+</html>
