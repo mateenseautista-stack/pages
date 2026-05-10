@@ -1404,12 +1404,12 @@ body {
     </div>
 
     <div class="field">
-      <label>E-mail <span class="req">*</span></label>
+      <label>E-mail <span style="font-size:0.8em;color:#888;font-weight:400">(opcional)</span></label>
       <div class="field-icon-wrap">
         <span class="field-icon">✉️</span>
-        <input type="email" id="f-email" placeholder="seu@email.com" autocomplete="email" inputmode="email">
+        <input type="email" id="f-email" placeholder="seu@email.com (opcional)" autocomplete="email" inputmode="email">
       </div>
-      <div class="field-error" id="err-email">Informe um e-mail válido.</div>
+      <div class="field-error" id="err-email">E-mail inválido. Verifique o formato ou deixe em branco.</div>
     </div>
 
     <div class="field">
@@ -2112,7 +2112,9 @@ function validarEtapa(etapa) {
     const telCheck = validarTelefoneES(telefone);
 
     mostrarErro('nome',     !nome);
-    mostrarErro('email',    !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email));
+    // email é opcional — só valida formato se algo foi digitado
+    const emailInvalido = email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+    mostrarErro('email',    !!emailInvalido);
     mostrarErro('cidade',   !cidade);
 
     // Mensagem customizada para telefone
@@ -2130,7 +2132,7 @@ function validarEtapa(etapa) {
 
     ok = ok && !!nome
       && telCheck.ok
-      && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)
+      && !emailInvalido
       && !!cidade;
   }
 
