@@ -1586,7 +1586,13 @@ body {
 <script>
 // ─── CONFIG ───────────────────────────────────────────
 // ⚠️  Cole aqui a URL do Apps Script após implantar como Web App
-const APPS_SCRIPT_URL = 'COLE_AQUI_A_URL_DO_APPS_SCRIPT';
+// ── URLs do Backend CMMPANE-NES (Manus WebDev) ──────────────────────
+const BACKEND_URL = 'BACKEND_URL_PLACEHOLDER';
+const API_STATUS   = BACKEND_URL + '/api/status';
+const API_INSCREVER = BACKEND_URL + '/api/inscrever';
+const API_ESPERA   = BACKEND_URL + '/api/lista-espera';
+// Compatibilidade com código legado
+const APPS_SCRIPT_URL = BACKEND_URL;
 
 // ─── LIMITES DE VAGAS ─────────────────────────────────
 const LIMITE_PRINCIPAL   = 1200;  // Fecha inscrições
@@ -1632,14 +1638,8 @@ async function fetchComTimeout(url, opcoes = {}, timeoutMs = 15000) {
 
 // ─── CONTADOR DE VAGAS AO VIVO (P22 + P24) ───────────
 async function buscarContagem() {
-  if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('COLE_AQUI')) {
-    // Modo demo: simula 847 inscritos
-    console.warn('[MODO DEMO] Usando dados simulados. Configure APPS_SCRIPT_URL para usar dados reais.');
-    renderizarContagem(847, true);
-    return;
-  }
   try {
-    const url = APPS_SCRIPT_URL + '?acao=contagem&t=' + Date.now();
+    const url = API_STATUS + '?t=' + Date.now();
     const resp = await fetchComTimeout(url, { method: 'GET' });
     const data = await resp.json();
     const total  = data.total  ?? 0;
@@ -1742,16 +1742,11 @@ async function entrarListaEspera() {
   btn.innerHTML = '<div class="btn-spinner"></div> Cadastrando…';
 
   try {
-    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('COLE_AQUI')) {
-      // Modo demo
-      await new Promise(r => setTimeout(r, 800));
-    } else {
-      await fetchComTimeout(APPS_SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ acao: 'listaEspera', nome, telefone: tel, email }),
-      });
-    }
+    await fetchComTimeout(API_ESPERA, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, telefone: tel, email, tipo: 'outro', estado: 'ES', lgpd: true }),
+    });
     document.getElementById('espera-form').style.display = 'none';
     document.getElementById('espera-sucesso').classList.add('show');
   } catch(e) {
@@ -2027,14 +2022,18 @@ async function enviarInscricao() {
   };
 
   try {
-    if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('COLE_AQUI')) {
-      throw new Error('URL_NAO_CONFIGURADA');
-    }
-
-    const resp = await fetchComTimeout(APPS_SCRIPT_URL, {
+    // Adaptar payload para o formato do backend CMMPANE-NES
+    const payloadBackend = {
+      nome: payload.nome, email: payload.email, telefone: payload.telefone,
+      tipo: payload.perfil, cidade: payload.cidade || '', estado: 'ES',
+      nomeFilho: payload.filhoNome || '', idadeFilho: payload.filhoIdade || '',
+      diagnostico: payload.filhoCondicao || '', comoSoube: payload.origem || '',
+      autorizacaoImagem: payload.termo1 || false, lgpd: payload.termo2 || false,
+    };
+    const resp = await fetchComTimeout(API_INSCREVER, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payloadBackend),
     });
     const data = await resp.json();
 
