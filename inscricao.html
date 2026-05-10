@@ -1812,9 +1812,8 @@ function validarTelefoneES(tel) {
   }
   return { ok: true };
 }
-}
 
-// ─── NAVEGAÇÃO ENTRE ETAPAS ───────────────────────────
+// ─── NAVEGAÇÃO ENTRE ETAPAS ─────────────────────
 function irParaEtapa(num) {
   if (num > state.etapaAtual && !validarEtapa(state.etapaAtual)) return;
   const antiga = state.etapaAtual;
