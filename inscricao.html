@@ -2487,15 +2487,21 @@ async function carregarBannerDinamico() {
     const resp = await fetch(BACKEND_URL + '/api/banner?t=' + Date.now());
     if (!resp.ok) return;
     const data = await resp.json();
-    if (data.bannerUrl) {
+    if (data.bannerUrl && typeof data.bannerUrl === 'string') {
       const img = document.getElementById('banner-dinamico-img');
       const wrap = document.getElementById('banner-dinamico-wrap');
       if (img && wrap) {
-        // Garante URL absoluta
-        const url = data.bannerUrl.startsWith('/')
+        // Garante URL absoluta e valida protocolo (proteção XSS)
+        const rawUrl = data.bannerUrl.startsWith('/')
           ? BACKEND_URL + data.bannerUrl
           : data.bannerUrl;
-        img.src = url;
+        let safeUrl;
+        try {
+          const parsed = new URL(rawUrl);
+          if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') throw new Error('protocolo invalido');
+          safeUrl = parsed.href;
+        } catch { return; } // URL inválida — não exibir
+        img.src = safeUrl;
         img.onload = () => { wrap.style.display = 'flex'; };
         img.onerror = () => { wrap.style.display = 'none'; };
       }
