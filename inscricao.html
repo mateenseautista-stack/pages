@@ -2433,6 +2433,8 @@ async function enviarInscricao() {
     const payloadBackend = {
       nome: payload.nome, email: payload.email, telefone: payload.telefone,
       tipo: payload.perfil, cidade: payload.cidade || '', estado: 'ES',
+      ehMae: payload.ehMae === true || payload.perfil === 'mae',
+      ehPai: payload.perfil === 'pai',
       nomeFilho: payload.filhoNome || '', idadeFilho: payload.filhoIdade || '',
       diagnostico: payload.filhoCondicao || '', comoSoube: payload.origem || '',
       autorizacaoImagem: payload.termo1 || false, lgpd: payload.termo2 || false,
