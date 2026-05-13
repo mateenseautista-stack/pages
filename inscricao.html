@@ -1476,12 +1476,22 @@ body {
       <div class="field-error" id="err-email">E-mail inválido. Verifique o formato ou deixe em branco.</div>
     </div>
 
-    <div class="field">
+    <div class="field" style="position:relative">
       <label>Cidade <span class="req">*</span></label>
       <div class="field-icon-wrap">
         <span class="field-icon">📍</span>
-        <input type="text" id="f-cidade" placeholder="Ex: São Mateus" autocomplete="address-level2" inputmode="text">
+        <input type="text" id="f-cidade" placeholder="Digite sua cidade..." autocomplete="off" inputmode="text"
+          oninput="cidadeAutocomplete(this.value)"
+          onfocus="cidadeAutocomplete(this.value)"
+          onblur="setTimeout(()=>document.getElementById('cidade-dropdown').style.display='none',180)"
+          onkeydown="cidadeKeydown(event)">
       </div>
+      <div id="cidade-dropdown" style="
+        display:none; position:absolute; top:100%; left:0; right:0; z-index:999;
+        background:var(--card); border:1px solid var(--roxo); border-radius:var(--r-md);
+        max-height:220px; overflow-y:auto; box-shadow:0 8px 24px #00000060;
+        margin-top:4px;
+      "></div>
       <div class="field-error" id="err-cidade">Informe sua cidade.</div>
     </div>
 
@@ -2596,7 +2606,91 @@ function irParaSlide(idx) {
 // Avança automaticamente a cada 4 segundos
 setInterval(() => irParaSlide(_slideAtual + 1), 4000);
 
-// ─── INIT ───────────────────────────────────────────────────
+// // ─── AUTOCOMPLETE DE CIDADES DO ES ──────────────────────────────
+const CIDADES_ES = [
+  "Afonso Cláudio","Água Doce do Norte","Alegre","Alfredo Chaves","Alto Rio Novo",
+  "Anchieta","Apiacá","Aracruz","Atilio Vivacqua","Baixo Guandu",
+  "Barra de São Francisco","Boa Esperança","Bom Jesus do Norte","Brejetuba",
+  "Cachoeiro de Itapemirim","Cariacica","Castelo","Colatina",
+  "Conceição da Barra","Conceição do Castelo","Divino de São Lourenço",
+  "Domingos Martins","Dores do Rio Preto","Ecoporanga","Fundão",
+  "Governador Lindenberg","Guacanã","Guarapari","Ibatiba","Ibiraçu",
+  "Iconha","Irupi","Itaguassú","Itaípe","Itapemirim","Itarana",
+  "Iúna","Jaguaré","João Neiva","Laranja da Terra","Linhares",
+  "Marechal Floriano","Marilândia","Mantenópolis","Maratáizes",
+  "Mimoso do Sul","Montanha","Mucurici","Muniz Freire","Muqui",
+  "Nova Venécia","Pancas","Pedro Canário","Pinheiros","Ponto Belo",
+  "Presidente Kennedy","Rio Bananal","Rio Novo do Sul","Santa Leopoldina",
+  "Santa Maria de Jetibá","Santa Teresa","São Domingos do Norte",
+  "São Gabriel da Palha","São José do Calçado","São Mateus",
+  "São Roque do Canã","Serra","Sooretama","Venda Nova do Imigrante",
+  "Viana","Vila Pavão","Vila Valério","Vila Velha","Vitória"
+];
+
+let cidadeActiveIndex = -1;
+
+function normalizarTexto(s) {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+}
+
+function cidadeAutocomplete(val) {
+  const dd = document.getElementById('cidade-dropdown');
+  const q = normalizarTexto(val);
+  if (!q) { dd.style.display = 'none'; return; }
+  const matches = CIDADES_ES.filter(c => normalizarTexto(c).includes(q)).slice(0, 8);
+  if (!matches.length) { dd.style.display = 'none'; return; }
+  cidadeActiveIndex = -1;
+  dd.innerHTML = matches.map((c, i) =>
+    `<div class="cidade-item" data-index="${i}" onmousedown="selecionarCidade('${c.replace(/'/g, "\\'")}')"
+      style="padding:11px 14px 11px 36px;cursor:pointer;font-size:14px;color:var(--txt);
+             border-bottom:1px solid var(--border2);position:relative;transition:background .15s">
+      <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:13px">📍</span>
+      ${c}
+    </div>`
+  ).join('');
+  dd.style.display = 'block';
+}
+
+function selecionarCidade(nome) {
+  const inp = document.getElementById('f-cidade');
+  inp.value = nome;
+  document.getElementById('cidade-dropdown').style.display = 'none';
+  inp.classList.remove('error');
+  document.getElementById('err-cidade').classList.remove('show');
+  // Atualizar toggle mãe/pai automaticamente
+  if (normalizarTexto(nome) === normalizarTexto('São Mateus')) {
+    const smBtn = document.querySelector('#cidade-toggle button:first-child');
+    if (smBtn) setCidadePerfil('sm', smBtn);
+  } else {
+    const outraBtn = document.querySelector('#cidade-toggle button:last-child');
+    if (outraBtn) setCidadePerfil('outra', outraBtn);
+  }
+}
+
+function cidadeKeydown(e) {
+  const dd = document.getElementById('cidade-dropdown');
+  const items = dd.querySelectorAll('.cidade-item');
+  if (!items.length || dd.style.display === 'none') return;
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    cidadeActiveIndex = Math.min(cidadeActiveIndex + 1, items.length - 1);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    cidadeActiveIndex = Math.max(cidadeActiveIndex - 1, 0);
+  } else if (e.key === 'Enter' && cidadeActiveIndex >= 0) {
+    e.preventDefault();
+    selecionarCidade(items[cidadeActiveIndex].textContent.trim());
+    return;
+  } else if (e.key === 'Escape') {
+    dd.style.display = 'none'; return;
+  } else return;
+  items.forEach((el, i) => {
+    el.style.background = i === cidadeActiveIndex ? 'var(--bg3)' : '';
+    el.style.color = i === cidadeActiveIndex ? 'var(--txt)' : '';
+  });
+}
+
+// ─── INIT ───────────────────────────────────────────
 atualizarProgress(1);
 buscarContagem();
 setInterval(buscarContagem, INTERVALO_CONTAGEM);
