@@ -1367,12 +1367,17 @@ body {
 <!-- ══════════════════════════════════════ -->
 <div class="carrossel-wrap" id="carrossel-wrap">
   <div class="carrossel-inner">
-    <img class="carrossel-img active" src="carrossel-4.png" alt="4º Encontro de Pais e Mães Atípicos" loading="eager">
-    <img class="carrossel-img" src="carrossel-5.png" alt="4º Encontro de Pais e Mães Atípicos" loading="lazy">
-    <img class="carrossel-img" src="carrossel-6.png" alt="4º Encontro de Pais e Mães Atípicos" loading="lazy">
-    <img class="carrossel-img" src="carrossel-1.jpg" alt="Inscrições abertas" loading="lazy">
-    <img class="carrossel-img" src="carrossel-2.jpg" alt="Inscrições oficialmente abertas" loading="lazy">
-    <img class="carrossel-img" src="carrossel-3.jpg" alt="Abertas as inscrições" loading="lazy">
+    <img class="carrossel-img active" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_01_Capa_7e1ed015.png" alt="4º Encontro · 30/05/2026 · Eles acreditaram nessa causa" loading="eager">
+    <img class="carrossel-img" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_01_Capa(5)_60251705.png" alt="Nossos Patrocinadores · Quem faz esse encontro acontecer" loading="lazy">
+    <img class="carrossel-img" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_10_Todos_Juntos_556c1dd7.png" alt="Juntos somos mais fortes · Nossos parceiros que fazem a diferença" loading="lazy">
+    <img class="carrossel-img" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_02_L_u00edvia_Barcelos_875eefc1.png" alt="Lívia Barcelos · Advogada Defensora da Pessoa Autista" loading="lazy">
+    <img class="carrossel-img" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_04_Bazoni_924e5d41.png" alt="Bazoni Empreendimentos Imobiliários" loading="lazy">
+    <img class="carrossel-img" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_04_Med_Imagem(1)_50109af0.png" alt="Med Imagem · Saúde e Diagnóstico" loading="lazy">
+    <img class="carrossel-img" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_05_M_u00f3veis_Linhares_6849d877.png" alt="Móveis Linhares · Casa e Decoração" loading="lazy">
+    <img class="carrossel-img" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_07_Dr__Rafael_de_Almeida_8be955ee.png" alt="Dr. Rafael de Almeida · Neurologista" loading="lazy">
+    <img class="carrossel-img" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_07_Maria_Mattos_e05b4bdf.png" alt="Maria Mattos · Beleza e Estética" loading="lazy">
+    <img class="carrossel-img" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_07_Neuroinfanti(1)_580b7cfa.png" alt="Neuroinfanti · Neuropediatria" loading="lazy">
+    <img class="carrossel-img" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_08_Casulo_29b75ce3.png" alt="Casulo · Comportamento e Saúde" loading="lazy">
   </div>
   <div class="carrossel-dots">
     <span class="carrossel-dot active" onclick="irParaSlide(0)"></span>
@@ -1381,6 +1386,11 @@ body {
     <span class="carrossel-dot" onclick="irParaSlide(3)"></span>
     <span class="carrossel-dot" onclick="irParaSlide(4)"></span>
     <span class="carrossel-dot" onclick="irParaSlide(5)"></span>
+    <span class="carrossel-dot" onclick="irParaSlide(6)"></span>
+    <span class="carrossel-dot" onclick="irParaSlide(7)"></span>
+    <span class="carrossel-dot" onclick="irParaSlide(8)"></span>
+    <span class="carrossel-dot" onclick="irParaSlide(9)"></span>
+    <span class="carrossel-dot" onclick="irParaSlide(10)"></span>
   </div>
 </div>
 
@@ -2599,7 +2609,7 @@ async function carregarBannerDinamico() {
 }
 // ─── CARROSSEL ROTATIVO ───────────────────────────────────
 let _slideAtual = 0;
-const _totalSlides = 3;
+const _totalSlides = 11;
 
 function irParaSlide(idx) {
   const imgs = document.querySelectorAll('.carrossel-img');
