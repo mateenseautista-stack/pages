@@ -107,12 +107,15 @@ body {
   margin: 20px auto 0;
   padding: 0 16px;
   position: relative;
-  overflow: hidden;
   border-radius: 16px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .carrossel-inner {
   position: relative;
   width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
 }
 .carrossel-img {
   width: 100%;
@@ -121,6 +124,7 @@ body {
   border-radius: 16px;
   object-fit: cover;
   animation: fadeInSlide 0.6s ease;
+  pointer-events: none;
 }
 .carrossel-img.active {
   display: block;
@@ -129,24 +133,69 @@ body {
   from { opacity: 0; transform: scale(1.02); }
   to   { opacity: 1; transform: scale(1); }
 }
+@media (prefers-reduced-motion: reduce) {
+  .carrossel-img { animation: none !important; }
+}
+/* Setas de navegação */
+.carrossel-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255,255,255,0.85);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  transition: background 0.2s, opacity 0.2s;
+  opacity: 0.7;
+}
+.carrossel-btn:hover { opacity: 1; background: #fff; }
+.carrossel-btn.prev { left: 4px; }
+.carrossel-btn.next { right: 4px; }
+@media (max-width: 480px) {
+  .carrossel-btn { width: 30px; height: 30px; font-size: 15px; opacity: 0.55; }
+}
+/* Dots — área de toque mínima 44px (WCAG) */
 .carrossel-dots {
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
+  gap: 2px;
+  margin-top: 6px;
   padding-bottom: 4px;
 }
 .carrossel-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: rgba(21,101,192,0.25);
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  transition: background 0.3s, transform 0.3s;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
-.carrossel-dot.active {
+.carrossel-dot::after {
+  content: '';
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(21,101,192,0.28);
+  transition: background 0.3s, transform 0.3s, width 0.3s;
+}
+.carrossel-dot.active::after {
   background: #1565C0;
-  transform: scale(1.3);
+  transform: scale(1.35);
+  width: 20px;
+  border-radius: 4px;
 }
 /* ─── TOPO HERO ──────────────────────────────────────────────── */
 .hero {
@@ -1366,6 +1415,8 @@ body {
 <!-- CARROSSEL DE IMAGENS                  -->
 <!-- ══════════════════════════════════════ -->
 <div class="carrossel-wrap" id="carrossel-wrap">
+  <button class="carrossel-btn prev" onclick="_carrosselNav(-1)" aria-label="Slide anterior">‹</button>
+  <button class="carrossel-btn next" onclick="_carrosselNav(1)" aria-label="Próximo slide">›</button>
   <div class="carrossel-inner">
     <img class="carrossel-img active" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_01_Capa_7e1ed015.png" alt="4º Encontro · 30/05/2026 · Eles acreditaram nessa causa" loading="eager">
     <img class="carrossel-img" src="https://cmmpaneapi-udws6mcd.manus.space/manus-storage/slide_01_Capa(5)_60251705.png" alt="Nossos Patrocinadores · Quem faz esse encontro acontecer" loading="lazy">
@@ -2607,23 +2658,74 @@ async function carregarBannerDinamico() {
     // falha silenciosa — o hero continua visível normalmente
   }
 }
-// ─── CARROSSEL ROTATIVO ───────────────────────────────────
-let _slideAtual = 0;
-const _totalSlides = 11;
+/// ─── CARROSSEL ROTATIVO ─────────────────────────────────────
+(function() {
+  const INTERVALO_AUTO = 6000;   // 6s entre slides
+  const PAUSA_APOS_INTERACAO = 10000; // 10s de pausa após clique/swipe
+  let _slideAtual = 0;
+  const _totalSlides = 11;
+  let _timer = null;
+  let _pausado = false;
 
-function irParaSlide(idx) {
-  const imgs = document.querySelectorAll('.carrossel-img');
-  const dots = document.querySelectorAll('.carrossel-dot');
-  if (!imgs.length) return;
-  imgs[_slideAtual].classList.remove('active');
-  dots[_slideAtual].classList.remove('active');
-  _slideAtual = (idx + _totalSlides) % _totalSlides;
-  imgs[_slideAtual].classList.add('active');
-  dots[_slideAtual].classList.add('active');
-}
+  function irParaSlide(idx, porInteracao) {
+    const imgs = document.querySelectorAll('.carrossel-img');
+    const dots = document.querySelectorAll('.carrossel-dot');
+    if (!imgs.length) return;
+    imgs[_slideAtual].classList.remove('active');
+    dots[_slideAtual].classList.remove('active');
+    _slideAtual = (idx + _totalSlides) % _totalSlides;
+    imgs[_slideAtual].classList.add('active');
+    dots[_slideAtual].classList.add('active');
+    if (porInteracao) {
+      // Pausa por 10s após interação manual, depois retoma
+      clearTimeout(_timer);
+      _pausado = true;
+      _timer = setTimeout(() => { _pausado = false; _iniciarAuto(); }, PAUSA_APOS_INTERACAO);
+    }
+  }
 
-// Avança automaticamente a cada 4 segundos
-setInterval(() => irParaSlide(_slideAtual + 1), 4000);
+  function _avancar() {
+    if (!_pausado && !document.hidden) irParaSlide(_slideAtual + 1, false);
+  }
+
+  function _iniciarAuto() {
+    clearInterval(window._carrosselInterval);
+    // Respeita prefers-reduced-motion: não avança automaticamente
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    window._carrosselInterval = setInterval(_avancar, INTERVALO_AUTO);
+  }
+
+  // Expõe funções globais para os onclick do HTML
+  window.irParaSlide = function(idx) { irParaSlide(idx, true); };
+  window._carrosselNav = function(dir) { irParaSlide(_slideAtual + dir, true); };
+
+  // Pausa quando aba fica em segundo plano
+  document.addEventListener('visibilitychange', function() {
+    if (document.hidden) {
+      clearInterval(window._carrosselInterval);
+    } else if (!_pausado) {
+      _iniciarAuto();
+    }
+  });
+
+  // Suporte a swipe (touchstart / touchend)
+  (function() {
+    const wrap = document.getElementById('carrossel-wrap');
+    if (!wrap) return;
+    let _txStart = 0;
+    wrap.addEventListener('touchstart', function(e) {
+      _txStart = e.changedTouches[0].clientX;
+    }, { passive: true });
+    wrap.addEventListener('touchend', function(e) {
+      const dx = e.changedTouches[0].clientX - _txStart;
+      if (Math.abs(dx) > 40) {
+        irParaSlide(dx < 0 ? _slideAtual + 1 : _slideAtual - 1, true);
+      }
+    }, { passive: true });
+  })();
+
+  _iniciarAuto();
+})();;
 
 // // ─── AUTOCOMPLETE DE CIDADES DO ES ──────────────────────────────
 // 78 municípios oficiais do Espírito Santo (IBGE)
