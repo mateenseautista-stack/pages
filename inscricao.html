@@ -2932,59 +2932,57 @@ function cidadeKeydown(e) {
 // ─── PÚBLICO ESTIMADO ───────────────────────────────────
 const API_PUBLICO = BACKEND_URL + '/api/publico-estimado';
 
+function renderizarPublico(total, inscritos, acomp) {
+  const elNum   = document.getElementById('pub-numero');
+  const elSub   = document.getElementById('pub-sub');
+  const elBadge = document.getElementById('pub-badge');
+  if (!elNum) return;
+  // Animação de contagem rápida ao atualizar
+  const atual = parseInt(elNum.textContent.replace(/\D/g, '')) || 0;
+  if (atual !== total && total > 0) {
+    const diff  = total - atual;
+    const steps = Math.min(Math.abs(diff), 20);
+    const step  = diff / steps;
+    let cur = atual, i = 0;
+    const tick = setInterval(() => {
+      cur += step;
+      elNum.textContent = Math.round(cur).toLocaleString('pt-BR');
+      i++;
+      if (i >= steps) { clearInterval(tick); elNum.textContent = total.toLocaleString('pt-BR'); }
+    }, 40);
+  } else if (total > 0) {
+    elNum.textContent = total.toLocaleString('pt-BR');
+  }
+  if (elSub && inscritos > 0) {
+    elSub.innerHTML = '<strong>' + inscritos.toLocaleString('pt-BR') + ' inscritos</strong>' +
+      (acomp > 0 ? ' + <strong>' + acomp.toLocaleString('pt-BR') + ' acompanhantes</strong>' : '');
+  }
+  if (elBadge) {
+    elBadge.textContent = total >= 1000 ? '🔥 ' + total.toLocaleString('pt-BR') + ' pessoas' : '❤️ AO VIVO';
+  }
+}
+
 async function buscarPublicoEstimado() {
   try {
+    // Tenta o endpoint dedicado (com cache de 30s no servidor)
     const resp = await fetchComTimeout(API_PUBLICO + '?t=' + Date.now(), { method: 'GET' });
     const data = await resp.json();
-    if (!data.ok) return;
-    const total     = data.publicoEstimado  ?? 0;
-    const inscritos = data.totalInscritos   ?? 0;
-    const acomp     = data.totalAcompanhantes ?? 0;
-
-    const elNum  = document.getElementById('pub-numero');
-    const elSub  = document.getElementById('pub-sub');
-    const elBadge = document.getElementById('pub-badge');
-
-    if (elNum) {
-      // Animação de contagem rápida ao atualizar
-      const atual = parseInt(elNum.textContent.replace(/\D/g, '')) || 0;
-      if (atual !== total) {
-        const diff = total - atual;
-        const steps = Math.min(Math.abs(diff), 20);
-        const step = diff / steps;
-        let cur = atual;
-        let i = 0;
-        const tick = setInterval(() => {
-          cur += step;
-          elNum.textContent = Math.round(cur).toLocaleString('pt-BR');
-          i++;
-          if (i >= steps) {
-            clearInterval(tick);
-            elNum.textContent = total.toLocaleString('pt-BR');
-          }
-        }, 40);
-      } else {
-        elNum.textContent = total.toLocaleString('pt-BR');
-      }
+    if (data.ok) {
+      renderizarPublico(data.publicoEstimado ?? 0, data.totalInscritos ?? 0, data.totalAcompanhantes ?? 0);
+      return;
     }
-
-    if (elSub) {
-      elSub.innerHTML = '<strong>' + inscritos.toLocaleString('pt-BR') + ' inscritos</strong>' +
-        (acomp > 0 ? ' + <strong>' + acomp.toLocaleString('pt-BR') + ' acompanhantes</strong>' : '');
-    }
-
-    if (elBadge) {
-      elBadge.textContent = total >= 1000 ? '🔥 ' + total.toLocaleString('pt-BR') + ' pessoas' : '❤️ AO VIVO';
-    }
-  } catch (e) {
-    // falha silenciosa — mantém último valor
-  }
+  } catch (_e) { /* fallback abaixo */ }
+  // Fallback: usa o total de inscritos do /api/status já carregado
+  try {
+    const total = state.totalInscritos ?? 0;
+    if (total > 0) renderizarPublico(total, total, 0);
+  } catch (_e) { /* silencioso */ }
 }
 
 // ─── INIT ───────────────────────────────────
 atualizarProgress(1);
-buscarContagem();
-buscarPublicoEstimado();
+// Carrega contagem e público estimado em paralelo para resposta mais rápida
+buscarContagem().then(() => buscarPublicoEstimado()).catch(() => buscarPublicoEstimado());
 setInterval(buscarContagem, INTERVALO_CONTAGEM);
 setInterval(buscarPublicoEstimado, INTERVALO_CONTAGEM);
 carregarBannerDinamico();
