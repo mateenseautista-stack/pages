@@ -1279,6 +1279,105 @@ body {
 .vagas-restantes strong { color: var(--amber); }
 .vagas-restantes.critico strong { color: var(--red); }
 
+/* ─── PÚBLICO ESTIMADO ─────────────────────────────────── */
+.publico-wrap {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 12px 20px 0;
+}
+.publico-card {
+  background: linear-gradient(135deg, #0D47A1 0%, #1565C0 50%, #0288D1 100%);
+  border-radius: var(--r-lg);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(21,101,192,.35);
+}
+.publico-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 80% 50%, rgba(255,255,255,.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+.publico-icon {
+  font-size: 28px;
+  line-height: 1;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.25));
+  animation: publico-bounce 3s ease-in-out infinite;
+}
+@keyframes publico-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  40%       { transform: translateY(-4px) scale(1.08); }
+  60%       { transform: translateY(-2px) scale(1.04); }
+}
+.publico-info {
+  flex: 1;
+  min-width: 0;
+}
+.publico-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255,255,255,.7);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 4px;
+}
+.publico-label .dot-live-branco {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #fff;
+  animation: pulse-live-branco 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes pulse-live-branco {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,255,255,.6); }
+  50%       { opacity: .5; box-shadow: 0 0 0 5px rgba(255,255,255,0); }
+}
+.publico-numero {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+  letter-spacing: -1px;
+  animation: publico-glow 3s ease-in-out infinite;
+}
+@keyframes publico-glow {
+  0%, 100% { text-shadow: 0 0 0 transparent; }
+  50%       { text-shadow: 0 0 16px rgba(255,255,255,.5); }
+}
+.publico-sub {
+  font-size: 11px;
+  color: rgba(255,255,255,.65);
+  margin-top: 3px;
+}
+.publico-sub strong { color: rgba(255,255,255,.9); }
+.publico-badge {
+  background: rgba(255,255,255,.18);
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 99px;
+  padding: 4px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  flex-shrink: 0;
+  backdrop-filter: blur(4px);
+  animation: publico-pulse-badge 2.5s ease-in-out infinite;
+}
+@keyframes publico-pulse-badge {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255,255,255,.3); }
+  50%       { transform: scale(1.04); box-shadow: 0 0 0 6px rgba(255,255,255,0); }
+}
+
 /* ─── TELA ESGOTAMENTO (P24) ─────────────────────────── */
 #tela-esgotamento {
   display: none;
@@ -1476,12 +1575,30 @@ body {
       <div class="vagas-bar-fill" id="vg-barra" style="width:0%"></div>
     </div>
     <div class="vagas-restantes" id="vg-restantes">Carregando…</div>
+</div>
+</div>
+
+<!-- ══════════════════════ -->
+<!-- PÚBLICO ESTIMADO (P23)               -->
+<!-- ══════════════════════ -->
+<div class="publico-wrap" id="publico-wrap">
+  <div class="publico-card">
+    <div class="publico-icon">👥</div>
+    <div class="publico-info">
+      <div class="publico-label">
+        <span class="dot-live-branco"></span>
+        Público esperado · ao vivo
+      </div>
+      <div class="publico-numero" id="pub-numero">—</div>
+      <div class="publico-sub" id="pub-sub">Carregando…</div>
+    </div>
+    <div class="publico-badge" id="pub-badge">❤️ AO VIVO</div>
   </div>
 </div>
 
-<!-- ══════════════════════════════════════ -->
+<!-- ══════════════════════ -->
 <!-- PROGRESS                              -->
-<!-- ══════════════════════════════════════ -->
+<!-- ══════════════════════ -->
 <div class="progress-wrap" id="progress-wrap">
   <div class="progress-steps">
     <div class="progress-line-bg"></div>
@@ -2812,10 +2929,64 @@ function cidadeKeydown(e) {
   });
 }
 
-// ─── INIT ───────────────────────────────────────────
+// ─── PÚBLICO ESTIMADO ───────────────────────────────────
+const API_PUBLICO = BACKEND_URL + '/api/publico-estimado';
+
+async function buscarPublicoEstimado() {
+  try {
+    const resp = await fetchComTimeout(API_PUBLICO + '?t=' + Date.now(), { method: 'GET' });
+    const data = await resp.json();
+    if (!data.ok) return;
+    const total     = data.publicoEstimado  ?? 0;
+    const inscritos = data.totalInscritos   ?? 0;
+    const acomp     = data.totalAcompanhantes ?? 0;
+
+    const elNum  = document.getElementById('pub-numero');
+    const elSub  = document.getElementById('pub-sub');
+    const elBadge = document.getElementById('pub-badge');
+
+    if (elNum) {
+      // Animação de contagem rápida ao atualizar
+      const atual = parseInt(elNum.textContent.replace(/\D/g, '')) || 0;
+      if (atual !== total) {
+        const diff = total - atual;
+        const steps = Math.min(Math.abs(diff), 20);
+        const step = diff / steps;
+        let cur = atual;
+        let i = 0;
+        const tick = setInterval(() => {
+          cur += step;
+          elNum.textContent = Math.round(cur).toLocaleString('pt-BR');
+          i++;
+          if (i >= steps) {
+            clearInterval(tick);
+            elNum.textContent = total.toLocaleString('pt-BR');
+          }
+        }, 40);
+      } else {
+        elNum.textContent = total.toLocaleString('pt-BR');
+      }
+    }
+
+    if (elSub) {
+      elSub.innerHTML = '<strong>' + inscritos.toLocaleString('pt-BR') + ' inscritos</strong>' +
+        (acomp > 0 ? ' + <strong>' + acomp.toLocaleString('pt-BR') + ' acompanhantes</strong>' : '');
+    }
+
+    if (elBadge) {
+      elBadge.textContent = total >= 1000 ? '🔥 ' + total.toLocaleString('pt-BR') + ' pessoas' : '❤️ AO VIVO';
+    }
+  } catch (e) {
+    // falha silenciosa — mantém último valor
+  }
+}
+
+// ─── INIT ───────────────────────────────────
 atualizarProgress(1);
 buscarContagem();
+buscarPublicoEstimado();
 setInterval(buscarContagem, INTERVALO_CONTAGEM);
+setInterval(buscarPublicoEstimado, INTERVALO_CONTAGEM);
 carregarBannerDinamico();
 </script>
 </body>
